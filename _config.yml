@@ -1,0 +1,65 @@
+
+title: Empty Space #Your awesome title
+email: fpg2012@yeah.net #youremail@domain.com
+description: > # this means to ignore newlines until "baseurl"
+  Nothing Here.
+
+baseurl: # the subpath of the site
+# url: http://starry99.github.io/catbook # the base hostname & protocol for your site
+
+permalink: /:year-:month/:title
+timezone:
+
+favicon: /assets/img/favicon.ico
+
+google_analytics: #UA—XXXXXXXX-X
+disqus_shortname: #disqus shortname
+
+user:
+  name: Nth233
+  # pic: /assets/img/cat.jpg
+  # picAlt: "catbook"
+  job: Nothing here
+  aboutme: true # comment this out if you don't need the 'about' page.
+
+exclude:
+  - README.md
+  - LICENSE
+  - github
+
+defaults:
+  - scope:
+      path: "_posts"
+      type: posts
+    values:
+      layout: post
+      comment: true   
+
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+markdown: kramdown 
+kramdown:  
+  auto_ids: true
+  entity_output: as_char
+  toc_levels: 1..6
+  smart_quotes: lsquo,rsquo,ldquo,rdquo
+  input: GFM
+  hard_wrap: false
+  footnote_nr: 1
+  show_warnings: false
+  enable_coderay: false
+
+# Filtering Content
+show_drafts: null
+limit_posts: 0
+future:      false
+unpublished: false
+
+plugins:
+  - jekyll-spaceship
+  - jekyll-feed
+
+jekyll-spaceship:
+  mathjax-processor:
+    src:
+      - https://polyfill.io/v3/polyfill.min.js?features=es6
+      - https://cdn.bootcdn.net/ajax/libs/mathjax/3.1.2/es5/tex-mml-chtml.min.js
