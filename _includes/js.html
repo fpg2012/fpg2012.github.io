@@ -70,8 +70,10 @@
     <!-- The loading of KaTeX is deferred to speed up page rendering -->
     <script src="https://cdn.jsdelivr.net/npm/katex@0.13.0/dist/katex.min.js" integrity="sha384-FaFLTlohFghEIZkw6VGwmf9ISTubWAVYW8tG8+w2LAIftJEULZABrF9PPFv+tVkH" crossorigin="anonymous"></script>
     
-    <script defer onload="render();">
-    function render() {
+    <script defer">
+    window.onload = 
+    function {
+      console.log("render inline math");
       renderMathInElement(
           document.body,
           {
