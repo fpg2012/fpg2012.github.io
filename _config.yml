@@ -55,6 +55,7 @@ future:      false
 unpublished: false
 
 plugins:
+  - jekyll-spaceship
   - jekyll-feed
 
 jekyll-spaceship:
