@@ -29,10 +29,10 @@
     --post_link: #46a891;
     --post_link_hover: #87CDBD;
     --inlinecode_text: #FFAA00;
-    --blockquote: #333;
+    --blockquote: #888888;
     --footer_font: #858585;
     --footer_font_a: #000;
-    --border_radius: 15px;
+    --border_radius: 5px;
     --table-zebra: whitesmoke;
     --table-bg: white;
 }
@@ -56,9 +56,9 @@
     --post_link: #8d7edc;
     --post_link_hover: #D4CEF2;
     --inlinecode_text: #FFAA00;
-    --blockquote: #CACCCE;
+    --blockquote: #ababab;
     --footer_font_a: #d1d1d1;
-    --border_radius: 1px;
+    --border_radius: 5px;
     --table-zebra: #222222;
     --table-bg: #333333;
 }
@@ -147,7 +147,7 @@ img {
     position: relative;
     max-width: 92%;
     min-height: 85%;
-    border-radius: 15px;
+    border-radius: var(--border_radius);
     box-shadow: 0 0 2px 2px var(--shadow_color);
     padding-bottom: 2rem;
 
@@ -159,7 +159,7 @@ img {
     }
 
     @include mobile-only {
-        padding-top: 16rem;
+        padding-top: 12rem;
         min-height: 75%;
     }
 }
@@ -295,9 +295,11 @@ img {
     width: 100%;
     border-radius: var(--border_radius);
     box-shadow: 0 0 2px 2px var(--shadow_color);
+    margin-bottom: 1rem;
+    height: 12rem;
 
     @include mobile-only {
-        height: 9rem;
+        height: 12rem;
     }
 
     @include breakpoint(medium) {
@@ -470,7 +472,7 @@ img {
 
     @include mobile-only {
         display: block;
-        margin: -.5rem;
+        margin: 1rem;
     }
 
     @include breakpoint(medium) {
@@ -512,7 +514,7 @@ img {
     }
 
     @include mobile-only {
-        margin-top: 2rem;
+        margin-top: 1rem;
         margin-left: 1rem;
         margin-right: 1rem;
     }
@@ -652,6 +654,14 @@ img {
         margin: 10px 0 10px 0;
         padding: 2px 8px 2px 8px;
         font-style: italic;
+        background-color: var(--header-bg);
+    }
+
+    blockquote>p {
+    	margin-block-start: 3px;
+    	margin-block-end: 3px;
+    	font-style: normal;
+    	color: var(--blockquote)
     }
 
     dfn {
@@ -704,6 +714,9 @@ img {
 
     dfn:hover::before {
         top: 20px;
+    }
+    ol {
+        padding-left: 1rem;
     }
 }
 

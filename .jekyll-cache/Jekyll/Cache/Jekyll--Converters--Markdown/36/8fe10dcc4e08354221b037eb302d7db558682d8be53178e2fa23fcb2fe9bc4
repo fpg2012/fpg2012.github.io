@@ -1,0 +1,270 @@
+I"�I<p>最近折腾了一下hugo，有点中毒，咸鱼了几天在搞这个，网课都没怎么上。</p>
+
+<p>感觉花在折腾上的时间太多了。</p>
+
+<h2 id="安装hugo">安装Hugo</h2>
+
+<p>由于国内特殊的网络环境，本来很简单的东西变得有点麻烦，必须用一些旁敲侧击的方法。从GitHub下载release的速度很慢，所以只好自己编译。从码云的镜像仓库clone下来，然后按照官网的步骤自己编译。</p>
+
+<ol>
+  <li>
+    <p>首先安装go。得益于<a href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。</p>
+  </li>
+  <li>
+    <p>然后编译安装hugo</p>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>go <span class="nb">install</span> <span class="nt">--tags</span> extended
+</code></pre></div>    </div>
+
+    <p>如果不要Sass/Scss支持的话可以把后面的选项去掉。</p>
+  </li>
+  <li>
+    <p>试试hugo能不能用，应该是可以了。</p>
+  </li>
+</ol>
+
+<h2 id="找个主题">找个主题</h2>
+
+<p>几经挑选，找到了这个主题（cactus-plus）。</p>
+
+<p>不得不说，这步可能是第二花时间的。</p>
+
+<h2 id="一点配置">一点配置</h2>
+
+<h3 id="数学公式">数学公式</h3>
+
+<p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
+
+<p>在<code class="language-plaintext highlighter-rouge">theme/layouts/partials</code>里添加一个<code class="language-plaintext highlighter-rouge">katex.html</code>，内容如下：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script&gt;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">DOMContentLoaded</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">delimiters</span><span class="p">:</span> <span class="p">[</span>
+              <span class="p">{</span><span class="na">left</span><span class="p">:</span> <span class="dl">"</span><span class="s2">$$</span><span class="dl">"</span><span class="p">,</span> <span class="na">right</span><span class="p">:</span> <span class="dl">"</span><span class="s2">$$</span><span class="dl">"</span><span class="p">,</span> <span class="na">display</span><span class="p">:</span> <span class="kc">true</span><span class="p">},</span>
+              <span class="p">{</span><span class="na">left</span><span class="p">:</span> <span class="dl">"</span><span class="s2">$</span><span class="dl">"</span><span class="p">,</span> <span class="na">right</span><span class="p">:</span> <span class="dl">"</span><span class="s2">$</span><span class="dl">"</span><span class="p">,</span> <span class="na">display</span><span class="p">:</span> <span class="kc">false</span><span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="nt">&lt;/script&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"</span> <span class="na">integrity=</span><span class="s">"sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq"</span> <span class="na">crossorigin=</span><span class="s">"anonymous"</span><span class="nt">&gt;</span>
+<span class="c">&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">defer</span> <span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"</span> <span class="na">integrity=</span><span class="s">"sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz"</span> <span class="na">crossorigin=</span><span class="s">"anonymous"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="c">&lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">defer</span> <span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"</span> <span class="na">integrity=</span><span class="s">"sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI"</span> <span class="na">crossorigin=</span><span class="s">"anonymous"</span> <span class="na">onload=</span><span class="s">"renderMathInElement(document.body);"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>当然也可以使用国内bootcdn的镜像，加载（理论上）更快。</p>
+
+<p>然后在<code class="language-plaintext highlighter-rouge">head.html</code>中添加：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{{ if or .Params.katex .Site.Params.katex }}
+{{ partial "katex.html" . }}
+{{ end }}
+</code></pre></div></div>
+
+<p>当渲染的页面当中有数学公式的时候，就在Front Matter里面加上<code class="language-plaintext highlighter-rouge">katex: true</code>即可。</p>
+
+<blockquote>
+  <p>ps: 还是有一点问题，`最近折腾了一下hugo，有点中毒，咸鱼了几天在搞这个，网课都没怎么上。</p>
+</blockquote>
+
+<p>感觉花在折腾上的时间太多了。</p>
+
+<h2 id="安装hugo-1">安装Hugo</h2>
+
+<p>由于国内特殊的网络环境，本来很简单的东西变得有点麻烦，必须用一些旁敲侧击的方法。从GitHub下载release的速度很慢，所以只好自己编译。从码云的镜像仓库clone下来，然后按照官网的步骤自己编译。</p>
+
+<ol>
+  <li>
+    <p>首先安装go。得益于<a href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。</p>
+  </li>
+  <li>
+    <p>然后编译安装hugo</p>
+
+    <p>&lt;!JEKYLL@3100@0&gt;</p>
+
+    <p>如果不要Sass/Scss支持的话可以把后面的选项去掉。</p>
+  </li>
+  <li>
+    <p>试试hugo能不能用，应该是可以了。</p>
+  </li>
+</ol>
+
+<h2 id="找个主题-1">找个主题</h2>
+
+<p>几经挑选，找到了这个主题（cactus-plus）。</p>
+
+<p>不得不说，这步可能是第二花时间的。</p>
+
+<h2 id="一点配置-1">一点配置</h2>
+
+<h3 id="数学公式-1">数学公式</h3>
+
+<p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
+
+<p>在&lt;!JEKYLL@3100@1&gt;里添加一个&lt;!JEKYLL@3100@2&gt;，内容如下：</p>
+
+<p>&lt;!JEKYLL@3100@3&gt;</p>
+
+<p>当然也可以使用国内bootcdn的镜像，加载（理论上）更快。</p>
+
+<p>然后在&lt;!JEKYLL@3100@4&gt;中添加：</p>
+
+<p>&lt;!JEKYLL@3100@5&gt;</p>
+
+<p>当渲染的页面当中有数学公式的时候，就在Front Matter里面加上&lt;!JEKYLL@3100@6&gt;即可。</p>
+
+<blockquote>
+  <p>ps: 还是有一点问题，、<code class="language-plaintext highlighter-rouge">_</code>、<code class="language-plaintext highlighter-rouge">&lt;</code>这些符号还是不能直接使用，即使按照网上某些教程的说法，把渲染器改成mmark也不行，似乎也没有什么简洁的处理方法，只能在用的时候注意。</p>
+</blockquote>
+
+<h3 id="对主题的微调">对主题的微调</h3>
+
+<p>这个主题并不是尽如人意，有些地方还是得自己调整，这是最花时间的。</p>
+
+<p>首先是代码块的样式有点丑。这个主题使用了highlight.js进行代码高亮，但却没有禁用hugo自带的高亮，就会出来一些奇奇怪怪的问题，比如代码块的圆角之外会有黑角，因为hugo默认采用monokai作为高亮主题，背景是暗色的。在配置文件中加入以下片段来禁用hugo自带的高亮。</p>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[markup]</span>
+  <span class="nn">[markup.highlight]</span>
+    <span class="py">codeFences</span> <span class="p">=</span> <span class="kc">false</span>
+    <span class="py">lineNos</span> <span class="p">=</span>  <span class="kc">false</span>
+</code></pre></div></div>
+
+<p>然后我几乎把所有元素的<code class="language-plaintext highlighter-rouge">border-radius</code>都改成了<code class="language-plaintext highlighter-rouge">0px</code>。（吐血</p>
+
+<p>改动了footer和navbar，更符合我的喜好。</p>
+
+<p>把字体替换成了Noto Sans SC，等宽字体替换成了Roboto Mono。用了Google Font。在<code class="language-plaintext highlighter-rouge">head.html</code>加入：</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">"https://fonts.googleapis.com/css?family=Noto+Sans+SC|Noto+Serif+SC|Roboto+Mono&amp;display=swap"</span> <span class="na">rel=</span><span class="s">"stylesheet"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<h3 id="用javascript自动替换插图路径">用Javascript自动替换插图路径</h3>
+
+<p>我习惯使用Typora作为markdown编辑器。当我把图片粘贴进来是，Typora就会把图片从剪贴板保存到<code class="language-plaintext highlighter-rouge">./${filename}</code>中，很方便，但是这样与hugo查找图片的方式冲突了。</p>
+
+<p>为了方便，只好用Js。现学了一点js后，编写了以下代码。虽然此策不优雅，但是还算能用。</p>
+
+<p>在<code class="language-plaintext highlighter-rouge">static/js</code>里面添加一个js文件：</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// replace image source</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">imgs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="dl">'</span><span class="s1">img</span><span class="dl">'</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">img</span> <span class="o">=</span> <span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">temp_arr</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">repl</span> <span class="o">=</span> <span class="dl">''</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="dl">'</span><span class="s1">posts</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">==</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">flag</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">!=</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="dl">'</span><span class="s1">/</span><span class="dl">'</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">'</span><span class="s1">replace </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">+</span> <span class="dl">'</span><span class="s1"> to </span><span class="dl">'</span> <span class="o">+</span> <span class="nx">repl</span><span class="p">);</span>
+            <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">repl</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>然后把它添加到配置文件的customJs中，即可。</p>
+
+<h3 id="其他">其他</h3>
+
+<p>诸如替换头像、添加email图标之类的，此不再赘述，要么调配置，要么改主题模板。</p>
+
+<h2 id="部署">部署</h2>
+
+<p>一开始先尝试了一下gitee pages，但是会出现莫名其妙的404问题。于是干脆搞到自己的云服务器上，用git部署。</p>
+
+<h3 id="搭建git服务器">搭建git服务器</h3>
+
+<p>参考下面的某条链接……由于是在ubuntu上弄，所以比较顺利。</p>
+
+<p>大概就是：新建git用户，添加公钥，修改<code class="language-plaintext highlighter-rouge">/etc/passwd</code>，新建裸仓库。</p>
+
+<h3 id="半自动部署">（半）自动部署</h3>
+
+<p>利用git钩子，如果愿意的话可以在服务器上装上hugo，然后自动构建、部署。但是我不想再装一次了。于是效法很多挂到github page的静态网页，分支<code class="language-plaintext highlighter-rouge">master</code> 专门管理源码，分支<code class="language-plaintext highlighter-rouge">gh-pages</code>专门管理构建好的网页。参考下面某条链接……</p>
+
+<p>在要放网页文件的地方克隆<code class="language-plaintext highlighter-rouge">gh-pages</code>分支。然后在裸仓库的<code class="language-plaintext highlighter-rouge">hook</code>里面添加<code class="language-plaintext highlighter-rouge">post-update</code>文件，内容大致如下：</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">unset </span>GIT_DIR
+<span class="nb">echo</span> <span class="s2">"Hello!"</span>
+<span class="nv">DEPLOY_PATH</span><span class="o">=</span><span class="s2">"放网页的目录"</span>
+<span class="nb">cd</span> <span class="nv">$DEPLOY_PATH</span>
+git pull origin gh-pages
+</code></pre></div></div>
+
+<p>下次push时就会自动把网页拉到这里来了。</p>
+
+<p>为了更自动化一些，本地也添加一个脚本<code class="language-plaintext highlighter-rouge">deploy.sh</code>。</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>hugo
+<span class="nb">cd </span>public
+git add <span class="nb">.</span>
+git commit <span class="nt">-m</span> <span class="s2">"Update - </span><span class="sb">`</span><span class="nb">date</span> +%Y-%m-%d<span class="sb">`</span><span class="s2">"</span>
+<span class="nb">cd</span> ..
+git push origin gh-pages
+git add <span class="nb">.</span>
+git commit <span class="nt">-a</span>
+git push origin master
+</code></pre></div></div>
+
+<p>下次写完博文，直接</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sh deploy.sh
+</code></pre></div></div>
+
+<p>或者双击脚本即可。</p>
+
+<h3 id="静态网站的搭建">静态网站的搭建</h3>
+
+<p>使用nginx，此不赘述。</p>
+
+<h2 id="一些链接">一些链接</h2>
+
+<ul>
+  <li>
+    <p>安装hugo</p>
+
+    <p>https://gohugo.io/getting-started/installing/</p>
+  </li>
+  <li>
+    <p>搭建git服务器</p>
+
+    <p>https://www.liaoxuefeng.com/wiki/896043488029600/899998870925664</p>
+  </li>
+  <li>
+    <p>git钩子</p>
+
+    <p>https://blog.csdn.net/u010837612/article/details/70825225</p>
+
+    <p>https://git-scm.com/book/zh/v2/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-Git-%E9%92%A9%E5%AD%90</p>
+  </li>
+  <li>
+    <p>gh-pages</p>
+
+    <p>https://gohugo.io/hosting-and-deployment/hosting-on-github/</p>
+  </li>
+</ul>
+
+<blockquote>
+  <p>一些未解决也暂时懒得解决的问题：</p>
+
+  <ul>
+    <li>
+      <p>about页面不显示头像</p>
+    </li>
+    <li>about页面内容不居中</li>
+    <li>tasklist的checkbox前会有一点</li>
+  </ul>
+</blockquote>
+:ET

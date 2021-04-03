@@ -30,8 +30,6 @@ GEM
       rouge (~> 3.0)
       safe_yaml (~> 1.0)
       terminal-table (~> 1.8)
-    jekyll-archives (2.2.1)
-      jekyll (>= 3.6, < 5.0)
     jekyll-feed (0.15.1)
       jekyll (>= 3.7, < 5.0)
     jekyll-sass-converter (2.1.0)
@@ -76,9 +74,8 @@ PLATFORMS
 
 DEPENDENCIES
   jekyll (~> 4.1.1)
-  jekyll-archives
   jekyll-feed
   jekyll-spaceship
 
 BUNDLED WITH
-   2.1.4
+   2.2.15
