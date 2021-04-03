@@ -348,13 +348,13 @@ template {
   display: none;
 }
 
-$spacing-unit: 30px !default
-$table-border-color: var(--table-zebra) !default
-$table-zebra-color: var(--table-zebra) !default
-$table-header-border: grey !default
-$table-text-align: left !default
-$on-laptop: 800px !default
-$table-header-bg-color: var(--table-zebra) !default
+$spacing-unit: 30px !default;
+$table-border-color: var(--table-zebra) !default;
+$table-zebra-color: var(--table-zebra) !default;
+$table-header-border: grey !default;
+$table-text-align: left !default;
+$on-laptop: 800px !default;
+$table-header-bg-color: var(--table-zebra) !default;
 
 @mixin media-query($device) {
   @media screen and (max-width: $device) {
