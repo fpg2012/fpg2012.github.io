@@ -1,0 +1,144 @@
+I"�J<h2 id="前因">前因</h2>
+
+<p>手头有一块（伪）Arduino Uno，现在需要把上面测到的电压数据发送到电脑上了。我知道Arduino官方提供了<code class="language-plaintext highlighter-rouge">Serial.write</code>和<code class="language-plaintext highlighter-rouge">Serial.read</code>，利用这些函数可以方便地通过串口发数据给电脑，在Arduino IDE提供的串口监视器上显示出来。但我现在需要自己处理数据，需要让Arduino直接和我的程序通信。对此我毫无头绪。一番搜索尝试之后算是找到了办法。</p>
+
+<h2 id="线">线</h2>
+
+<p>我的Arduino UNO和计算机连接的依赖一根USB线，一头是type-B，一头是type-A，通过这个USB提供了虚拟串口，可以假想Arduino和计算机用一条RS-232串行总线连接起来了。利用这个串口，Arduino就可以和计算机通信。</p>
+
+<p>连接到计算机的Arduino被linux包装成一个文件，我这里是<code class="language-plaintext highlighter-rouge">/dev/ttyACM0</code>，只要对这个文件进行响应的读写，就可以实现通信。但是毕竟串口和硬盘上的文件本质上不同，还是得通过系统对其进行终端控制。linux提供了<code class="language-plaintext highlighter-rouge">termios.h</code>，里面用一个结构体保存了终端控制的各种属性，属于POSIX标准。很多东西看起来是上一个时代的遗存，从UNIX和电传打字机的时代一直继承到了现在。</p>
+
+<h2 id="struct-termio"><code class="language-plaintext highlighter-rouge">struct termio</code></h2>
+
+<h3 id="结构体内容">结构体内容</h3>
+
+<p><code class="language-plaintext highlighter-rouge">struct termio</code>里面保存了终端的各种属性。</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">c_iflag</code> 设置输入模式，比如要不要流量控制、要不要对输入字节进行特殊处理</li>
+  <li><code class="language-plaintext highlighter-rouge">c_oflag</code> 设置输出模式，比如要不要对输出字节进行特殊处理</li>
+  <li><code class="language-plaintext highlighter-rouge">c_cflag</code> 设置控制模式，比如一个字节多宽，有没有奇偶校验位，有几个终止位，要不要进行载波检测，要不要读数据</li>
+  <li><code class="language-plaintext highlighter-rouge">c_lflag</code> 设置局部模式（我也不知道为什么叫Local Mode），比如要不要回传、要不要使用标准模式（Canonical Mode，似乎是一行一行读）</li>
+  <li><code class="language-plaintext highlighter-rouge">c_cc</code> 一个数组，包含一些特殊设置，比如一次最少读几个字符</li>
+</ol>
+
+<p>前面几个flag都是通过位运算进行控制的，把对应的位设为1则启用，否则禁用。</p>
+
+<p>上面一些设置似乎只和以前的调制解调器有关，比如流量控制、载波监听什么的，对于我们和Arduino通信来说是没什么用的，我们不需要操作系统对我们的数据做太多的处理，因此使用的时候需要禁用掉大多数配置。</p>
+
+<p>对于<code class="language-plaintext highlighter-rouge">c_cc</code>数组，里面<code class="language-plaintext highlighter-rouge">c_cc[VMIN]</code>表示一次读写几个字符，如果没有读到这么多字符，<code class="language-plaintext highlighter-rouge">read</code>系统调用（前面写了，串口在linux看来是个文件）就会一直阻塞，直到超时为止，最大位255（毕竟无符号的8位能表示的最大整数不过如此）。<code class="language-plaintext highlighter-rouge">c_cc[VTIME]</code>保存了超时信息（timeout），也就是多久算超时，单位是十分秒（0.1秒，decisecond）。</p>
+
+<h3 id="具体的配置">具体的配置</h3>
+
+<p>参考网上的资料，对于<code class="language-plaintext highlighter-rouge">c_cflag</code>，禁用<code class="language-plaintext highlighter-rouge">PARENB</code>、<code class="language-plaintext highlighter-rouge">CSTOPB</code>，意思是禁用奇偶校验，只用一个停止位。启用<code class="language-plaintext highlighter-rouge">CS8</code>、<code class="language-plaintext highlighter-rouge">CREAD</code>和<code class="language-plaintext highlighter-rouge">CLOCAL</code>，字节8位长（现在真的还有什么设备字节长度不是8位吗？），可以读写。对于<code class="language-plaintext highlighter-rouge">c_lflag</code>，禁用<code class="language-plaintext highlighter-rouge">ICANON</code>、<code class="language-plaintext highlighter-rouge">ECHO</code>、<code class="language-plaintext highlighter-rouge">ECHOE</code>、<code class="language-plaintext highlighter-rouge">ECHONL</code>、<code class="language-plaintext highlighter-rouge">ISIG</code>，禁用标准模式、任何回传、信号字节。对于<code class="language-plaintext highlighter-rouge">c_iflag</code>，禁用<code class="language-plaintext highlighter-rouge">IXOFF</code>、<code class="language-plaintext highlighter-rouge">IXON</code>、<code class="language-plaintext highlighter-rouge">IXANY</code>，不要流量控制；禁用<code class="language-plaintext highlighter-rouge">IGNBRK</code>、<code class="language-plaintext highlighter-rouge">BRKINT</code>、<code class="language-plaintext highlighter-rouge">PARMRK</code>、<code class="language-plaintext highlighter-rouge">ISTRIP</code>、<code class="language-plaintext highlighter-rouge">INLCR</code>、<code class="language-plaintext highlighter-rouge">IGNCR</code>、<code class="language-plaintext highlighter-rouge">ICRNL</code>，我们要原始数据，不要特殊处理。对于<code class="language-plaintext highlighter-rouge">c_oflag</code>，禁用<code class="language-plaintext highlighter-rouge">OPOST</code>、<code class="language-plaintext highlighter-rouge">ONLCR</code>，不要特殊处理。</p>
+
+<p>我这里<code class="language-plaintext highlighter-rouge">VMIN</code>设置为2，因为我配置了我的Arduino一次发送两个字节。VTIME我随便设置了一个值。</p>
+
+<p>波特率也需要设置。使用<code class="language-plaintext highlighter-rouge">cfsetispeed</code>和<code class="language-plaintext highlighter-rouge">cfsetospeed</code>可以分别设置读写的波特率。我这里全部设为9600Hz，也就是B9600。</p>
+
+<p>在看了Qt的<code class="language-plaintext highlighter-rouge">QSerialPort</code>和rust的<code class="language-plaintext highlighter-rouge">serialport</code> crate之后，我发现还是操作系统提供的接口最为详细完备。</p>
+
+<h3 id="总体大致流程">总体大致流程</h3>
+
+<p>先<code class="language-plaintext highlighter-rouge">open</code>对应的文件（我这里是<code class="language-plaintext highlighter-rouge">/dev/ttyACM0</code>），然后利用<code class="language-plaintext highlighter-rouge">tcgetattr</code>获得终端控制的结构体，对其进行设置，接下来就和普通的文件一样，可以从里面<code class="language-plaintext highlighter-rouge">read</code>数据了。最后再关闭文件。</p>
+
+<h2 id="c程序">C程序</h2>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdint.h&gt;
+</span>
+<span class="cp">#include &lt;fcntl.h&gt;
+#include &lt;errno.h&gt;
+#include &lt;termios.h&gt;
+#include &lt;unistd.h&gt;
+</span>
+<span class="c1">// handle memory in different ways</span>
+<span class="c1">// convert two char into a uint16_t</span>
+<span class="k">union</span> <span class="n">Convert</span> <span class="p">{</span>
+    <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="kt">uint16_t</span> <span class="n">num</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">serial_port</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">"/dev/ttyACM0"</span><span class="p">,</span> <span class="n">O_RDWR</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">serial_port</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"Error %i from open: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">struct</span> <span class="n">termios</span> <span class="n">tty</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">tcgetattr</span><span class="p">(</span><span class="n">serial_port</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">tty</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"Error %i from tcgetattr: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">errno</span><span class="p">,</span> <span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">PARENB</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">CSTOPB</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">|=</span> <span class="n">CS8</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cflag</span> <span class="o">|=</span> <span class="n">CREAD</span> <span class="o">|</span> <span class="n">CLOCAL</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ICANON</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ECHO</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ECHOE</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ECHONL</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_lflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ISIG</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">IXON</span> <span class="o">|</span> <span class="n">IXOFF</span> <span class="o">|</span> <span class="n">IXANY</span><span class="p">);</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_iflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">IGNBRK</span><span class="o">|</span><span class="n">BRKINT</span><span class="o">|</span><span class="n">PARMRK</span><span class="o">|</span><span class="n">ISTRIP</span><span class="o">|</span><span class="n">INLCR</span><span class="o">|</span><span class="n">IGNCR</span><span class="o">|</span><span class="n">ICRNL</span><span class="p">);</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_oflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">OPOST</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_oflag</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">ONLCR</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VTIME</span><span class="p">]</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="n">tty</span><span class="p">.</span><span class="n">c_cc</span><span class="p">[</span><span class="n">VMIN</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="n">cfsetispeed</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tty</span><span class="p">,</span> <span class="n">B9600</span><span class="p">);</span>
+    <span class="n">cfsetospeed</span><span class="p">(</span><span class="o">&amp;</span><span class="n">tty</span><span class="p">,</span> <span class="n">B9600</span><span class="p">);</span>
+    <span class="kt">char</span> <span class="n">read_buf</span><span class="p">[</span><span class="mi">20</span><span class="p">];</span> <span class="c1">// buffer to use</span>
+    <span class="k">union</span> <span class="n">Convert</span> <span class="n">temp</span><span class="p">;</span>
+    <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">int</span> <span class="n">n</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">serial_port</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">read_buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">read_buf</span><span class="p">));</span>
+        <span class="c1">// ! should handle error here</span>
+        <span class="c1">// but in my case, error rarely arises</span>
+        <span class="n">temp</span><span class="p">.</span><span class="n">buffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_buf</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+        <span class="n">temp</span><span class="p">.</span><span class="n">buffer</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">read_buf</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+        <span class="n">printf</span><span class="p">(</span><span class="s">"%x</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">temp</span><span class="p">.</span><span class="n">num</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">close</span><span class="p">(</span><span class="n">serial_port</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Arduino方面程序如下。这里要注意，不要用<code class="language-plaintext highlighter-rouge">Serial.println</code>，Arduino的库会因此在后面加上<code class="language-plaintext highlighter-rouge">\r\n</code>。</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">union</span> <span class="n">Convert</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+  <span class="kt">uint16_t</span> <span class="n">num</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">);</span>
+<span class="p">}</span>
+ 
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">delay</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+  <span class="n">Convert</span> <span class="n">temp</span><span class="p">;</span>
+  <span class="n">temp</span><span class="p">.</span><span class="n">num</span> <span class="o">=</span> <span class="n">analogRead</span><span class="p">(</span><span class="n">A0</span><span class="p">);</span>
+  <span class="n">Serial</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">temp</span><span class="p">.</span><span class="n">buffer</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>经测最终是可以读到数据的，而且速度很快，不会出现速度不匹配的问题。</p>
+
+<h2 id="其他方法">其他方法</h2>
+
+<p>我还尝试使用了Qt的<code class="language-plaintext highlighter-rouge">QSerialPort</code>来读串口，那个用起来比直接调POSIX接口简单多了。但是不知道为什么，有的时候只读了一个字节，有的时候按我要求读了两个字节，但是高字节和低字节反了。用法可以参考Qt文档。</p>
+
+<p>rust有个crate，<code class="language-plaintext highlighter-rouge">serialport</code>，也很不错，对底层的操作进行了封装。我最终的程序就是用了这个crate。（因为rust有很方便的线程库，写起来没有C语言这么累人）</p>
+
+<h2 id="参考资料">参考资料</h2>
+
+<p>没有这些参考资料我真的写不出这个程序。</p>
+
+<ol>
+  <li><a href="https://www.cmrr.umn.edu/~strupp/serial.html#CONTENTS">Serial Programming Guide for POSIX Operating Systems</a></li>
+  <li><a href="https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/">Linux Serial Ports Using C/C++</a></li>
+  <li><a href="https://linux.die.net/man/3/termios">termios(3) - Linux man page</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Computer_terminal#:~:text=A%20computer%20terminal%20is%20an,a%20computer%20screen%20by%20decades.">Computer terminal - Wikipedia</a></li>
+  <li><a href="https://docs.rs/serialport/4.0.1/serialport/">Crate serialport</a></li>
+  <li><a href="https://doc.qt.io/qt-5/qserialport.html">QSerialPort Class</a></li>
+</ol>
+:ET
