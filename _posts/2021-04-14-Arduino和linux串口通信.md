@@ -7,6 +7,7 @@ tags:
   - "串口"
   - "posix"
   - "linux"
+comments: true
 ---
 
 ## 前因

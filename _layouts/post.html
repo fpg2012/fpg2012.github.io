@@ -32,10 +32,10 @@ layout: page
   </div>
 
 
-  {% if page.comment %}
+  {% if page.comments %}
   <div class="post_comment">
 
-    {% include disqus.html username = site.disqus.shortname %}
+    {% include disqus.html %}
 
   </div>
   {% endif %}
