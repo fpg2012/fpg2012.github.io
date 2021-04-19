@@ -1,4 +1,4 @@
-I"+T<p>本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。</p>
+I"|T<p>本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。</p>
 
 <p>这不是我第一次尝试自制MC启动器，三四年前不会用HMCL的时候也想过自己做一个。但是当时连MC为什么要用启动器都不知道，自制启动器一直停留在「想法」阶段。</p>
 
@@ -27,7 +27,7 @@
 
 <p>举个例子：</p>
 
-<pre><code class="language-none">.minecraft/
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>.minecraft/
 	assets/
 		indexes/                 // 里面有一些以版本号命名的json
 		objects/                 // 里面都是乱七八糟的东西
@@ -45,7 +45,7 @@
 			1.7.10.json
 	options.txt                // minecraft游戏的具体设置，比如鼠标灵敏度、键盘控制等等
 	usercache.json             // 玩家信息的缓存，内含游戏名、uuid、最后登陆时间
-</code></pre>
+</code></pre></div></div>
 
 <h3 id="启动参数说明">启动参数说明</h3>
 

@@ -36,7 +36,7 @@ date: "2019-02-17T13:54:03"
 
 举个例子：
 
-```none
+```
 .minecraft/
 	assets/
 		indexes/                 // 里面有一些以版本号命名的json
