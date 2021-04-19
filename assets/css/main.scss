@@ -28,7 +28,7 @@
     --post_h3: #4c4c4c;
     --post_link: #46a891;
     --post_link_hover: #87CDBD;
-    --inlinecode_text: #FFAA00;
+    --inlinecode_text: #cb4b16;
     --blockquote: #888888;
     --footer_font: #858585;
     --footer_font_a: #000;
@@ -627,15 +627,17 @@ img {
     code {
         color: var(--inlinecode_text);
         padding: .1em .4em;
-        border-radius: 5px;
-        font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+        border-radius: 2px;
+        font-family: JetBrains Mono, Consolas, Menlo, Monaco, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
         font-size: .85rem;
+        background: var(--bg_color);
     }
 
     pre code {
         color: #fafafa;
         padding: 0;
         border: none;
+        background: none;
     }
 
     img {
@@ -721,7 +723,6 @@ img {
 }
 
 .post_comment {
-    margin-top: 8rem;
     padding: 10px;
 }
 

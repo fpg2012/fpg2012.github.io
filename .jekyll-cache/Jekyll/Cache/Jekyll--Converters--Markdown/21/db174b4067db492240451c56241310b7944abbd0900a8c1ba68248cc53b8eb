@@ -1,4 +1,4 @@
-I"�J<h2 id="前因">前因</h2>
+I"�J<h2 id="前因">前因</h2>
 
 <p>手头有一块（伪）Arduino Uno，现在需要把上面测到的电压数据发送到电脑上了。我知道Arduino官方提供了<code class="language-plaintext highlighter-rouge">Serial.write</code>和<code class="language-plaintext highlighter-rouge">Serial.read</code>，利用这些函数可以方便地通过串口发数据给电脑，在Arduino IDE提供的串口监视器上显示出来。但我现在需要自己处理数据，需要让Arduino直接和我的程序通信。对此我毫无头绪。一番搜索尝试之后算是找到了办法。</p>
 
@@ -139,6 +139,6 @@
   <li><a href="https://linux.die.net/man/3/termios">termios(3) - Linux man page</a></li>
   <li><a href="https://en.wikipedia.org/wiki/Computer_terminal#:~:text=A%20computer%20terminal%20is%20an,a%20computer%20screen%20by%20decades.">Computer terminal - Wikipedia</a></li>
   <li><a href="https://docs.rs/serialport/4.0.1/serialport/">Crate serialport</a></li>
-  <li><a href="https://doc.qt.io/qt-5/qserialport.html">QSerialPort Class</a></li>
+  <li><a href="https://doc.qt.io/qt-5/qserialport.html">QSerialPort Class</a>dui</li>
 </ol>
 :ET
