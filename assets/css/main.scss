@@ -370,8 +370,8 @@ img {
 
         &+div {
             background: url('../img/m.png') no-repeat center center;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             position: relative;
             transition: box-shadow .5s ease 0s, transform .5s ease .1s;
@@ -389,11 +389,11 @@ img {
 
             &:after {
                 
-                background: url('../img/s.png') no-repeat center;
+                background: url('../img/s.png') no-repeat center center;
                 border-radius: 50%;
                 content: '';
-                width: 30px;
-                height: 30px;
+                width: 40px;
+                height: 40px;
                 position: absolute;
                 transform: scale(0);
                 transition: all .5s ease;
@@ -401,10 +401,10 @@ img {
         }
 
         &:checked+div {
-            transform: scale(.5);
+            transform: scale(.2);
 
             &:after {
-                transform: scale(2);
+                transform: scale(5);
                 transition: transform .5s ease .15s;
             }
         }
@@ -414,6 +414,7 @@ img {
 .button {
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 3rem;
 }
 
 .nav {
