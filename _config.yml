@@ -13,7 +13,9 @@ timezone:
 favicon: /assets/img/favicon.ico
 
 google_analytics: #UA—XXXXXXXX-X
-disqus_shortname: nth233
+#disqus_shortname: 
+valine_appid: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz'
+valine_appkey: '4R2vpq8Wy392JAroRiaL7MJY'
 
 user:
   name: Nth233
@@ -62,4 +64,3 @@ jekyll-spaceship:
   mathjax-processor:
     src:
       - https://polyfill.io/v3/polyfill.min.js?features=es6
-      - https://cdn.bootcdn.net/ajax/libs/mathjax/3.1.2/es5/tex-mml-chtml.min.js

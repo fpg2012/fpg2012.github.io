@@ -1,5 +1,6 @@
 ---
 layout: about
+comments: true
 ---
 
 # About

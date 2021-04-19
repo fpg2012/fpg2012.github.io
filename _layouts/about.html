@@ -7,10 +7,12 @@ layout: page
     {{ content }}
   </div>
 
-  {% if page.comment %}
+  {% if site.valine_appid and site.valine_appkey %}
   <div class="post_comment">
-
-    {% include disqus.html username = site.disqus.shortname %}
+  <hr>
+  <h4>留言</h4>
+  
+    {% include valine.html %}
 
   </div>
   {% endif %}

@@ -32,10 +32,12 @@ layout: page
   </div>
 
 
-  {% if page.comments %}
+  {% if page.comments and site.valine_appid and site.valine_appkey %}
   <div class="post_comment">
-
-    {% include disqus.html %}
+  <hr>
+  <h4>Comments</h4>
+  
+    {% include valine.html %}
 
   </div>
   {% endif %}

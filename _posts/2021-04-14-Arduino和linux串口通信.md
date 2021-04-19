@@ -150,4 +150,4 @@ rust有个crate，`serialport`，也很不错，对底层的操作进行了封�
 3. [termios(3) - Linux man page](https://linux.die.net/man/3/termios)
 4. [Computer terminal - Wikipedia](https://en.wikipedia.org/wiki/Computer_terminal#:~:text=A%20computer%20terminal%20is%20an,a%20computer%20screen%20by%20decades.)
 5. [Crate serialport](https://docs.rs/serialport/4.0.1/serialport/)
-6. [QSerialPort Class](https://doc.qt.io/qt-5/qserialport.html)
+6. [QSerialPort Class](https://doc.qt.io/qt-5/qserialport.html)dui
