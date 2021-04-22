@@ -82,7 +82,7 @@
   <li>
     <p>然后编译安装hugo</p>
 
-    <p>&lt;!JEKYLL@3100@0&gt;</p>
+    <p>&lt;!JEKYLL@3140@0&gt;</p>
 
     <p>如果不要Sass/Scss支持的话可以把后面的选项去掉。</p>
   </li>
@@ -103,17 +103,17 @@
 
 <p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
 
-<p>在&lt;!JEKYLL@3100@1&gt;里添加一个&lt;!JEKYLL@3100@2&gt;，内容如下：</p>
+<p>在&lt;!JEKYLL@3140@1&gt;里添加一个&lt;!JEKYLL@3140@2&gt;，内容如下：</p>
 
-<p>&lt;!JEKYLL@3100@3&gt;</p>
+<p>&lt;!JEKYLL@3140@3&gt;</p>
 
 <p>当然也可以使用国内bootcdn的镜像，加载（理论上）更快。</p>
 
-<p>然后在&lt;!JEKYLL@3100@4&gt;中添加：</p>
+<p>然后在&lt;!JEKYLL@3140@4&gt;中添加：</p>
 
-<p>&lt;!JEKYLL@3100@5&gt;</p>
+<p>&lt;!JEKYLL@3140@5&gt;</p>
 
-<p>当渲染的页面当中有数学公式的时候，就在Front Matter里面加上&lt;!JEKYLL@3100@6&gt;即可。</p>
+<p>当渲染的页面当中有数学公式的时候，就在Front Matter里面加上&lt;!JEKYLL@3140@6&gt;即可。</p>
 
 <blockquote>
   <p>ps: 还是有一点问题，、<code class="language-plaintext highlighter-rouge">_</code>、<code class="language-plaintext highlighter-rouge">&lt;</code>这些符号还是不能直接使用，即使按照网上某些教程的说法，把渲染器改成mmark也不行，似乎也没有什么简洁的处理方法，只能在用的时候注意。</p>

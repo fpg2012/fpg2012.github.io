@@ -1,4 +1,4 @@
-I"|T<p>本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。</p>
+I"S<p>本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。</p>
 
 <p>这不是我第一次尝试自制MC启动器，三四年前不会用HMCL的时候也想过自己做一个。但是当时连MC为什么要用启动器都不知道，自制启动器一直停留在「想法」阶段。</p>
 
@@ -78,7 +78,7 @@
 
 <p>举个例子：</p>
 
-<p>&lt;!JEKYLL@3080@0&gt;</p>
+<p>&lt;!JEKYLL@3120@0&gt;</p>
 
 <h3 id="启动参数说明-1">启动参数说明</h3>
 
@@ -97,17 +97,17 @@
 <span class="na">-Dfml</span>.ignoreInvalidMinecraftCertificates<span class="o">=</span><span class="kd">true</span> 
 <span class="na">-Dfml</span>.ignorePatchDiscrepancies<span class="o">=</span><span class="kd">true</span> 
 <span class="na">-cp </span><span class="s2">"F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/netty/1.6/netty-1.6.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/oshi-project/oshi-core/1.1/oshi-core-1.1.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/dev/jna/jna/3.4.0/jna-3.4.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/ibm/icu/icu4j-core-mojang/51.2/icu4j-core-mojang-51.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/sf/jopt-simple/jopt-simple/4.6/jopt-simple-4.6.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/io/netty/netty-all/4.0.23.Final/netty-all-4.0.23.Final.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/google/guava/guava/17.0/guava-17.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-io/commons-io/2.4/commons-io-2.4.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-codec/commons-codec/1.9/commons-codec-1.9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/google/code/gson/gson/2.2.4/gson-2.2.4.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/authlib/1.5.22/authlib-1.5.22.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/realms/1.9.0/realms-1.9.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/versions/1.10/1.10.jar"</span> <span class="nb">net</span>.minecraft.client.main.Main 
-<span class="o">-</span><span class="na">-username </span><span class="kd">nothing</span> 
-<span class="o">-</span><span class="na">-version </span><span class="s2">"HMCL 2.5.1.79"</span> 
-<span class="o">-</span><span class="na">-gameDir </span><span class="s2">"F:/MC/Minecraft 1.10.2-Forge/.minecraft"</span> 
-<span class="o">-</span><span class="na">-assetsDir </span><span class="s2">"F:/MC/Minecraft 1.10.2-Forge/.minecraft/assets"</span> 
-<span class="o">-</span><span class="na">-assetIndex </span><span class="m">1</span>.10 
-<span class="o">-</span><span class="na">-uuid </span><span class="m">3</span><span class="kd">e47b75000b0924b6c9ba5759a7cf15d</span> 
-<span class="o">-</span><span class="na">-accessToken </span><span class="m">3</span><span class="kd">e47b75000b0924b6c9ba5759a7cf15d</span> 
-<span class="o">-</span><span class="na">-userType </span><span class="kd">Legacy</span> 
-<span class="o">-</span><span class="na">-versionType </span><span class="s2">"HMCL 2.5.1.79"</span> 
-<span class="o">-</span><span class="na">-height </span><span class="m">480</span> 
-<span class="o">-</span><span class="na">-width </span><span class="m">854</span>
+<span class="na">--username </span><span class="kd">nothing</span> 
+<span class="na">--version </span><span class="s2">"HMCL 2.5.1.79"</span> 
+<span class="na">--gameDir </span><span class="s2">"F:/MC/Minecraft 1.10.2-Forge/.minecraft"</span> 
+<span class="na">--assetsDir </span><span class="s2">"F:/MC/Minecraft 1.10.2-Forge/.minecraft/assets"</span> 
+<span class="na">--assetIndex </span><span class="m">1</span>.10 
+<span class="na">--uuid </span><span class="m">3</span><span class="kd">e47b75000b0924b6c9ba5759a7cf15d</span> 
+<span class="na">--accessToken </span><span class="m">3</span><span class="kd">e47b75000b0924b6c9ba5759a7cf15d</span> 
+<span class="na">--userType </span><span class="kd">Legacy</span> 
+<span class="na">--versionType </span><span class="s2">"HMCL 2.5.1.79"</span> 
+<span class="na">--height </span><span class="m">480</span> 
+<span class="na">--width </span><span class="m">854</span>
 </code></pre></div></div>
 
 <p>linux下脚本可能会像这样（我用上面的手改的，因为有些依赖似乎与系统相关，所以不知道还能不能用）。<code class="language-plaintext highlighter-rouge">~</code>应该换成别的，比如<code class="language-plaintext highlighter-rouge">/home/username</code>。</p>
