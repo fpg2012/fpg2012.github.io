@@ -246,11 +246,13 @@ img {
 
     @include breakpoint(medium) {
         max-width: 30rem;
-        margin-top: 5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
     }
 
     @include mobile-only {
         margin-top: 2rem;
+        margin-bottom: 2rem;
         margin-left: 1.2rem;
         margin-right: 1.2rem;
     }
