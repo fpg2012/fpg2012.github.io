@@ -25,12 +25,15 @@ layout: page
       {% for cat_tag in page.tags %}
         <span>#{{ cat_tag }}</span>
       {% endfor %}
+      {% if page.nocount %}
+      {% else %}
+        <span id="busuanzi_container_page_pv">👀 <span id="busuanzi_value_page_pv"></span> views</span>
+      {% endif %}
     </div>
   </div>
   <div class="post_content">
     {{ content }}
   </div>
-
 
   {% if page.comments and site.valine_appid and site.valine_appkey %}
   <div class="post_comment">
