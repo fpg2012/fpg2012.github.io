@@ -748,3 +748,8 @@ img {
         color: var(--footer_font_a);
     }
 }
+
+.katex-display {
+    overflow-x: scroll;
+    overflow-y: hidden;
+}
