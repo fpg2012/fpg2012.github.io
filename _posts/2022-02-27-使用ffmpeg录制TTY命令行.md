@@ -1,5 +1,5 @@
 ---
-title: 没有图形界面，在tty命令行下录屏
+title: 没有图形界面也要录屏：/dev/fb0和ffmpeg
 date: "2022-02-27"
 description: "ffmpeg"
 categories: ["dev"]
