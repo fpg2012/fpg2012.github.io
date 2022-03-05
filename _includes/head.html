@@ -4,6 +4,12 @@
 {% capture title %}{{ site.title }}{% endcapture %}
 {% endif %}
 
+{% if page.description %}
+{% capture description %}{{ page.description }}{% endcapture %}
+{% else %}
+{% capture description %}Nth233' Blog{% endcapture %}
+{% endif %}
+
 <head>
   <title>{{ title }}</title>
   {% include google_analytics.html %}
@@ -13,6 +19,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="msvalidate.01" content="5D27540F4518091B434ECCD6AAEFFB62" />
   <meta name="google-site-verification" content="K6Unj208ob7dJSsi_BKu1MU40Xe6cPIfMAhZYYXg0nU" />
+  <meta name="description" content="{{ description }}">
   <link rel="stylesheet" href="{{ 'assets/css/main.css' | relative_url }}" media="all">
   <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.url }}">
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}"
