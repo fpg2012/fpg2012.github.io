@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 没有图形界面也要录屏：/dev/fb0和ffmpeg</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="「录屏」一词，说起来仿佛是图形界面的专属。现有的趁手录屏工具很多也的确需要桌面环境才能工作。比方说常用的obs。如果在tty中执行obs的录屏命令，很遗憾，无效。obs会提示cannot connect to display。大概是因为运行obs需要显示一个Qt窗口。好在tty下录屏并非毫无办法，ffmpeg提供了一条路，直接读取Linux的framebuffer：`/dev/fb*`。">
+        
+
+        
+        <meta name="keywords" content="FFmpeg,Framebuffer,命令行,linux">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>没有图形界面也要录屏：/dev/fb0和ffmpeg</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-02-27</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#FFmpeg</span>
+    
+        <span class="tag">#Framebuffer</span>
+    
+        <span class="tag">#命令行</span>
+    
+        <span class="tag">#linux</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>「录屏」一词，说起来仿佛是图形界面的专属。现有的趁手录屏工具很多也的确需要桌面环境才能工作。比方说常用的obs。如果在tty中执行obs的录屏命令：</p>
+<div class="highlight"><pre><span></span>obs --startrecording
+</pre></div>
+
+<p>很遗憾，无效。obs会提示”cannot connect to
+display”。大概是因为运行obs需要显示一个Qt窗口。</p>
+<p>好在tty下录屏并非毫无办法，ffmpeg提供了一条路，直接读取Linux的framebuffer：<code>/dev/fb*</code>。</p>
+<blockquote>
+<p>切换tty，一般是按<code>ctrl</code>+<code>alt</code>+<code>F1~F6</code>，对应tty1到6。我的机器上tty1和tty2对应桌面环境。</p>
+</blockquote>
+<h2 id="devfb">/dev/fb*</h2>
+<p>UNIX操作系统最重要的设计原则之一就是“一切皆文件”。Linux继承了这个优点，将一系列设备抽象为设备文件，放置在<code>/dev</code>目录下。</p>
+<p>显示设备也不例外。图形显示器被抽象为一个帧缓冲〔framebuffer〕文件，也就是本节标题中的<code>/dev/fb*</code>，在我的机器上是<code>/dev/fb0</code>，如果电脑连接了多个显示器，或许还会有<code>/dev/fb1</code>等等。要获取显示的内容，可以直接读取此文件；要操作显示的内容，也可以直接修改此文件——这个文件充当了程序员和Linux间的接口，抽象了底层的图形操作，对用户空间的程序编写者隐藏细节。</p>
+<p>我们可以认为<code>/dev/fb*</code>当中存放了屏幕上各个像素的颜色。只要能够不断读取这些信息，转化成视频格式，录屏就完成了。</p>
+<p>这当然可以实现，比如我们打开tty。</p>
+<div class="highlight"><pre><span></span>cp /dev/fb0 test
+</pre></div>
+
+<p>然后做一些操作，让屏幕显得不同。接着执行：</p>
+<div class="highlight"><pre><span></span>cat test &gt;&gt; /dev/fb0
+</pre></div>
+
+<p>我们会发现屏幕变回去了。实际上我们实现了截图。</p>
+<p><a
+href="https://cmcenroe.me/2018/01/30/fbclock.html">这篇博文</a>讲解了利用帧缓冲设备和mmap实现像素级操作屏幕像素的方法。</p>
+<h2 id="使用ffmpeg进行录制">使用FFmpeg进行录制</h2>
+<p>要把一系列图片编码成一段视频，FFmpeg应该是最合适的工具。不过实际上不必先获取大量“截图”再生成视频，FFmpeg可以直接从<code>/dev/fb*</code>获取输入，然后我们只要设定输出格式为mp4（或者其他视频格式），就实现了tty下录屏的方法。</p>
+<p>比如：</p>
+<div class="highlight"><pre><span></span>ffmpeg -f fbdev -i /dev/fb0 screenrecord.mp4
+</pre></div>
+
+<p><code>-f</code>指定了输入格式是<code>fbdev</code>，也就是帧缓冲设备〔framebuffer
+device〕的格式，<code>-i</code>指定输入，最后指定输出，ffmpeg会自动选择输出格式。</p>
+<p>如果没有意外，按下回车就立刻开始录屏了。（要注意权限问题）</p>
+<p>如果录屏的时候要做其他事情怎么办？我的办法是切换到另一个tty，简单粗暴。</p>
+<h2 id="不只是录屏">不只是录屏</h2>
+<p>FFmpeg不仅仅可以读取帧缓冲设备，还可以修改它。完全可以使用它在tty下播放视频。</p>
+<div class="highlight"><pre><span></span>ffmpeg -i screenrecord.mp4 -pix_fmt bgra -f fbdev /dev/fb0
+</pre></div>
+
+<p>会发现刚才录制的视频开始播起来了。fbdev的颜色格式似乎一般是BGRA，不同于RGBA。</p>
+<h2 id="参考">参考</h2>
+<p><a href="https://cmcenroe.me/2018/01/30/fbclock.html">Programming the
+Linux Framebuffer · C. McEnroe</a></p>
+<p><a href="https://ffmpeg.org/documentation.html">FFmpeg
+Documentation</a></p>
+<p><a
+href="https://www.kernel.org/doc/html/latest/fb/framebuffer.html">Linux内核关于帧缓冲设备的文档</a></p>
+<p><a
+href="http://unix.stackexchange.com/questions/342815/how-to-send-ffmpeg-output-to-framebuffer">关于ffmpeg如何输出到framebuffer的问答</a></p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2022-03-04-rogue.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2022-03-04-rogue.html">「地牢探险指南」—...</a></div>
+        <div class="sibling-page-date">2022-03-04</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2022-01-09-RISC-V的向量扩展.html">SIMD与RISC...</a></div>
+        <div class="sibling-page-date">2022-01-09</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2022-01-09-RISC-V的向量扩展.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - Material Design 相关组件笔记</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="整理自《第一行代码》，原文过于啰嗦不便查阅，故摘抄整理之。">
+        
+
+        
+        <meta name="keywords" content="笔记,归纳整理,安卓,Material Design">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>Material Design 相关组件笔记</h1>
+    
+    <div class="date-bar">
+        <span class="date">2021-12-03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#笔记</span>
+    
+        <span class="tag">#归纳整理</span>
+    
+        <span class="tag">#安卓</span>
+    
+        <span class="tag">#Material Design</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <blockquote>
+<p>整理自《第一行代码》，原文过于啰嗦不便查阅，故摘抄整理之。理解肤浅，有错见谅。</p>
+<p>插图均来自<a href="material.io">material.io</a>，侵删。</p>
+</blockquote>
+<h2 id="工具栏-toolbar">工具栏 Toolbar</h2>
+<h3 id="如何使用toolbar">如何使用Toolbar？</h3>
+<ol type="1">
+<li><p>修改主题（在<code>res/values/style.xml</code>中）为<code>Theme.AppCompact.NoActionBar</code>（深色）或<code>Theme.AppCompact.Light.NoActionBar</code>（浅色），目的是隐藏默认的<code>ActionBar</code></p></li>
+<li><p>设置颜色，即<code>ColorPrimary</code>等属性（在<code>res/values/style.xml</code>中）</p></li>
+<li><p>在布局中引入<code>Toolbar</code>（包为<code>androidx.appcompat.widget.Toolbar</code>）</p></li>
+<li><p>布局应该重设命名空间为<code>xmlns:app</code></p></li>
+<li><p><code>Activity</code>中调用<code>setSupportActionBar(toolbar)</code></p></li>
+</ol>
+<blockquote>
+<p>使用<code>app</code>命名空间，而不是<code>android</code>，是为了兼容老版本，防止和旧控件冲突</p>
+</blockquote>
+<h3 id="如何配置toolbar显示的内容">如何配置Toolbar显示的内容？</h3>
+<ol type="1">
+<li><p>文字：修改<code>AndroidManifest.xml</code>，当中<code>&lt;application&gt;</code>标签下，可以设置对应Activity的的标题栏文字</p></li>
+<li><p>增加按钮</p>
+<ol type="1">
+<li><p>新建Menu
+Resource，添加<code>&lt;item&gt;</code>和对应的action按钮，<code>android:id</code>、<code>android:icon</code>、<code>android:title</code>分别设定id、图标和文字</p></li>
+<li><p>设置<code>app:showAsAction</code>指定按钮的显示位置，<code>always</code>、<code>ifRoom</code>、<code>never</code>分别对应「永远显示」、「无空间则进菜单」和「永远在菜单中」</p></li>
+<li><p>设置按钮的事件：<code>override onOptionItemSelected(item: Menu Item)</code></p></li>
+</ol></li>
+</ol>
+<blockquote>
+<p>更高级的Toolbar——可折叠工具栏CollapsingToolbarLayout</p>
+</blockquote>
+<h2 id="抽屉布局-drawerlayout">抽屉布局 DrawerLayout</h2>
+<ol type="1">
+<li><p>直接使用<code>DrawerLayout</code>，其下第一个子控件为主界面，第二个子控件为抽屉中的内容（<code>layout_gravity</code>最好设为<code>start</code>）</p></li>
+<li><p>在<code>Toolbar</code>最左侧添加菜单按钮「Home按钮」：在Activity中，设置</p>
+<div class="highlight"><pre><span></span><span class="n">supportActionBar</span><span class="o">?.</span><span class="na">let</span> <span class="p">{</span>
+    <span class="nb">it</span><span class="p">.</span><span class="na">setDisplayHomeAsUpEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="c1">// 启用菜单按钮</span>
+    <span class="nb">it</span><span class="p">.</span><span class="na">setHomeAsUpIndicator</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">drawable</span><span class="p">.</span><span class="na">ic_menu</span><span class="p">)</span> <span class="c1">// 图标</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>然后在重写的<code>onOptionsItemSelected</code>中，当菜单按钮被按下时唤出抽屉</p>
+<div class="highlight"><pre><span></span><span class="c1">// ...</span>
+<span class="k">when</span> <span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">itemId</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// home按钮的id永远是home</span>
+    <span class="n">android</span><span class="p">.</span><span class="na">R</span><span class="p">.</span><span class="na">id</span><span class="p">.</span><span class="na">home</span> <span class="o">-&gt;</span> <span class="n">drawerLayout</span><span class="p">.</span><span class="na">openDrawer</span><span class="p">(</span><span class="n">GravityCompat</span><span class="p">.</span><span class="na">START</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// ...</span>
+</pre></div>
+</li>
+</ol>
+<h2 id="导航视图-navigationview">导航视图 NavigationView</h2>
+<p><img
+src="https://lh3.googleusercontent.com/W4QDMYeNtcm37g2JfKKj5lv8rJ6KGLb9vZdYUNEpjixpHDjjQ_hPrwnj5Ruo1ZYHyukHLRQCtXrzQV6gLzRSNE-w60QYjFcUZZ_2=w1064-v0" /></p>
+<p>导航视图适合与抽屉布局一起使用。</p>
+<p>包括两个部分：<code>headerLayout</code>和<code>menu</code>。分别需要定义对应部分的布局。menu还需要有个xml文件定义菜单中的具体项目。</p>
+<p>设置完成所需的xml后，将<code>NavigationView</code>添加到<code>DrawerLayout</code>中。</p>
+<p>要处理对应的点击事件，只要调用<code>NavigationView</code>对象的<code>setNavigationItemSelectedListener</code>进行设置，比如</p>
+<div class="highlight"><pre><span></span><span class="n">navView</span><span class="p">.</span><span class="na">setNavigationItemSelectedListener</span> <span class="p">{</span>
+    <span class="n">drawerLayout</span><span class="p">.</span><span class="na">closeDrawers</span><span class="p">()</span>
+    <span class="kc">true</span> <span class="c1">// 表示事件已经被处理</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2 id="悬浮按钮-floatingactionbutton">悬浮按钮
+FloatingActionButton</h2>
+<p>相当简单，在布局中加入<code>&lt;com.google.android.material.floatingactionbutton.FloatingActionButton&gt;</code>，设置对应的图标和其他属性。设置<code>app:elevation</code>可以调整z轴上的「悬浮高度」。</p>
+<blockquote>
+<p>默认颜色为<code>colorAccent</code></p>
+</blockquote>
+<p>点击事件和<code>Button</code>没有区别。<code>setOnClickListener</code>，相当简单。</p>
+<h2 id="快餐店-snackbar">「快餐店」 SnackBar</h2>
+<p>SnackBar一定程度上可以替代「吐司」Toast。相比Toast，用户不仅仅是被动接受通知，而是可以给出一定反馈。</p>
+<figure>
+<img
+src="https://lh3.googleusercontent.com/-osHhhWWYPzLb8UmhUU1pmmd2q-bUj1vU8raFKcPtAxDPMdRlGixw31rhd1EcOiW6guvgFZAflH7rFF1b-D45Pk-SFmPGiBg9BpazQ=w1064-v0"
+alt="Example of snackbar on a mobile screen" />
+<figcaption aria-hidden="true">Example of snackbar on a mobile
+screen</figcaption>
+</figure>
+<p>用法类似Toast，比如</p>
+<div class="highlight"><pre><span></span><span class="n">Snackbar</span><span class="p">.</span><span class="na">make</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="s">&quot;Can&#39;t send photo&quot;</span><span class="p">,</span> <span class="n">Snakebar</span><span class="p">.</span><span class="na">LENGTH_SHORT</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">setAction</span><span class="p">(</span><span class="s">&quot;Retry&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">// retry</span>
+    <span class="p">}.</span><span class="na">show</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2 id="协调布局-coordinatorlayout">协调布局 CoordinatorLayout</h2>
+<p>增强版的<code>FrameLayout</code>，具有一定Material
+Design相关的能力。比如Snakebar弹出的时候不会覆盖住「悬浮按钮」，而是会将悬浮按钮「挤」上去。</p>
+<h2 id="卡片视图-materialcardview">卡片视图 MaterialCardView</h2>
+<p>原先的卡片加了点阴影。略。</p>
+<h2 id="应用栏布局-appbarlayout">应用栏布局 AppBarLayout</h2>
+<p>使用协调布局时，Toolbar会被主体部分遮盖。因此引入应用栏布局。使用时将Toolbar包裹到AppBarLayout当中即可保证Toolbar不被遮挡。而且可以顺带通过调整<code>app:layout_scrollFlags</code>来实现向上滚动自动隐藏Toolbar的功能。</p>
+<h2 id="下拉刷新布局-swiperefreshlayout">下拉刷新布局
+SwipeRefreshLayout</h2>
+<p>Material
+Design风格的下拉刷新。使用的时候可以把RecyclerView包裹到下拉刷新布局中。</p>
+<p>假设<code>SwipeRefreshLayout</code>的id为<code>swipeRefresh</code>，那么用例如下</p>
+<div class="highlight"><pre><span></span><span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setColorSchemeResources</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">color</span><span class="p">.</span><span class="na">colorPrimary</span><span class="p">)</span>
+<span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setOnRefreshListener</span> <span class="p">{</span>
+    <span class="c1">// 刷新逻辑</span>
+    <span class="n">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="kd">private</span> <span class="kd">fun</span> <span class="nf">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">:</span> <span class="n">XXXAdapter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">thread</span> <span class="p">{</span>
+        <span class="c1">// Thread.sleep(2000)</span>
+        <span class="n">runOnUiThread</span> <span class="p">{</span>
+            <span class="c1">// ...</span>
+            <span class="n">adapter</span><span class="p">.</span><span class="na">notifyDataSetChanged</span><span class="p">()</span>
+            <span class="n">swipeRefresh</span><span class="p">.</span><span class="na">isRefreshing</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>下拉自动开始刷新（显示刷新进度条，并用<code>thread</code>函数开新线程执行刷新逻辑），刷新完成后，用<code>runOnUiThread</code>回到界面线程并停止刷新（隐藏刷新进度条）。</p>
+<h2 id="其他种种部件">其他种种部件</h2>
+<p>上<a href="material.io">material.io</a>应有尽有。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2022-01-09-RISC-V的向量扩展.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2022-01-09-RISC-V的向量扩展.html">SIMD与RISC...</a></div>
+        <div class="sibling-page-date">2022-01-09</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2021-10-01-抄几首戴望舒的诗.html">抄几首戴望舒的诗...</a></div>
+        <div class="sibling-page-date">2021-10-20</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2021-10-01-抄几首戴望舒的诗.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

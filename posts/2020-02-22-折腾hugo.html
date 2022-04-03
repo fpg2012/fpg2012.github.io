@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 折腾hugo</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="最近折腾了一下hugo，因此咸鱼了几天。">
+        
+
+        
+        <meta name="keywords" content="折腾记录,blog">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>折腾hugo</h1>
+    
+    <div class="date-bar">
+        <span class="date">2020-02-22T22:29:07+08:00</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#折腾记录</span>
+    
+        <span class="tag">#blog</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>最近折腾了一下hugo，有点中毒，咸鱼了几天在搞这个，网课都没怎么上。</p>
+<p>感觉花在折腾上的时间太多了。</p>
+<h2 id="安装hugo">安装Hugo</h2>
+<p>由于国内特殊的网络环境，本来很简单的东西变得有点麻烦，必须用一些旁敲侧击的方法。从GitHub下载release的速度很慢，所以只好自己编译。从码云的镜像仓库clone下来，然后按照官网的步骤自己编译。</p>
+<ol type="1">
+<li><p>首先安装go。得益于<a
+href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。</p></li>
+<li><p>然后编译安装hugo</p>
+<div class="highlight"><pre><span></span>go install --tags extended
+</pre></div>
+
+<p>如果不要Sass/Scss支持的话可以把后面的选项去掉。</p></li>
+<li><p>试试hugo能不能用，应该是可以了。</p></li>
+</ol>
+<h2 id="找个主题">找个主题</h2>
+<p>几经挑选，找到了这个主题（cactus-plus）。</p>
+<p>不得不说，这步可能是第二花时间的。</p>
+<h2 id="一点配置">一点配置</h2>
+<h3 id="数学公式">数学公式</h3>
+<p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
+<p>在<code>theme/layouts/partials</code>里添加一个<code>katex.html</code>，内容如下：</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="p">{</span>
+            <span class="nx">delimiters</span><span class="o">:</span> <span class="p">[</span>
+              <span class="p">{</span><span class="nx">left</span><span class="o">:</span> <span class="s2">&quot;$$&quot;</span><span class="p">,</span> <span class="nx">right</span><span class="o">:</span> <span class="s2">&quot;$$&quot;</span><span class="p">,</span> <span class="nx">display</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span>
+              <span class="p">{</span><span class="nx">left</span><span class="o">:</span> <span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="nx">right</span><span class="o">:</span> <span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="nx">display</span><span class="o">:</span> <span class="kc">false</span><span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;</span>
+<span class="cm">&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">defer</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="cm">&lt;!-- To automatically render math in text elements, include the auto-render extension: --&gt;</span>
+<span class="p">&lt;</span><span class="nt">script</span> <span class="na">defer</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span> <span class="na">onload</span><span class="o">=</span><span class="s">&quot;renderMathInElement(document.body);&quot;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</pre></div>
+
+<p>当然也可以使用国内bootcdn的镜像，加载（理论上）更快。</p>
+<p>然后在<code>head.html</code>中添加：</p>
+<p>{% raw %}</p>
+<div class="highlight"><pre><span></span>{{ if or .Params.katex .Site.Params.katex }}
+{{ partial &quot;katex.html&quot; . }}
+{{ end }}
+</pre></div>
+
+<p>{% endraw %}</p>
+<p>当渲染的页面当中有数学公式的时候，就在Front
+Matter里面加上<code>katex: true</code>即可。</p>
+<blockquote>
+<p>ps:
+还是有一点问题，<code>\\</code>、<code>_</code>、<code>&lt;</code>这些符号还是不能直接使用，即使按照网上某些教程的说法，把渲染器改成mmark也不行，似乎也没有什么简洁的处理方法，只能在用的时候注意。</p>
+</blockquote>
+<h3 id="对主题的微调">对主题的微调</h3>
+<p>这个主题并不是尽如人意，有些地方还是得自己调整，这是最花时间的。</p>
+<p>首先是代码块的样式有点丑。这个主题使用了highlight.js进行代码高亮，但却没有禁用hugo自带的高亮，就会出来一些奇奇怪怪的问题，比如代码块的圆角之外会有黑角，因为hugo默认采用monokai作为高亮主题，背景是暗色的。在配置文件中加入以下片段来禁用hugo自带的高亮。</p>
+<div class="highlight"><pre><span></span><span class="k">[markup]</span><span class="w"></span>
+<span class="w">  </span><span class="k">[markup.highlight]</span><span class="w"></span>
+<span class="w">    </span><span class="n">codeFences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
+<span class="w">    </span><span class="n">lineNos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kc">false</span><span class="w"></span>
+</pre></div>
+
+<p>然后我几乎把所有元素的<code>border-radius</code>都改成了<code>0px</code>。（吐血</p>
+<p>改动了footer和navbar，更符合我的喜好。</p>
+<p>把字体替换成了Noto Sans SC，等宽字体替换成了Roboto Mono。用了Google
+Font。在<code>head.html</code>加入：</p>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">link</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://fonts.googleapis.com/css?family=Noto+Sans+SC|Noto+Serif+SC|Roboto+Mono&amp;display=swap&quot;</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span><span class="p">&gt;</span>
+</pre></div>
+
+<h3 id="用javascript自动替换插图路径">用Javascript自动替换插图路径</h3>
+<p>我习惯使用Typora作为markdown编辑器。当我把图片粘贴进来是，Typora就会把图片从剪贴板保存到<code>./${filename}</code>中，很方便，但是这样与hugo查找图片的方式冲突了。</p>
+<p>为了方便，只好用Js。现学了一点js后，编写了以下代码。虽然此策不优雅，但是还算能用。</p>
+<p>在<code>static/js</code>里面添加一个js文件：</p>
+<div class="highlight"><pre><span></span><span class="c1">// replace image source</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">imgs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">img</span> <span class="o">=</span> <span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+        <span class="kd">var</span> <span class="nx">temp_arr</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">repl</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
+        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">&gt;=</span> <span class="mf">2</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;posts&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">==</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span> <span class="p">{</span>
+                <span class="nx">flag</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="p">}</span>
+            <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
+            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">!=</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span> 
+                <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replace &#39;</span> <span class="o">+</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> <span class="nx">repl</span><span class="p">);</span>
+            <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">repl</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>然后把它添加到配置文件的customJs中，即可。</p>
+<h3 id="其他">其他</h3>
+<p>诸如替换头像、添加email图标之类的，此不再赘述，要么调配置，要么改主题模板。</p>
+<h2 id="部署">部署</h2>
+<p>一开始先尝试了一下gitee
+pages，但是会出现莫名其妙的404问题。于是干脆搞到自己的云服务器上，用git部署。</p>
+<h3 id="搭建git服务器">搭建git服务器</h3>
+<p>参考下面的某条链接……由于是在ubuntu上弄，所以比较顺利。</p>
+<p>大概就是：新建git用户，添加公钥，修改<code>/etc/passwd</code>，新建裸仓库。</p>
+<h3 id="半自动部署">（半）自动部署</h3>
+<p>利用git钩子，如果愿意的话可以在服务器上装上hugo，然后自动构建、部署。但是我不想再装一次了。于是效法很多挂到github
+page的静态网页，分支<code>master</code>
+专门管理源码，分支<code>gh-pages</code>专门管理构建好的网页。参考下面某条链接……</p>
+<p>在要放网页文件的地方克隆<code>gh-pages</code>分支。然后在裸仓库的<code>hook</code>里面添加<code>post-update</code>文件，内容大致如下：</p>
+<div class="highlight"><pre><span></span><span class="nb">unset</span> GIT_DIR
+<span class="nb">echo</span> <span class="s2">&quot;Hello!&quot;</span>
+<span class="nv">DEPLOY_PATH</span><span class="o">=</span><span class="s2">&quot;放网页的目录&quot;</span>
+<span class="nb">cd</span> <span class="nv">$DEPLOY_PATH</span>
+git pull origin gh-pages
+</pre></div>
+
+<p>下次push时就会自动把网页拉到这里来了。</p>
+<p>为了更自动化一些，本地也添加一个脚本<code>deploy.sh</code>。</p>
+<div class="highlight"><pre><span></span>hugo
+<span class="nb">cd</span> public
+git add .
+git commit -m <span class="s2">&quot;Update - `date +%Y-%m-%d`&quot;</span>
+<span class="nb">cd</span> ..
+git push origin gh-pages
+git add .
+git commit -a
+git push origin master
+</pre></div>
+
+<p>下次写完博文，直接</p>
+<div class="highlight"><pre><span></span>sh deploy.sh
+</pre></div>
+
+<p>或者双击脚本即可。</p>
+<h3 id="静态网站的搭建">静态网站的搭建</h3>
+<p>使用nginx，此不赘述。</p>
+<h2 id="一些链接">一些链接</h2>
+<ul>
+<li><p>安装hugo</p>
+<p>https://gohugo.io/getting-started/installing/</p></li>
+<li><p>搭建git服务器</p>
+<p>https://www.liaoxuefeng.com/wiki/896043488029600/899998870925664</p></li>
+<li><p>git钩子</p>
+<p>https://blog.csdn.net/u010837612/article/details/70825225</p>
+<p>https://git-scm.com/book/zh/v2/%E8%87%AA%E5%AE%9A%E4%B9%89-Git-Git-%E9%92%A9%E5%AD%90</p></li>
+<li><p>gh-pages</p>
+<p>https://gohugo.io/hosting-and-deployment/hosting-on-github/</p></li>
+</ul>
+<blockquote>
+<p>一些未解决也暂时懒得解决的问题：</p>
+<ul>
+<li><p>about页面不显示头像</p></li>
+<li><p>about页面内容不居中</p></li>
+<li><p>tasklist的checkbox前会有一点</p></li>
+</ul>
+</blockquote>
+
+</div>
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2020-03-17-明天就是夏天.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2020-03-17-明天就是夏天.html">明天就是夏天...</a></div>
+        <div class="sibling-page-date">2020-03-17T11:00:30+08:00</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2019-02-17-mclauncher.html">自制MC启动器的失...</a></div>
+        <div class="sibling-page-date">2019-02-17T13:54:03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2019-02-17-mclauncher.html">〉</a></div>
+    
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    </body>
+</html>

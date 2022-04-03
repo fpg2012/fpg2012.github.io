@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 「地牢探险指南」——原版《Rogue》游戏规则翻译</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="我很喜欢roguelike游戏，因此决定玩玩Rogue，也就是所有roguelike的鼻祖，纯度最高的roguelike。然而真正启动Rogue之后我发现没有文档完全不知如何上手。因此决定翻译。">
+        
+
+        
+        <meta name="keywords" content="rogue,roguelike,游戏规则,翻译">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>「地牢探险指南」——原版《Rogue》游戏规则翻译</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-03-04</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔other〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#rogue</span>
+    
+        <span class="tag">#roguelike</span>
+    
+        <span class="tag">#游戏规则</span>
+    
+        <span class="tag">#翻译</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <blockquote>
+<p>直接看翻译部分，请<a href="#地牢探险指南">点此跳转</a></p>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p><img src="/assets/img/post/rogue.png" /></p>
+<blockquote>
+<p>Rogue is a computer fantasy game with a new twist. It is crt oriented
+and the object of the game is to survive the attacks of various monsters
+and get a lot of gold, rather than the puzzle solving orientation of
+most computer fantasy games.</p>
+<p>—— man page of <em>Rogue</em></p>
+</blockquote>
+<h3 id="为什么有这篇翻译">为什么有这篇翻译？</h3>
+<p>我很喜欢roguelike游戏，因此决定玩玩Rogue，也就是所有roguelike的鼻祖，纯度最高的roguelike。然而真正启动Rogue之后我发现没有文档完全不知如何上手。因此决定翻译。</p>
+<h3 id="rogue的出现">Rogue的出现</h3>
+<p>上世纪70年代末，C语言刚刚出现，电子游戏尚是新鲜事物。那时的游戏只能运行在笨重的大型机上，微型机的出现要等到1981年。</p>
+<p>在这样的背景下，1977年前后，William Crowther和Don
+Woods在PDP-10大型机上开发了《洞穴冒险》〔<em>Colossal Cave
+Adventure</em>〕，一个纯文字冒险游戏。这一游戏启发了当时正在UCSC学习的Toy，而此人不久后结交了在UCSC学习游戏设计、准备成为桌游设计师的Wichman。Wichman十分喜欢《地牢&amp;恶龙》〔<em>Dungeons
+&amp;
+Dragon</em>〕这款桌游。两人苦于当时的冒险游戏可重玩性太弱，决定自己开发一款游戏，而前面提到的两款游戏为Rogue提供了灵感。</p>
+<p>1980年，UC Berkeley开发的BSD
+Unix在UC校园中普及开来，其中附带了Arnold开发的著名的curses库，使得在命令行显示图形化的界面成为可能（其实就是通过各种字符来拼凑出“图形界面”）。</p>
+<p>各方面条件都已成熟，于是1980年，Rogue出现了，并且风靡一时。Rogue留下的游戏体裁更是经久不衰，形成了现在所谓的<strong>roguelike</strong>游戏，比如《以撒的重生》。</p>
+<h3 id="现在如何玩到初版rogue">现在如何玩到「初版」Rogue</h3>
+<p>显然不可能回到大型机玩Rogue，现在能玩到的Rogue严格上说都不是「初版」。</p>
+<p>如果是在Arch Linux上，软件仓库中就有Rogue，一条命令即可安装。</p>
+<div class="highlight"><pre><span></span>pacman -S rogue
+</pre></div>
+
+<p>一条命令即可执行。</p>
+<div class="highlight"><pre><span></span>rogue
+</pre></div>
+
+<p>如果在Windows下就有点麻烦了，也许需要先装个Dosbox，然后运行DOS移植版的Rogue。或者也可以运行其他的复刻版。</p>
+<p>各种版本的Rogue可以在<a
+href="https://britzl.github.io/roguearchive/">The Roguelike
+Archive</a>找到。</p>
+<h3 id="关于翻译的说明">关于翻译的说明</h3>
+<p>本人不是专业译者，难免有翻译不妥的地方，如有疏漏，恳请指正。</p>
+<p>翻译的原文来自<a
+href="https://docs.freebsd.org/44doc/usd/30.rogue/paper.pdf">FreeBSD的文档</a>。大家点开就会发现，原文颇有论文的感觉，从摘要到致谢一应俱全。</p>
+<blockquote>
+<p>翻译中如出现引用框，则代表注脚。「——译者注」表示译者的吐槽。</p>
+</blockquote>
+<p>翻译的内容遵循<a
+href="https://creativecommons.org/licenses/by-sa/3.0/deed.zh">知识共享署名-相同方式共享许可协议</a>（CC
+BY-SA 3.0）授权。</p>
+<hr />
+<h1 id="地牢探险指南">地牢探险指南</h1>
+<p>Michael C. Toy</p>
+<p>Kenneth C. R. C. Arnold。</p>
+<p>Computer Systems Research Group</p>
+<p>Department of Electrical Engineering and Computer Science</p>
+<p>University of California</p>
+<p>Berkeley, California 94720</p>
+<p><strong>摘要</strong>：<strong><em>Rogue</em></strong>是一个基于CRT显示器的可视奇幻游戏，运行于UNIX分时系统上。本文阐述rogue的玩法，为可能迷失在毁灭地牢中的冒险者提供些许提示。</p>
+<h2 id="简介">简介</h2>
+<p>你是一个学徒，刚刚从本地的勇者名下毕业。经过艰苦卓绝的训练，你完成了所有练习，终于能够开始一场艰险的冒险之旅。作为对你的试炼，冒险者公会派你去「毁灭之地牢」。此行的任务，是从地牢中取出「焉得护符」〔Amulte
+of
+Yendor〕并归来。完成任务的奖励是公会的正式会员身份，另外还有你拿回的所有战利品。</p>
+<p>作为冒险的准备，公会给予你一支附魔法杖，一把弓和一袋箭。这些武器皆来自遥远的黑暗山脉，曾是那里恶龙的私藏。另外，你还穿着精灵打造的盔甲，并且带上了足以支撑你到达地牢入口的干粮。准备万全，只差一场告别。你向你的亲友告别（也许是永别），然后也不回地踏上冒险之路。</p>
+<p>启程之后，你度过了平平无奇的数日，最后来到古代废墟，也就是「毁灭之地牢」的入口的所在地。此时已及深夜，你于是在洞口露营。拂晓，你清点武器，穿上盔甲，吃掉所剩无几的食物，只身进入空无一人的黑暗地牢。</p>
+<blockquote>
+<p>「焉得护符」〔Amulte of
+Yendor〕，命名中的「焉得」〔Yendor〕来自「Rodney」一词的反拼。根据<a
+href="https://www.reddit.com/r/roguelikes/comments/3t5dw9/who_is_rodney/">reddit的说法</a>，「得焉」〔Rodney〕似乎是Rogue的原名。——译者注</p>
+</blockquote>
+<h2 id="发生了什么">发生了什么？</h2>
+<p>你刚刚启动了rogue。你的目标是尽可能多拿财宝，找到「焉得护符」，然后活着出来。屏幕上显示了你的位置和你到过的房间，还有你当前所在的层数。</p>
+<p>Rogue和多数奇幻类电子游戏不同，命令的输入只需一两次击键，且执行结果图形化地显示在屏幕上，而非只是用文字说明。另外一个比较显著的区别点在于，一般的游戏通关之后就不再有趣，但Rogue可以反复通关，每次都不同。即便作者们也依然觉得乐趣无穷。</p>
+<h2 id="屏幕上显示的是什么">屏幕上显示的是什么？</h2>
+<p>想要畅玩Rogue，首先需了解显示方式。Rogue的屏显内容替代了传统的「你可以看到……」的文字说明。下面是一个游戏截图样例。</p>
+<div class="highlight"><pre><span></span>                          ------------
+                          |..........+
+                          |..@....]..|
+                          |....B.....|
+                          |..........|
+                          -----+------
+Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
+</pre></div>
+
+<blockquote>
+<p>游玩游戏需要至少24行×80列的显示屏。如果显示屏更大，那么只会使用24行×80列来显示地图。</p>
+</blockquote>
+<h3 id="底栏">底栏</h3>
+<p>底栏显示了一些关于现状的信息。</p>
+<table>
+<thead>
+<tr class="header">
+<th>信息</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Level</td>
+<td>此数字代表你向下走了几层，从1开始计数，随深入地牢而提高</td>
+</tr>
+<tr class="even">
+<td>Gold</td>
+<td>当前金币数</td>
+</tr>
+<tr class="odd">
+<td>Hp</td>
+<td>当前生命值和最大生命值。休息可以回复之。</td>
+</tr>
+<tr class="even">
+<td>Str</td>
+<td>当前力量和历史最大力量。数字越大越大越强，最大99。</td>
+</tr>
+<tr class="odd">
+<td>Arm</td>
+<td>当前护甲值。越大则护甲越有效。</td>
+</tr>
+<tr class="even">
+<td>Exp</td>
+<td>当前经验等级和经验点数。经验越高法术攻击力和法术抗性越高。</td>
+</tr>
+</tbody>
+</table>
+<h3 id="顶栏">顶栏</h3>
+<p>顶栏用于显示图形无法说明的信息。看见<code>--More--</code>时，按<code>&lt;空格&gt;</code>可以继续阅读。</p>
+<h3 id="屏幕主体">屏幕主体</h3>
+<p>主体部分显示已经探索的本层地图。每个符号都有其含义。</p>
+<table>
+<thead>
+<tr class="header">
+<th>符号</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>@</code></td>
+<td>玩家</td>
+</tr>
+<tr class="even">
+<td><code>-</code>，<code>\|</code></td>
+<td>墙</td>
+</tr>
+<tr class="odd">
+<td><code>+</code></td>
+<td>门</td>
+</tr>
+<tr class="even">
+<td><code>.</code></td>
+<td>地板</td>
+</tr>
+<tr class="odd">
+<td><code>#</code></td>
+<td>通道</td>
+</tr>
+<tr class="even">
+<td><code>*</code></td>
+<td>金</td>
+</tr>
+<tr class="odd">
+<td><code>)</code></td>
+<td>武器</td>
+</tr>
+<tr class="even">
+<td><code>]</code></td>
+<td>护甲</td>
+</tr>
+<tr class="odd">
+<td><code>!</code></td>
+<td>魔药</td>
+</tr>
+<tr class="even">
+<td><code>?</code></td>
+<td>纸，通常是魔法卷轴</td>
+</tr>
+<tr class="odd">
+<td><code>=</code></td>
+<td>戒指</td>
+</tr>
+<tr class="even">
+<td><code>/</code></td>
+<td>法杖</td>
+</tr>
+<tr class="odd">
+<td><code>^</code></td>
+<td>陷阱</td>
+</tr>
+<tr class="even">
+<td><code>%</code></td>
+<td>阶梯，通往下一层</td>
+</tr>
+<tr class="odd">
+<td><code>:</code></td>
+<td>食物</td>
+</tr>
+<tr class="even">
+<td><code>A-Z</code></td>
+<td>大写字母代表敌对生物</td>
+</tr>
+</tbody>
+</table>
+<h2 id="命令">命令</h2>
+<p>命令通常为一两个字符，多数命令都可以通过在前面输入数字的方式执行多次（比如输入<code>10s</code>代表执行10次<code>s</code>命令，也就是10次搜查）。少数命令次数没有意义，输入的次数将被忽略。按<code>&lt;Esc&gt;</code>可以取消数字在内的所有“前缀命令”。按<code>?</code>可以查看命令列表。</p>
+<table>
+<colgroup>
+<col style="width: 17%" />
+<col style="width: 82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>?</code></td>
+<td>帮助。用于询问命令的用法。输入<code>*</code>列出所有命令。</td>
+</tr>
+<tr class="even">
+<td><code>/</code></td>
+<td>「屏幕上显示的是什么？」指令。用于询问某个显示符的意义。</td>
+</tr>
+<tr class="odd">
+<td><code>h</code>、<code>H</code>、<code>^H</code></td>
+<td>左移。大写表示左移直到遇见某物。<code>^H</code>（即<code>&lt;Ctrl&gt;</code>+<code>&lt;H&gt;</code>）表示左移直到墙。其他移动命令以此类推。</td>
+</tr>
+<tr class="even">
+<td><code>j</code></td>
+<td>下移</td>
+</tr>
+<tr class="odd">
+<td><code>k</code></td>
+<td>上移</td>
+</tr>
+<tr class="even">
+<td><code>l</code></td>
+<td>右移</td>
+</tr>
+<tr class="odd">
+<td><code>y</code></td>
+<td>左上移</td>
+</tr>
+<tr class="even">
+<td><code>u</code></td>
+<td>右上移</td>
+</tr>
+<tr class="odd">
+<td><code>b</code></td>
+<td>左下移</td>
+</tr>
+<tr class="even">
+<td><code>n</code></td>
+<td>右下移</td>
+</tr>
+<tr class="odd">
+<td><code>t</code></td>
+<td>抛出指令。前缀指令，后接移动指令代表抛出方向。</td>
+</tr>
+<tr class="even">
+<td><code>f</code></td>
+<td>战斗直到一方死亡。前缀指令，后接移动指令代表攻击方向。</td>
+</tr>
+<tr class="odd">
+<td><code>m</code></td>
+<td>不拾取。前缀指令，后接移动指令。</td>
+</tr>
+<tr class="even">
+<td><code>z</code></td>
+<td>施法。前缀指令，后接移动指令代表施法方向。</td>
+</tr>
+<tr class="odd">
+<td><code>^</code></td>
+<td>辨别陷阱。前缀指令，后接移动指令代表方向。</td>
+</tr>
+<tr class="even">
+<td><code>s</code></td>
+<td>搜查陷阱和隐藏门。检查和你邻接的每一格。</td>
+</tr>
+<tr class="odd">
+<td><code>&gt;</code></td>
+<td>进入下一层。仅站在台阶上时有效。</td>
+</tr>
+<tr class="even">
+<td><code>&lt;</code></td>
+<td>回到上一层。仅取得「焉得护符」且站在台阶上时有效。</td>
+</tr>
+<tr class="odd">
+<td><code>.</code></td>
+<td>什么也不做，休息。</td>
+</tr>
+<tr class="even">
+<td><code>,</code></td>
+<td>拾取。</td>
+</tr>
+<tr class="odd">
+<td><code>i</code></td>
+<td>物品清单。列出背包中的所有物品。</td>
+</tr>
+<tr class="even">
+<td><code>I</code></td>
+<td>可选物品清单。解释背包中某个物品的作用。</td>
+</tr>
+<tr class="odd">
+<td><code>q</code></td>
+<td>饮用〔quaff〕魔药</td>
+</tr>
+<tr class="even">
+<td><code>r</code></td>
+<td>阅读卷轴</td>
+</tr>
+<tr class="odd">
+<td><code>e</code></td>
+<td>进食</td>
+</tr>
+<tr class="even">
+<td><code>w</code></td>
+<td>装备武器。从背包中选取武器替换当前武器。</td>
+</tr>
+<tr class="odd">
+<td><code>W</code></td>
+<td>穿上盔甲</td>
+</tr>
+<tr class="even">
+<td><code>T</code></td>
+<td>卸下盔甲</td>
+</tr>
+<tr class="odd">
+<td><code>P</code></td>
+<td>戴上戒指</td>
+</tr>
+<tr class="even">
+<td><code>R</code></td>
+<td>摘下戒指</td>
+</tr>
+<tr class="odd">
+<td><code>d</code></td>
+<td>丢弃物品。从背包中选取物品放到地上。</td>
+</tr>
+<tr class="even">
+<td><code>c</code></td>
+<td>命名。魔药和卷轴默认以性状或标题命名，使用之后会才能知道其作用。但是在使用前可以为其命名，便于你区分。</td>
+</tr>
+<tr class="odd">
+<td><code>o</code></td>
+<td>检查游戏设置。将在后文详细说明。</td>
+</tr>
+<tr class="even">
+<td><code>&lt;Esc&gt;</code></td>
+<td>取消</td>
+</tr>
+<tr class="odd">
+<td><code>Q</code></td>
+<td>退出</td>
+</tr>
+<tr class="even">
+<td><code>S</code></td>
+<td>存档</td>
+</tr>
+<tr class="odd">
+<td><code>v</code></td>
+<td>显示版本号</td>
+</tr>
+<tr class="even">
+<td><code>)</code></td>
+<td>显示当前武器</td>
+</tr>
+<tr class="odd">
+<td><code>]</code></td>
+<td>显示当前护甲</td>
+</tr>
+<tr class="even">
+<td><code>=</code></td>
+<td>显示当前戒指</td>
+</tr>
+</tbody>
+</table>
+<h2 id="房间">房间</h2>
+<p>房间在你进入后将被点亮。离开房间后，里面所有的怪物将不再显示。在黑暗的走廊中只能看见周身一格。</p>
+<h2 id="战斗">战斗</h2>
+<p>尝试走进怪物即为攻击。怪物有时不会主动进攻，但请保持谨慎。</p>
+<h2 id="物品">物品</h2>
+<p>走进物品即为获取，若背包已满，程序会告诉你无法拾取。</p>
+<p>许多前缀命令会提示你选取物品，如果你改变主意，可以按<code>&lt;Esc&gt;</code>取消命令。</p>
+<p>一些物品，如武器、护甲，易于区分；而另一些物品，如魔药，卷轴等，难以从外观区分，需要为他们贴上标签。每次游戏时，相同的标签总是代表同类物品。当然，默认标签是随机生成的，且每次游戏都不同。</p>
+<p>在你使用了带标签的物品后，标签会根据其作用发生更改。你也可以手动重命名，便于之后记住。</p>
+<h3 id="武器">武器</h3>
+<p>一部分武器一次可以获取一批，比如箭，而且无需装备；另一部分武器一次只能获取一个，比如弓。后者在使用前需先装备。要射箭，则需要先装备弓。若当前武器是被诅咒过的，那么不能替换。相关命令有<code>w</code>和<code>t</code>。</p>
+<h3 id="护甲">护甲</h3>
+<p>地牢中的护甲有若干种类，有一些是附魔过的，还有一些是诅咒过的，当然还有普通的。不同的护甲有不同的护甲值。护甲值越高，护甲抵御攻击的效果越好。下面是普通护甲的护甲值列表。</p>
+<table>
+<thead>
+<tr class="header">
+<th>类型</th>
+<th>护甲值</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>无</td>
+<td>0</td>
+</tr>
+<tr class="even">
+<td>皮革甲〔Leather armor〕</td>
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>带钉皮甲〔Studded leather〕／锁甲〔Ring mail〕</td>
+<td>3</td>
+</tr>
+<tr class="even">
+<td>鳞甲〔Scale mail〕</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>链甲〔Chain mail〕</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>带甲〔Banded mail〕／板甲〔Splint mail〕</td>
+<td>6</td>
+</tr>
+<tr class="odd">
+<td>铠甲〔Plate mail〕</td>
+<td>7</td>
+</tr>
+</tbody>
+</table>
+<p>附魔后的护甲值将高于普通护甲，诅咒后的则反之。收到诅咒的护甲不能脱下。但是并非所有抵御正常护甲值的护甲都是被诅咒过的。</p>
+<p>相关命令有<code>W</code>和<code>T</code>。</p>
+<h3 id="卷轴">卷轴</h3>
+<p>标题用未知语言写就。阅读之后卷轴将消失。使用<code>r</code>阅读。</p>
+<blockquote>
+<p>实际上标题使用的是外蒙一个仅有27人的部落的方言。（当然你不该知道这些）</p>
+</blockquote>
+<h3 id="魔药">魔药</h3>
+<p>初始标签标明瓶中液体的性状（比如颜色）。饮用后消失。使用<code>q</code>饮用。</p>
+<blockquote>
+<p>原文此处有笔误，误将potion写作scroll。——译者注</p>
+</blockquote>
+<h3 id="法器">法器</h3>
+<p>法器按照其材料进行区分。施法（远程法术攻击）的工具。一般使用前需要指定方向。法器使用前带有一定的法力，法力耗尽之后就会变成普通的木头或者铁棒。使用<code>z</code>施法。</p>
+<h3 id="戒指">戒指</h3>
+<p>戒指相当有用，法力能常驻其中。有害的指环通常有更强的法力。多数指环会导致你需要更频繁地进食，这取决于指环的类型。相关命令<code>P</code>和<code>R</code>。</p>
+<h3 id="食物">食物</h3>
+<p>前行的必需品。太久不进食会导致虚弱和晕眩，甚至可能会饿死。</p>
+<h2 id="游戏设置">游戏设置</h2>
+<p>调整游戏选项有两种方法：</p>
+<ol type="1">
+<li><p>使用<code>o</code>命令</p></li>
+<li><p>设置<code>ROGUEOPTS</code>环境变量，由逗号分隔的选项组成，比如</p></li>
+</ol>
+<div class="highlight"><pre><span></span><span class="c">% setenv ROGUEOPTS &quot;jump,nopassgo,name=Blue Meanie&quot;</span><span class="w"></span>
+</pre></div>
+
+<blockquote>
+<p>sh用户应这样设置环境变量：</p>
+<div class="highlight"><pre><span></span>$ <span class="nv">ROGUEOPTS</span><span class="o">=</span><span class="s2">&quot;jump,nopassgo,name=Blue Meanie&quot;</span>
+$ <span class="nb">export</span> ROGUEOPTS
+</pre></div>
+
+</blockquote>
+<blockquote>
+<p>Version 6系统上没有和<code>ROGUEOPTS</code>等价的功能。</p>
+</blockquote>
+<p>选项列表如下。</p>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 57%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>选项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>jump[nojump]</td>
+<td>直到移动结束后才刷新界面，节省CPU资源</td>
+</tr>
+<tr class="even">
+<td>passgo[nopassgo]</td>
+<td>自动走到通道另一头，如果通道中有岔路，则会停下。</td>
+</tr>
+<tr class="odd">
+<td>skull[skull]</td>
+<td>在游戏结束时显示墓碑</td>
+</tr>
+<tr class="even">
+<td>name[account name]</td>
+<td>主角的名字</td>
+</tr>
+<tr class="odd">
+<td>fruit[slime-mold]</td>
+<td>水果命名列表</td>
+</tr>
+<tr class="even">
+<td>file[~/rogue.save]</td>
+<td>默认存档位置</td>
+</tr>
+</tbody>
+</table>
+<h2 id="计分">计分</h2>
+<p>Rogue会记录一个得分榜。当你退出时，会带出所有的金币进入下一次游戏。死亡时，则只能带出90%的金币，余下的10%交给地牢巫师作为费用。所以，如果生命值不足，战斗前请三思。</p>
+<p>如果你想看本机的排行榜，却不想进入游戏，可以使用<code>-s</code>命令行选项。</p>
+<div class="highlight"><pre><span></span><span class="c">% rogue -s</span><span class="w"></span>
+</pre></div>
+
+<blockquote>
+<p>地牢巫师名为瓦里·“奇迹”·拜格〔Wally the Wonder
+Badger〕，要向他捐赠不少钱他才会现身。</p>
+</blockquote>
+<h2 id="致谢">致谢</h2>
+<p>Rogue最初由Glenn Wichman和Michael Toy构想。Ken Arnold和Michael
+Toy优化了界面，添加了大量功能。同时感谢Bob Arnold, Michelle Busch, Andy
+Hatcher, Kipp Hickman, Mark Horton, Daniel Jensen, Bill Joy, Joe Kalash,
+Steve Maurer, Marty McNary, Jan Miller, and Scott
+Nelson的点子和帮助，还要感谢大量忽略了工作、学习、生活在玩rogue的人向我们报告bug、抱怨、建议。当然还要感谢母亲。</p>
+<p>公有领域版本的rogue由Timothy Stoehr编写，和Berkeley
+UNIX一同发行。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">没有图形界面也要录...</a></div>
+        <div class="sibling-page-date">2022-02-27</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - SIMD与RISC-V的向量扩展</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="体系结构">
+        
+
+        
+        <meta name="keywords" content="体系结构,归纳整理,ISA,SIMD">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>SIMD与RISC-V的向量扩展</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-01-09</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#体系结构</span>
+    
+        <span class="tag">#归纳整理</span>
+    
+        <span class="tag">#ISA</span>
+    
+        <span class="tag">#SIMD</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <blockquote>
+<p>原是体系结构的“课程研究报告”。不过既然已经花了那么多时间搜集资料，写出来的东西只当成作业上交未免有点浪费。</p>
+</blockquote>
+<p>虽然RISC-V的向量扩展（V-extension）目前还在草案阶段，但是已经基本成型了。出于对RISC-V的兴趣，我决定以其向量扩展为研究学习主题。</p>
+<p>我原先以为RISC-V向量扩展的的设计会类似Intel的SSE、AVX指令集，但是查找资料的结果告诉我并非如此。与SIMD指令的路子不同，RISC-V选择了向量处理，类似上课讲过CRAY向量机的处理方式。RISC-V文档中，压缩整型扩展（P扩展）被砍掉了，另外提出了向量扩展（V扩展）。关于这点，Patterson（RISC-V的发起人之一，《计算机体系结构：量化方法》的作者之一，图灵奖得主）甚至还专门写了一篇很有意思的文章，批评SIMD指令并不是一个好设计。</p>
+<p>SIMD是Flynn分类法中”单指令多数据“的简写，为何这一数据级并行的基本思路会受到Patterson的批判？下面我简要概括一下Patterson等人的理由。</p>
+<h2
+id="simd指令为什么被认为是有害的">SIMD指令为什么「被认为是有害的」？</h2>
+<p>在发表于SIGARCH上的《<strong>SIMD Instructions</strong> Considered
+Harmful》一文中，Patterson和Waterman提出了以下理由，说明为什么SIMD指令的出发点看似仅仅是划分寄存器，允许同时对不同部分进行运算，但是却”好心办了坏事“，带来不少害处。</p>
+<ol type="1">
+<li><p>对于元素宽度不同的划分方式，SIMD指令集需要提供不同的指令，硬件也有些复杂</p></li>
+<li><p>当SIMD寄存器改进得更宽（宽一倍），为了兼容性，指令数量也几乎需要翻倍</p></li>
+<li><p>SIMD指令带来的复杂程度，与带来的性能提升或许并不匹配</p></li>
+</ol>
+<p>SIMD指令本质上缺乏灵活性，因此随着指令架构的演进不可避免地变得非常庞大、复杂。比如，Intel的IA-32从1978年至今从80条指令演化到了1400条指令，这么大数量的增加很大程度上是为了SIMD指令。对比Intel的指令集文档和RISC-V的文档页数，前者不仅分成好几卷，一卷基本上就有几千页，后者总共核心内容只有几十页，总共加在一起应该也没有500页。SIMD指令很大程度上使得指令级非常复杂，并且复杂程度很可能随着架构演进，还要继续增加。</p>
+<p>关于第三点，两位作者对一个平凡而简单的程序进行了分析，统计指令的数量，假设n=1000</p>
+<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">void</span><span class="w"> </span><span class="n">daxpy</span><span class="p">(</span><span class="n">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">const</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">x</span><span class="err">[]</span><span class="p">,</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">y</span><span class="err">[]</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="err">{</span><span class="w"></span>
+<span class="w">     </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
+<span class="w">       </span><span class="n">y</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
+<span class="w">     </span><span class="err">}</span><span class="w"></span>
+<span class="w">    </span><span class="err">}</span><span class="w"></span>
+</pre></div>
+
+<p><img
+src="https://www.sigarch.org/wp-content/uploads/2017/09/SIMDHarmfulTable2.jpg" /></p>
+<p>使用CRAY式向量流水线的RV32V在n=1000时几乎是完胜使用SIMD的前两者。据此测试结果，两位作者不得不对SIMD指令这种方式带来的提升提出质疑，并认为SIMD指令不是一个好思路。</p>
+<p>当然对SIMD指令的批判并不意味着SIMD一无是处，在图像处理中，彩色像素几乎总是包含三个值（RGB），经常需要对这三个值做相同的操作，这种情况下SIMD就是非常好的方案。按照我个人的理解，两位作者意指传统的SIMD<strong>指令</strong>带来的代价太大，而不是SIMD这一<strong>思路</strong>本身无用。</p>
+<p>RISC-V的向量扩展和粗暴地添加指令和硬件不同。Eirk
+Engheim的文章对这种动机进行了进一步说明：“用向量架构，可以更优雅地实现数据级并行。”</p>
+<h2 id="risc-v的向量指令扩展">RISC-V的向量指令扩展</h2>
+<p>我尝试阅读了RISC-V向量指令扩展的细则（spec），虽说不能完全掌握其使用，但是对其灵活性有更直接的感受。</p>
+<h3 id="基本概念">基本概念</h3>
+<p>向量扩展指令集添加了若干个CSR（控制状态寄存器），定义了一些基本的控制状态，比如向量开始位置、向量数据类型、向量长度等等。其中我觉得最重要的是<code>vtype</code>寄存器，灵活性就体现于此，后面具体说明。</p>
+<p>还有32个向量寄存器<code>v0-v31</code>，每个寄存器都有VLEN个位。</p>
+<h3 id="向量指令扩展如何处理向量">向量指令扩展如何处理向量</h3>
+<figure>
+<img src="https://miro.medium.com/proxy/1*n2UKrFFCFVAfuqiealwtQA.png"
+alt="Processing elements two vectors with just one ALU. Normally there will be more ALUs to process multiple elements in parallel." />
+<figcaption aria-hidden="true">Processing elements two vectors with just
+one ALU. Normally there will be more ALUs to process multiple elements
+in parallel.</figcaption>
+</figure>
+<p>如图（图来自Erik
+Engheim的文章），不同于SIMD，一次只使用一个ALU，只对一对元素进行操作，但是向量寄存器可以很长。</p>
+<p>具体实现中在<code>vtype</code>寄存器中的<code>[5:3]</code>位表示<code>vsew[2:0]</code>，<code>[2:0]</code>位表示<code>vlmul[2:0]</code>。前者设置SEW（选中元素宽度），后者设置LMUL（分组因子）。</p>
+<p>SEW表示了一个向量寄存器中有多少个元素，如果SEW是16，那么向量的每个元素就有16个位，向量包含的元素个数就是VLEN/16。</p>
+<p>LMUL表示分组方案，上面提到向量寄存器可以很长，但是实际上「很多向量」和「很长的向量」不能同时取得，分组就是一种折衷方案（compromise），当LMUL是1的时候，不分组；当LMUL是2的时候，两个向量一组，比如，v0和v1被接在一起了，v2和v3接在一起，向量长度相比不分组就长了一倍。LMUL取4、8以此类推。LMUL还可以取分数，缩短向量长度。具体的分组方法和接法在spec中有图表说明。</p>
+<p>我觉得SEW和LMUL的设置就是RISC-V向量扩展灵活性的核心。通过在CSR<code>vtype</code>中设置这两个参数，就能调整机器看待向量的方式，<strong>可长可短，可宽可窄，按需设置</strong>。另外CSR必须用专门的指令进行修改，spec中说明这可以简化CSR的管理。</p>
+<h3 id="具体的向量指令">具体的向量指令</h3>
+<p>使用<code>vsetvl</code>系列指令设置<code>vtype</code>寄存器。spec中建议汇编器使用一些预先定义的名字来表示LMUL。比如</p>
+<div class="highlight"><pre><span></span>vsetvli t0, a0, e8, m2  # SEW= 8, LMUL=2
+</pre></div>
+
+<p>从内存中加载向量使用<code>vl</code>系列指令，写回内存中使用<code>vs</code>系列指令。加载和写回都有三种寻址方式，如同课上说过的，unit-stride（单位步长）、stride（常数步长）、indexed（索引）。第一种指定位置开始，一次取一个元素。第二种从指定位置开始，先取一个元素，然后走一个给定的步长后再取下一个元素（适合行主序存储时取列），索引则需要提供另一个向量提供各个元素的偏移量（适合稀疏的数据）。</p>
+<p>spec举例如下。<code>vd</code>代表目标向量寄存器。<code>(rs1)</code>代表主存中的地址，用一个通用寄存器给出，<code>vm</code>是掩码，此处不讨论。</p>
+<div class="highlight"><pre><span></span><span class="n">vle8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 8-bit unit-stride load</span><span class="w"></span>
+<span class="n">vlse8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 8-bit strided load</span><span class="w"></span>
+<span class="n">vle32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 32-bit unit-stride load</span><span class="w"></span>
+<span class="n">vlse32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 32-bit strided load</span><span class="w"></span>
+<span class="n">vluxei8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vs2</span><span class="p">,</span><span class="w"> </span><span class="n">vm</span><span class="w">  </span><span class="c1"># unorderd 8-bit indexed load of SEW data</span><span class="w"></span>
+<span class="n">vluxei32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vs2</span><span class="p">,</span><span class="w"> </span><span class="n">vm</span><span class="w"> </span><span class="c1"># unorderd 32-bit indexed load of SEW data</span><span class="w"></span>
+</pre></div>
+
+<p>写回内存只需将指令换成对应的<code>vs</code>系列指令。</p>
+<p>向量运算部分，十分简单，不过浮点指令和整型指令是分开的，另外还有一族加宽度的指令，即结果的SEW是操作数SEW的两倍。</p>
+<p>以整型加法为例，不仅有向量加向量，还有向量加标量，向量加立即数。减法、乘法、移位都类似。甚至还有取最值（最大值、最小值）的指令。</p>
+<div class="highlight"><pre><span></span>vadd.vv vd, vs2, vs1, vm # vector add vector
+vadd.vx vd, vs2, rs1, vm # vector add scalar
+vadd.vi vd, vs2, imm, vm # vector add immediate
+</pre></div>
+
+<p>上面提到的掩码可以用于合并向量。掩码实际上也存储在一个向量寄存器中，掩码向量之间可以做逻辑运算。被“掩”住的元素不会发生异常。</p>
+<h3 id="简单程序">简单程序</h3>
+<p>上面<code>daxpy</code>函数，Patterson的文章给出了RISC-V指令集和IA-32
+AVX的汇编代码</p>
+<div class="highlight"><pre><span></span><span class="c1"># a0 is n, a1 is pointer to x[0], a2 is pointer to y[0], fa0 is a</span><span class="w"></span>
+<span class="w">  </span><span class="mi">0</span><span class="p">:</span><span class="w">  </span><span class="n">li</span><span class="w"> </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&lt;&lt;</span><span class="mi">25</span><span class="w"></span>
+<span class="w">  </span><span class="mi">4</span><span class="p">:</span><span class="w">  </span><span class="n">vsetdcfg</span><span class="w"> </span><span class="n">t0</span><span class="w">             </span><span class="c1"># enable 2 64b Fl.Pt. registers</span><span class="w"></span>
+<span class="n">loop</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="mi">8</span><span class="p">:</span><span class="w">  </span><span class="n">setvl</span><span class="w">  </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="w">           </span><span class="c1"># vl = t0 = min(mvl, n)</span><span class="w"></span>
+<span class="w">  </span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">vld</span><span class="w">    </span><span class="n">v0</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="w">           </span><span class="c1"># load vector x</span><span class="w"></span>
+<span class="w">  </span><span class="mi">10</span><span class="p">:</span><span class="w">  </span><span class="n">slli</span><span class="w">   </span><span class="n">t1</span><span class="p">,</span><span class="w"> </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w">        </span><span class="c1"># t1 = vl * 8 (in bytes)</span><span class="w"></span>
+<span class="w">  </span><span class="mi">14</span><span class="p">:</span><span class="w">  </span><span class="n">vld</span><span class="w">    </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="w">           </span><span class="c1"># load vector y</span><span class="w"></span>
+<span class="w">  </span><span class="mi">18</span><span class="p">:</span><span class="w">  </span><span class="n">add</span><span class="w">    </span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="w">       </span><span class="c1"># increment pointer to x by vl*8</span><span class="w"></span>
+<span class="w">  </span><span class="mi">1</span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">vfmadd</span><span class="w"> </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">v0</span><span class="p">,</span><span class="w"> </span><span class="n">fa0</span><span class="p">,</span><span class="w"> </span><span class="n">v1</span><span class="w">  </span><span class="c1"># v1 += v0 * fa0 (y = a * x + y)</span><span class="w"></span>
+<span class="w">  </span><span class="mi">20</span><span class="p">:</span><span class="w">  </span><span class="n">sub</span><span class="w">    </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">t0</span><span class="w">       </span><span class="c1"># n -= vl (t0)</span><span class="w"></span>
+<span class="w">  </span><span class="mi">24</span><span class="p">:</span><span class="w">  </span><span class="n">vst</span><span class="w">    </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="w">           </span><span class="c1"># store Y</span><span class="w"></span>
+<span class="w">  </span><span class="mi">28</span><span class="p">:</span><span class="w">  </span><span class="n">add</span><span class="w">    </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="w">       </span><span class="c1"># increment pointer to y by vl*8</span><span class="w"></span>
+<span class="w">  </span><span class="mi">2</span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">bnez</span><span class="w">   </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">loop</span><span class="w">         </span><span class="c1"># repeat if n != 0</span><span class="w"></span>
+<span class="w">  </span><span class="mi">30</span><span class="p">:</span><span class="w">  </span><span class="n">ret</span><span class="w">                     </span><span class="c1"># return</span><span class="w"></span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="c1"># eax is i, n is esi, a is xmm1,</span><span class="w"></span>
+<span class="c1"># pointer to x[0] is ebx, pointer to y[0] is ecx</span><span class="w"></span>
+<span class="w"> </span><span class="mi">0</span><span class="p">:</span><span class="w"> </span><span class="n">push</span><span class="w">   </span><span class="n">esi</span><span class="w"></span>
+<span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="n">push</span><span class="w">   </span><span class="n">ebx</span><span class="w"></span>
+<span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">esi</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">]</span><span class="w">   </span><span class="c1"># esi = n</span><span class="w"></span>
+<span class="w"> </span><span class="mi">6</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">ebx</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x18</span><span class="p">]</span><span class="w">  </span><span class="c1"># ebx = x</span><span class="w"></span>
+<span class="w"> </span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="n">xmm1</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span><span class="w"> </span><span class="c1"># xmm1 = a</span><span class="w"></span>
+<span class="w"> </span><span class="mi">10</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">ecx</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x1c</span><span class="p">]</span><span class="w">  </span><span class="c1"># ecx = y</span><span class="w"></span>
+<span class="w"> </span><span class="mi">14</span><span class="p">:</span><span class="w"> </span><span class="n">vmovddup</span><span class="w"> </span><span class="n">xmm2</span><span class="p">,</span><span class="n">xmm1</span><span class="w">     </span><span class="c1"># xmm2 = {a,a}</span><span class="w"></span>
+<span class="w"> </span><span class="mi">18</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="n">esi</span><span class="w"></span>
+<span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="ow">and</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="mh">0xfffffffc</span><span class="w">  </span><span class="c1"># eax = floor(n/4)*4</span><span class="w"></span>
+<span class="w"> </span><span class="mi">1</span><span class="n">d</span><span class="p">:</span><span class="w"> </span><span class="n">vinsertf128</span><span class="w"> </span><span class="n">ymm2</span><span class="p">,</span><span class="n">ymm2</span><span class="p">,</span><span class="n">xmm2</span><span class="p">,</span><span class="mh">0x1</span><span class="w"> </span><span class="c1"># ymm2 = {a,a,a,a}</span><span class="w"></span>
+<span class="w"> </span><span class="mi">23</span><span class="p">:</span><span class="w"> </span><span class="n">je</span><span class="w">     </span><span class="mi">3</span><span class="n">e</span><span class="w">              </span><span class="c1"># if n &lt; 4 goto Fringe</span><span class="w"></span>
+<span class="w"> </span><span class="mi">25</span><span class="p">:</span><span class="w"> </span><span class="n">xor</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="n">edx</span><span class="w">         </span><span class="c1"># edx = 0</span><span class="w"></span>
+<span class="n">Main</span><span class="w"> </span><span class="n">Loop</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="mi">27</span><span class="p">:</span><span class="w"> </span><span class="n">vmovapd</span><span class="w"> </span><span class="n">ymm0</span><span class="p">,[</span><span class="n">ebx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># load 4 elements of x</span><span class="w"></span>
+<span class="w"> </span><span class="mi">2</span><span class="n">c</span><span class="p">:</span><span class="w"> </span><span class="n">vfmadd213pd</span><span class="w"> </span><span class="n">ymm0</span><span class="p">,</span><span class="n">ymm2</span><span class="p">,[</span><span class="n">ecx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># 4 mul adds</span><span class="w"></span>
+<span class="w"> </span><span class="mi">32</span><span class="p">:</span><span class="w"> </span><span class="n">vmovapd</span><span class="w"> </span><span class="p">[</span><span class="n">ecx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">],</span><span class="n">ymm0</span><span class="w"> </span><span class="c1"># store into 4 elements of y</span><span class="w"></span>
+<span class="w"> </span><span class="mi">37</span><span class="p">:</span><span class="w"> </span><span class="n">add</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="mh">0x4</span><span class="w"></span>
+<span class="w"> </span><span class="mi">3</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># compare to n</span><span class="w"></span>
+<span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="p">:</span><span class="w"> </span><span class="n">jb</span><span class="w">     </span><span class="mi">27</span><span class="w">               </span><span class="c1"># repeat loop if &lt; n</span><span class="w"></span>
+<span class="n">Fringe</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="mi">3</span><span class="n">e</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">esi</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># any fringe elements?</span><span class="w"></span>
+<span class="w"> </span><span class="mi">40</span><span class="p">:</span><span class="w"> </span><span class="n">jbe</span><span class="w">    </span><span class="mi">59</span><span class="w">               </span><span class="c1"># if (n mod 4) == 0 go to Done</span><span class="w"></span>
+<span class="n">Fringe</span><span class="w"> </span><span class="n">Loop</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="mi">42</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="n">xmm0</span><span class="p">,[</span><span class="n">ebx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># load element of x</span><span class="w"></span>
+<span class="w"> </span><span class="mi">47</span><span class="p">:</span><span class="w"> </span><span class="n">vfmadd213sd</span><span class="w"> </span><span class="n">xmm0</span><span class="p">,</span><span class="n">xmm1</span><span class="p">,[</span><span class="n">ecx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># 1 mul add</span><span class="w"></span>
+<span class="w"> </span><span class="mi">4</span><span class="n">d</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="p">[</span><span class="n">ecx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">],</span><span class="n">xmm0</span><span class="w"> </span><span class="c1"># store into element of y</span><span class="w"></span>
+<span class="w"> </span><span class="mi">52</span><span class="p">:</span><span class="w"> </span><span class="n">add</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="mh">0x1</span><span class="w">          </span><span class="c1"># increment Fringe count</span><span class="w"></span>
+<span class="w"> </span><span class="mi">55</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">esi</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># compare Loop and Fringe counts</span><span class="w"></span>
+<span class="w"> </span><span class="mi">57</span><span class="p">:</span><span class="w"> </span><span class="n">jne</span><span class="w">    </span><span class="mi">42</span><span class="w"> </span><span class="o">&lt;</span><span class="n">daxpy</span><span class="o">+</span><span class="mh">0x42</span><span class="o">&gt;</span><span class="w">  </span><span class="c1"># repeat FringeLoop if != 0</span><span class="w"></span>
+<span class="n">Done</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="mi">59</span><span class="p">:</span><span class="w"> </span><span class="n">pop</span><span class="w">    </span><span class="n">ebx</span><span class="w">              </span><span class="c1"># function epilogue</span><span class="w"></span>
+<span class="w"> </span><span class="mi">5</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">pop</span><span class="w">    </span><span class="n">esi</span><span class="w"></span>
+<span class="w"> </span><span class="mi">5</span><span class="n">b</span><span class="p">:</span><span class="w"> </span><span class="n">ret</span><span class="w"></span>
+</pre></div>
+
+<p>后者在真正开始计算前需要做很多准备工作，但是循环体中的指令少；前者整体更简洁，但是循环体中的指令多。但是依靠向量指令和流水线，后者可以规避这一点。看完程序之后我不得不同意RISC-V确实更加优雅。</p>
+<h2 id="总结">总结</h2>
+<p>我没有预料到对RISC-V指令的学习会引出这么多有趣的内容，看似人畜无害的SIMD居然会引发这么多争论。</p>
+<p>看完资料后我在想，是否真的是向量指令<strong>永远</strong>优于SIMD指令？我觉得如果向量长度很短，向量处理指令未必能够更快，SIMD指令也许更好。因此，对SIMD指令和向量指令的优劣对比都是综合比较的结果，并不是一方全方面完胜另一方。至于谁的trade-off更优，也许只有实际应用才能告诉我们答案。</p>
+<h2 id="参考文献">参考文献</h2>
+<ul>
+<li><p>Patterson和Waterman的文章
+https://www.sigarch.org/simd-instructions-considered-harmful/https://www.sigarch.org/simd-instructions-considered-harmful/</p></li>
+<li><p>Eirk Engheim的文章
+https://medium.com/swlh/risc-v-vector-instructions-vs-arm-and-x86-simd-8c9b17963a31</p></li>
+<li><p>RISC-V V-extension SPEC
+https://github.com/riscv/riscv-v-spec</p></li>
+</ul>
+
+</div>
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">没有图形界面也要录...</a></div>
+        <div class="sibling-page-date">2022-02-27</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2021-12-03-Material Design笔记.html">Material ...</a></div>
+        <div class="sibling-page-date">2021-12-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2021-12-03-Material Design笔记.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

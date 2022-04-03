@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 自制MC启动器的失败尝试</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。">
+        
+
+        
+        <meta name="keywords" content="minecraft,折腾记录">
+        
+
+        <link rel="stylesheet" href="//localhost:5000/assets/style/main.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/tango.css">
+        <link rel="stylesheet" href="//localhost:5000/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//localhost:5000/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//localhost:5000/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//localhost:5000/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//localhost:5000/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//localhost:5000/assets/img/404.png"></img>
+    <a href="//localhost:5000/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//localhost:5000/about/">About</a>
+    <a href="//localhost:5000/feed.xml">RSS</a>
+    <!--<a href="//localhost:5000/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>自制MC启动器的失败尝试</h1>
+    
+    <div class="date-bar">
+        <span class="date">2019-02-17T13:54:03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#minecraft</span>
+    
+        <span class="tag">#折腾记录</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。</p>
+<p>这不是我第一次尝试自制MC启动器，三四年前不会用HMCL的时候也想过自己做一个。但是当时连MC为什么要用启动器都不知道，自制启动器一直停留在「想法」阶段。</p>
+<p>上网查了一些MC启动器相关的东西，算是大致了解了一下MC启动器的原理。但是网上的很多博文对具体的细节语焉不详，还得自己翻HMCL或者JMCCC的源代码慢慢理解。</p>
+<hr />
+<h2 id="mc启动器的原理">MC启动器的原理</h2>
+<p>简而言之，启动器的工作就是列出一堆option，生成启动脚本，然后用脚本启动MC。</p>
+<h3 id="为什么mc需要启动器">为什么MC需要启动器？</h3>
+<p>按照<a
+href="https://www.zhihu.com/question/49997128/answer/119951802">BMCL作者的说法</a>，MC需要启动器的原因大致有几点：</p>
+<ol type="1">
+<li>MC启动需要传入JVM参数、游戏参数、列出主类依赖的jar包等等，启动脚本很长，不适合手打。</li>
+<li>管理资源文件，比如声音、语言。</li>
+<li>正版登录以及验证。</li>
+<li>版本管理。</li>
+<li>依赖管理。</li>
+<li>额外的功能，比如下载MC、Forge或Optifine，放置新闻…</li>
+</ol>
+<h3 id="mc的目录结构">MC的目录结构</h3>
+<p>举个例子：</p>
+<div class="highlight"><pre><span></span><span class="na">.minecraft</span><span class="err">/</span><span class="w"></span>
+<span class="w">    </span><span class="nf">assets</span><span class="err">/</span><span class="w"></span>
+<span class="w">        </span><span class="nf">indexes</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面有一些以版本号命名的json</span>
+<span class="w">        </span><span class="nf">objects</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面都是乱七八糟的东西</span>
+<span class="w">    </span><span class="nf">libraries</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面是MC运行所依赖的jar包，按照包名建好了一层一层的文件夹</span>
+<span class="w">    </span><span class="nf">logs</span><span class="err">/</span><span class="w">                      </span><span class="c1">// 顾名思义，都是日志文件 </span>
+<span class="w">    </span><span class="nf">resourcepacks</span><span class="err">/</span><span class="w">             </span><span class="c1">// 顾名思义，都是资源包，也叫材质包</span>
+<span class="w">    </span><span class="nf">saves</span><span class="err">/</span><span class="w">                     </span><span class="c1">// 顾名思义，里面放存档</span>
+<span class="w">    </span><span class="nf">screenshots</span><span class="err">/</span><span class="w">               </span><span class="c1">// 顾名思义，里面放截屏</span>
+<span class="w">    </span><span class="nf">versions</span><span class="err">/</span><span class="w">                  </span><span class="c1">// 放置不同版本的minecraft主程序</span>
+<span class="w">        </span><span class="err">1</span><span class="nf">.7.2</span><span class="err">/</span><span class="w"></span>
+<span class="w">            </span><span class="err">1</span><span class="nf">.7.2.jar</span><span class="w">              </span><span class="c1">// 1.7.2版本的minecraft主程序</span>
+<span class="w">            </span><span class="err">1</span><span class="nf">.7.2.json</span><span class="w">             </span><span class="c1">// 列出了所依赖的jar包及其下载地址。这些jar包在libraries中可找到</span>
+<span class="w">        </span><span class="err">1</span><span class="nf">.7.10</span><span class="err">/</span><span class="w"></span>
+<span class="w">            </span><span class="err">1</span><span class="nf">.7.10.jar</span><span class="w"></span>
+<span class="w">            </span><span class="err">1</span><span class="nf">.7.10.json</span><span class="w"></span>
+<span class="w">    </span><span class="nf">options.txt</span><span class="w">                </span><span class="c1">// minecraft游戏的具体设置，比如鼠标灵敏度、键盘控制等等</span>
+<span class="w">    </span><span class="nf">usercache.json</span><span class="w">             </span><span class="c1">// 玩家信息的缓存，内含游戏名、uuid、最后登陆时间</span>
+</pre></div>
+
+<h3 id="启动参数说明">启动参数说明</h3>
+<p>下面这个启动脚本是由HMCL在windows下生成的。我把<code>\</code>都换成了<code>/</code></p>
+<div class="highlight"><pre><span></span><span class="p">@</span><span class="k">echo</span> off
+<span class="k">set</span> <span class="nv">appdata</span><span class="p">=</span>F:\MC\Minecraft 1.10.2-Forge\.minecraft
+<span class="s2">&quot;C:/Program Files/Java/jre1.8.0_73/bin/javaw.exe&quot;</span> 
+-XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump 
+-XX:+UseG1GC 
+-XX:-UseAdaptiveSizePolicy 
+-XX:-OmitStackTraceInFastThrow 
+-Xmn128m 
+-Xmx512m 
+<span class="s2">&quot;-Djava.library.path=F:/MC/Minecraft 1.10.2-Forge/.minecraft/versions/1.10/1.10-natives&quot;</span> 
+-Dfml.ignoreInvalidMinecraftCertificates=true 
+-Dfml.ignorePatchDiscrepancies=true 
+-cp <span class="s2">&quot;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/netty/1.6/netty-1.6.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/oshi-project/oshi-core/1.1/oshi-core-1.1.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/dev/jna/jna/3.4.0/jna-3.4.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/ibm/icu/icu4j-core-mojang/51.2/icu4j-core-mojang-51.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/sf/jopt-simple/jopt-simple/4.6/jopt-simple-4.6.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/io/netty/netty-all/4.0.23.Final/netty-all-4.0.23.Final.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/google/guava/guava/17.0/guava-17.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-io/commons-io/2.4/commons-io-2.4.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-codec/commons-codec/1.9/commons-codec-1.9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/google/code/gson/gson/2.2.4/gson-2.2.4.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/authlib/1.5.22/authlib-1.5.22.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/com/mojang/realms/1.9.0/realms-1.9.0.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar;F:/MC/Minecraft 1.10.2-Forge/.minecraft/versions/1.10/1.10.jar&quot;</span> net.minecraft.client.main.Main 
+--username nothing 
+--version <span class="s2">&quot;HMCL 2.5.1.79&quot;</span> 
+--gameDir <span class="s2">&quot;F:/MC/Minecraft 1.10.2-Forge/.minecraft&quot;</span> 
+--assetsDir <span class="s2">&quot;F:/MC/Minecraft 1.10.2-Forge/.minecraft/assets&quot;</span> 
+--assetIndex 1.10 
+--uuid 3e47b75000b0924b6c9ba5759a7cf15d 
+--accessToken 3e47b75000b0924b6c9ba5759a7cf15d 
+--userType Legacy 
+--versionType <span class="s2">&quot;HMCL 2.5.1.79&quot;</span> 
+--height 480 
+--width 854
+</pre></div>
+
+<p>linux下脚本可能会像这样（我用上面的手改的，因为有些依赖似乎与系统相关，所以不知道还能不能用）。<code>~</code>应该换成别的，比如<code>/home/username</code>。</p>
+<div class="highlight"><pre><span></span>/usr/bin/java
+-XX:+UseG1GC 
+-XX:-UseAdaptiveSizePolicy 
+-XX:-OmitStackTraceInFastThrow 
+-Xmn128m
+-Xmx1024m 
+-Djava.library.path<span class="o">=</span>~/.minecraft/versions/1.10/1.10-natives
+-Dfml.ignoreInvalidMinecraftCertificates<span class="o">=</span><span class="nb">true</span> 
+-Dfml.ignorePatchDiscrepancies<span class="o">=</span><span class="nb">true</span> 
+-cp <span class="s2">&quot;~/.minecraft/libraries/com/mojang/netty/1.6/netty-1.6.jar;~/.minecraft/libraries/oshi-project/oshi-core/1.1/oshi-core-1.1.jar;~/.minecraft/libraries/net/java/dev/jna/jna/3.4.0/jna-3.4.0.jar;~/.minecraft/libraries/net/java/dev/jna/platform/3.4.0/platform-3.4.0.jar;~/.minecraft/libraries/com/ibm/icu/icu4j-core-mojang/51.2/icu4j-core-mojang-51.2.jar;~/.minecraft/libraries/net/sf/jopt-simple/jopt-simple/4.6/jopt-simple-4.6.jar;~/.minecraft/libraries/com/paulscode/codecjorbis/20101023/codecjorbis-20101023.jar;~/.minecraft/libraries/com/paulscode/codecwav/20101023/codecwav-20101023.jar;~/.minecraft/libraries/com/paulscode/libraryjavasound/20101123/libraryjavasound-20101123.jar;~/.minecraft/libraries/com/paulscode/librarylwjglopenal/20100824/librarylwjglopenal-20100824.jar;~/.minecraft/libraries/com/paulscode/soundsystem/20120107/soundsystem-20120107.jar;~/.minecraft/libraries/io/netty/netty-all/4.0.23.Final/netty-all-4.0.23.Final.jar;~/.minecraft/libraries/com/google/guava/guava/17.0/guava-17.0.jar;~/.minecraft/libraries/org/apache/commons/commons-lang3/3.3.2/commons-lang3-3.3.2.jar;~/.minecraft/libraries/commons-io/commons-io/2.4/commons-io-2.4.jar;~/.minecraft/libraries/commons-codec/commons-codec/1.9/commons-codec-1.9.jar;~/.minecraft/libraries/net/java/jinput/jinput/2.0.5/jinput-2.0.5.jar;~/.minecraft/libraries/net/java/jutils/jutils/1.0.0/jutils-1.0.0.jar;~/.minecraft/libraries/com/google/code/gson/gson/2.2.4/gson-2.2.4.jar;~/.minecraft/libraries/com/mojang/authlib/1.5.22/authlib-1.5.22.jar;~/.minecraft/libraries/com/mojang/realms/1.9.0/realms-1.9.0.jar;~/.minecraft/libraries/org/apache/commons/commons-compress/1.8.1/commons-compress-1.8.1.jar;~/.minecraft/libraries/org/apache/httpcomponents/httpclient/4.3.3/httpclient-4.3.3.jar;~/.minecraft/libraries/commons-logging/commons-logging/1.1.3/commons-logging-1.1.3.jar;~/.minecraft/libraries/org/apache/httpcomponents/httpcore/4.3.2/httpcore-4.3.2.jar;~/.minecraft/libraries/it/unimi/dsi/fastutil/7.0.12_mojang/fastutil-7.0.12_mojang.jar;~/.minecraft/libraries/org/apache/logging/log4j/log4j-api/2.0-beta9/log4j-api-2.0-beta9.jar;~/.minecraft/libraries/org/apache/logging/log4j/log4j-core/2.0-beta9/log4j-core-2.0-beta9.jar;~/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl/2.9.4-nightly-20150209/lwjgl-2.9.4-nightly-20150209.jar;~/.minecraft/libraries/org/lwjgl/lwjgl/lwjgl_util/2.9.4-nightly-20150209/lwjgl_util-2.9.4-nightly-20150209.jar;~/.minecraft/versions/1.10/1.10.jar&quot;</span> 
+net.minecraft.client.main.Main 
+--username nth233 
+--version <span class="s2">&quot;HMCL 2.5.1.79&quot;</span> 
+--gameDir <span class="s2">&quot;~/.minecraft&quot;</span> 
+--assetsDir <span class="s2">&quot;~/.minecraft/assets&quot;</span> 
+--assetIndex <span class="m">1</span>.10 
+--uuid 3e47b75000b0924b6c9ba5759a7cf15d 
+--accessToken 3e47b75000b0924b6c9ba5759a7cf15d 
+--userType Legacy 
+--versionType <span class="s2">&quot;HMCL 2.5.1.79&quot;</span> 
+--height <span class="m">480</span> 
+--width <span class="m">854</span>
+</pre></div>
+
+<p>我们来大致分析一下启动脚本。<code>/usr/bin/java</code>是完整的java路径。</p>
+<p>然后是一串JVM参数，比如<code>-Xmn128m</code>指定了最小内存，<code>-Xmx1024m</code>指定了最大内存，<code>-Djava.library.path=~/.minecraft/versions/1.10/1.10-natives</code>指明了natives文件夹的位置。<code>-XmsXXXm</code>指定了初始堆的大小。不知道开头那三行有什么用…</p>
+<p>接下来以<code>-Dfml</code>开头的两行是让forge忽略自身文件被修改，否则无法兼容optifine。</p>
+<p>接下来是以<code>-cp</code>开头的「一行」，很长，列出了所有MC依赖的jar包（其中就包含了声音、领域、twitch等一堆东西）。
+可以从MC主程序旁边的那个同名<code>json</code>里获得它们的下载地址和应放置的位置。</p>
+<p>再接下来的一行<code>net.minecraft.client.main.Main</code>是主类。</p>
+<p>再接下来的一堆是游戏参数，包括了游戏主目录<code>.minecraft</code>的位置、MC版本、uuid、令牌、启动器版本以及游戏窗口的长宽、是否全屏（<code>--fullscreen</code>，上面的脚本没有体现）等等。</p>
+<h3 id="粗略的启动过程">粗略的启动过程</h3>
+<ol start="0" type="1">
+<li>获取java路径、下载MC</li>
+<li>根据用户的设置，生成启动脚本</li>
+<li>启动MC</li>
+<li>还可以监视MC的进程（不是很懂，不是非常确定是不是这个功能）</li>
+</ol>
+<hr />
+<h2 id="具体的尝试过程">具体的尝试过程</h2>
+<p>先是花了三天时间分析HMCL的源码。不知道为什么，我这里vscode装了java扩展后依然无法使用「转到定义」等功能，于是一些本来应该由IDE/编辑器自动完成的事情变成要我人肉手动完成，十分蛋疼。花了一堆时间解决诸如「<code>gameDir</code>是哪个文件夹？」、「<code>versionDir</code>是哪个文件夹？」这类问题。我记得我第一天看代码看得差点睡着（事实证明，看别人的代码对我这种菜鸡来说可以算是催眠法宝之一）。在HMCL的代码里绕了三天后，总算是自己搞出了一个启动脚本（人肉编译执行2333）。但是，无论我怎么修改，这个启动脚本都没法启动MC。原因似乎是MC没有下载「完整」（缺少natives文件夹）。好吧，我又花了一个小时左右的时间<strong>手动</strong>下载natives里的内容，<strong>手动</strong>按照包名一层层建文件夹，置入依赖的jar包，然而最终还是没有成功。</p>
+<p>自制启动器的尝试到这里算是基本失败了。</p>
+<p>但是，我又找到了JMCCC。JMCCC的代码比HMCL的「整洁」，再加上之前阅读HMCL代码的经验，看JMCCC的代码比看HMCL的快多了。由于担心JMCCC的脚本不兼容HMCL的目录结构，所以还得重新下载MC。到这里我已经彻底放弃了，按照JMCCC的代码再做一回人肉编译器，重新下载MC，还不如直接调用JMCCC。</p>
+<p>好吧，调用JMCCC。完全按照教程，用java调用JMCCC「自制」了一个启动器（simplelauncher）。先是建立项目，把maven依赖添加到<code>pom.xml</code>，复制JMCCC项目<code>README.md</code>里面的示例代码，稍微改一改：用几十行代码下载MC，用几行代码启动MC。在eclipse里一运行，居然真的启动了MC的1.7.10版本。然后又尝试了几个版本，屡试不爽。当然这个时候心情自然是非常爽。</p>
+<p>编译的时候由于不了解java又踩了一些坑。本来想直接把<code>class</code>文件拿来用，但很快我发现我这个启动器需要另一个「启动器的启动器」来启动，实在是滑稽。后来查到可以编译成可执行jar包。于是又往<code>pom.xml</code>里面添了几行，编译出可执行jar包。又大致给这个启动器添加几个启动选项后，这个「自制的」simplelauncher终于到了「能用」的层级。不过操作依然非常傻：双击，则默认从<code>~/.minecraft</code>启动1.7.10版本。要启动其他版本，或者要下载MC，必须在命令行里面<code>java -jar sl.jar [ --version ${version} ] [ --download ]</code>。还是有点蛋疼，不过我已经懒得再改了，也懒得玩MC了。</p>
+<h2 id="一些链接">一些链接</h2>
+<p><a href="https://www.zhihu.com/question/49997128">《 Minecraft
+》为什么要以启动器的形式启动？</a></p>
+<p><a
+href="http://www.MCbbs.net/thread-573154-1-1.html">JMCCC使用教程——Java启动器类库，几行代码下载并启动MC</a>
+<a href="https://github.com/huanghongxun/HMCL/">Hello Minecraft!
+Launcher</a> <a href="https://github.com/to2mbn/JMCCC">JMCCC</a> <a
+href="https://github.com/yushijinhun/jMCcc.tutorial">JMCCC使用教程</a>
+<a
+href="https://stackoverflow.com/questions/574594/how-can-i-create-an-executable-jar-with-dependencies-using-maven">How
+can I create an executable JAR with dependencies using Maven?</a> <a
+href="https://stackoverflow.com/questions/44745261/why-do-jvm-arguments-start-with-d">[Why
+do JVM arguments start with
+“-D”?](https://stackoverflow.com/questions/44745261/why-do-jvm-arguments-start-with-d)</a>
+<a
+href="http://www.cnblogs.com/redcreen/archive/2011/05/04/2037057.html">JVM系列三:JVM参数设置、分析</a>
+<a
+href="https://www.oracle.com/technetwork/java/gc-tuning-5-138395.html">Tuning
+Garbage Collection with the 5.0 Java Virtual Machine</a> <a
+href="https://www.baeldung.com/jvm-parameters">Guide to the Most
+Important JVM Parameters</a></p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//localhost:5000/posts/2020-02-22-折腾hugo.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//localhost:5000/posts/2020-02-22-折腾hugo.html">折腾hugo</a></div>
+        <div class="sibling-page-date">2020-02-22T22:29:07+08:00</div>
+    </div>
+    
+    
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//localhost:5000/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    </body>
+</html>
