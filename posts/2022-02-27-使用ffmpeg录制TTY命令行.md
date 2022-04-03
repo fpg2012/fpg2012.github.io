@@ -1,14 +1,15 @@
 ---
 title: 没有图形界面也要录屏：/dev/fb0和ffmpeg
 date: "2022-02-27"
-description: "ffmpeg"
-categories: ["dev"]
-tags:
+description: "「录屏」一词，说起来仿佛是图形界面的专属。现有的趁手录屏工具很多也的确需要桌面环境才能工作。比方说常用的obs。如果在tty中执行obs的录屏命令，很遗憾，无效。obs会提示cannot connect to display。大概是因为运行obs需要显示一个Qt窗口。好在tty下录屏并非毫无办法，ffmpeg提供了一条路，直接读取Linux的framebuffer：`/dev/fb*`。"
+category: ["dev"]
+tag:
   - FFmpeg
   - Framebuffer
   - 命令行
   - linux
-comments: true
+comment: true
+layout: post
 ---
 
 「录屏」一词，说起来仿佛是图形界面的专属。现有的趁手录屏工具很多也的确需要桌面环境才能工作。比方说常用的obs。如果在tty中执行obs的录屏命令：

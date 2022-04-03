@@ -1,0 +1,456 @@
+html {
+    font-size: 15px;
+}
+
+html.dark-theme {
+    filter: invert(1);
+}
+
+html.dark-theme img {
+    filter: brightness(0.7) invert(1);
+}
+
+a {
+    text-decoration: none;
+    color: rgb(70, 104, 165);
+}
+
+a:hover {
+    text-decoration: underline;
+    color: rgb(99, 124, 172);
+}
+
+a:active {
+    color: rgb(70, 104, 165);
+}
+
+a:visited {
+    color: cornflowerblue;
+}
+
+header {
+    height: 3ex;
+    font-size: 1.25rem;
+    padding: 1rem 1rem 1rem 3rem;
+    font-family: 'Fira Sans', 'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    top: 0px;
+    position: sticky;
+    z-index: 100;
+    display: flex;
+    /* background-color: whitesmoke; */
+    background-color: rgb(247, 243, 239);
+    justify-content: space-between;
+    border-bottom: solid 1px #dedede;
+}
+
+.header-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1rem;
+}
+
+.header-menu a {
+    display: block;
+    margin: 0 1em 0 1em;
+    color: #888888;
+}
+
+.header-menu button {
+    border: none;
+    margin: 0 0.5em 0 0.5em;
+    cursor: pointer;
+}
+
+.header-menu button:hover {
+    background:rgb(236, 211, 178);
+    border-radius: 5px;
+}
+
+.header-logo a {
+    color: black;
+}
+
+header a:hover {
+    color: black;
+    text-decoration: none;
+}
+
+header a:visited {
+    color: black;
+    text-decoration: none;
+}
+
+code {
+    font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    display: inline-block;
+    padding: 0 0.1em 0 0.1em;
+}
+
+pre {
+    border: solid 1px whitesmoke;
+    padding: 1rem;
+    overflow-x: auto;
+    background: white;
+    border-radius: 0.3125rem;
+    font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    font-size: 0.875rem;
+}
+
+footer {
+    border-top: solid 1px #dedede;
+    font-size: 1rem;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 0.3125rem 0.3125rem 0 0;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.048);
+    color: rgb(94, 94, 94);
+}
+
+body {
+    margin: 0;
+    background-color: white;
+    font-family: -apple-system, "Fira Sans", "Noto Sans", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Color Emoji", "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+main {
+    margin: 1em 1em 1em 1em;
+    font-size: 1rem;
+}
+
+.post-front-matter {
+    border-radius: 0.3125rem 0.3125rem 0 0;
+    background-color: rgba(255, 255, 255, 0.644);
+    padding: 1em 2em 1em 2em;
+}
+
+.post-area figure {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post-area img {
+    max-width: 100%;
+}
+
+.post-area blockquote {
+    border-left: 0.3125rem solid #888888;
+    margin: 1ex 0 1ex 0;
+    padding: 0 1ex 0 1ex;
+    font-style: normal;
+    color: #888888;
+}
+
+.post-area table {
+    display: block;
+    overflow-x: auto;
+    /* border: solid 2px rgba(250, 235, 215, 0); */
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+tr {
+    text-align: left;
+}
+
+tbody tr:last-child th:first-child {
+}
+
+tbody tr:last-child th:last-child {
+}
+
+tr.header {
+    background: rgb(236, 211, 178) !important;
+}
+
+tr.header th:first-child {
+}
+
+tr.header th:last-child {
+}
+
+td, th {
+    padding: 0.8ex;
+}
+
+table tr:nth-child(odd) {
+    background: antiquewhite;
+}
+
+table tr:nth-child(even) {
+    background: rgb(252, 243, 232)
+}
+
+figure {
+    margin: 0;
+}
+
+figure figcaption {
+    font-size: 0.875rem;
+    color: dimgray;
+    text-align: center;
+}
+
+img {
+    border-radius: 0.3125rem;
+}
+
+.post-area {
+    max-width: 50em;
+    background: rgb(247, 243, 239);
+    border: solid 1px #dedede;
+    margin: 0 auto 0 auto;
+}
+
+.post-content {
+    margin: 0rem auto 0rem auto;
+    padding: 1em 2em 1em 2em;
+    line-height: 3ex;
+    font-size: 1.0625rem;
+}
+
+.category-bar {
+    display: inline-block;
+    margin: 0.1em;
+    font-size: 0.875rem;
+}
+
+.tag-bar {
+    display: inline-block;
+    margin: 0.1em auto 0.1em 0.1em;
+    font-size: 0.875rem;
+}
+
+.category {
+    display: inline-block;
+    background: rgba(60, 40, 60);
+    padding: 0.2em 0.4em 0.2em 0.4em;
+    border-radius: 0.3125rem;
+    margin-right: 0.1em;
+    margin-bottom: 0.1em;
+    color: white;
+}
+
+.tag {
+    display: inline-block;
+    background: rgb(255, 255, 255);
+    padding: 0.2em 0.4em 0.2em 0.4em;
+    border-radius: 0.3125rem;
+    margin-right: 0.1em;
+}
+
+.date {
+    font-size: 0.875rem;
+    color: darkgrey;
+}
+
+.date-bar {
+    margin-bottom: 1ex;
+}
+
+.archive-list {
+    max-width: 50em;
+    border-radius: 0.3125rem;
+    margin: 0 auto 0 auto;
+    min-height: 75vh;
+}
+
+.archive-list a {
+    color: black;
+}
+
+.archive-list>ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* .archive-list>ul>li:nth-child(even) {
+    background-color: rgb(247, 243, 239);
+} */
+
+.archive-list>ul>li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: solid 1px #dedede;
+}
+
+.archive-item {
+    font-size: 1.125rem;
+    border-radius: 0.3125rem 0 0 0.3125rem;
+    padding: 2ex 2em 2ex 2em;
+    margin: 1ex 0 1ex 1ex;
+    flex-grow: 1;
+    font-family: --apple-system, 'Fira Sans', 'Noto Sans', 'Liberation Sans', 'Noto Sans CJK SC', 'Segoe UI';
+}
+
+.archive-list>.sibling-pages {
+    border-radius: 0.3125rem;
+    background: white;
+    margin: 1ex 1ex 1ex 1ex;
+    padding: 2ex 0 2ex 0;
+    width: unset;
+}
+
+.archive-list .sibling-page {
+    flex-direction: row;
+}
+
+.archive-item-more {
+    max-width: 8em;
+    min-width: fit-content;
+    align-self: stretch;
+    display: flex;
+    border-radius: 0 0.3125rem 0.3125rem 0;
+    padding: 2ex 2ex 2ex 2em;
+    margin: 1ex 1ex 1ex 0;
+}
+
+.archive-item-more>div {
+    align-self: center;
+    text-align: center;
+    padding: 2px;
+    font-size: 1.5rem;
+}
+
+.archive-item-information {
+    color: darkgray;
+    padding: 0.2ex 0.2ex 1ex 0.2ex;
+}
+
+.archive-item-link {
+    text-decoration: none;
+    color: black;
+}
+
+.archive-item-link::hover {
+    color: rgba(34, 33, 30, 0.63);
+}
+
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.sibling-pages {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: white;
+    border-radius: 0 0 0.3125rem 0.3125rem;
+    padding: 2ex 0 2ex 0;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.sibling-page {
+    /* padding: 1.5ex; */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 3em;
+}
+
+.sibling-page-last {
+    align-items: flex-end;
+    /* padding: 1ex 3em 1ex 3em; */
+}
+
+.sibling-page-next {
+    align-items: flex-start;
+    /* padding: 1ex 3em 1ex 3em; */
+}
+
+.sibling-page-arrow {
+    align-self: center;
+    font-size: 1.5rem;
+}
+
+.sibling-page-title {
+    height: 2.1ex;
+}
+
+.sibling-page-date {
+    height: 2.1ex;
+    color: rgb(70, 96, 146);
+}
+
+#fullscreen-img-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 110;
+    display: flex;
+}
+
+.post-content img {
+    /* cursor: zoom-in; */
+    display: block;
+    object-fit: contain;
+}
+
+#fullscreen-img-container.hidden {
+    visibility: hidden;
+    filter: opacity(0);
+}
+
+#fullscreen-img-container.show {
+    visibility: visible;
+    filter: opacity(1);
+    backdrop-filter: blur(5px);
+}
+
+#fullscreen-img-container > img {
+    max-width: 100%;
+    max-height: 100%;
+    margin: auto;
+    cursor: zoom-out;
+    object-fit: contain;
+}
+
+#top-button {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 2rem;
+    width: 3rem;
+    font-size: 1.25rem;
+    text-align: center;
+    line-height: 3rem;
+    height: 3rem;
+    background-color: #dedede;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.comment-area {
+    padding: 0.5em 1.5em 0.5em 1.5em;
+}
+
+.error-area {
+    display: flex;
+    min-height: 80vh;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.header-logo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.nth233logo {
+    max-width: 3ex;
+    max-height: 3ex;
+    margin: 0 0.5em 0 0.5em;
+}

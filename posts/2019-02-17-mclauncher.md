@@ -1,11 +1,12 @@
 ---
 title: 自制MC启动器的失败尝试
-categories: [dev]
-tags: 
+category: [dev]
+tag: 
   - minecraft
   - 折腾记录
-description: 严格来说是「半失败」的尝试
+description: "本打算在寒假重拾MC，却突然发现HMCL在arch上用不了了，明明18年八月初还是可以用的。打开HMCL后ui无法被正常渲染，只有空白窗口一个。疑似是arch的锅，也可能是openjfx的bug（但是我就算是换用oracle的jdk问题也依然存在，并且就算是一路回退到2018年七月的版本，问题也依然没有解决）。于是便再次将自制MC启动器提上日程，作为六月前的最后一次在电脑上的折腾。"
 date: "2019-02-17T13:54:03"
+layout: post
 ---
 
 

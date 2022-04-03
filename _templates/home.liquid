@@ -1,0 +1,54 @@
+---
+layout: page
+---
+
+<div class="archive-list">
+    <ul>
+    {% for pid in paginator.current_batch %}
+    <li>
+        <div class="archive-item">
+            <div class="archive-item-text">
+                <h2 class="archive-item-title"><a href="{{ id_to_page[pid].url }}" class="archive-item-link">{{ id_to_page[pid].title }}</a></h2>
+                <div class="archive-item-information">
+                    <span class="archive-item-date">{{ id_to_page[pid].date | date: "%Y-%m-%d" }}</span>
+                    {% if id_to_page[pid].category %}
+                    <span class="archive-item-category">＼〔{{ id_to_page[pid].category }}〕</span>
+                    {% endif %}
+                    {% if id_to_page[pid].tag %}
+                        {% for i in (0..4) %}
+                            {% if id_to_page[pid].tag[i] %}
+                            <span class="archive-item-tag">#{{ id_to_page[pid].tag[i] }}</span>
+                            {% else %}
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="archive-item-more">
+            <div><a href="{{ id_to_page[pid].url }}">〉</a></div>
+        </div>
+        </a>
+    </li>
+    {% endfor %}
+    </ul>
+    {% if paginator.batch_num > 1 %}
+    <div class="sibling-pages">
+        
+        {% if paginator.last_batch_num %}
+        {% assign last_page = paginator.last_batch_num %}
+        <div class="sibling-page">
+            <div class="sibling-page-arrow"><a href="{{ paginator.batch_urls[last_page] }}">〈</a></div>
+        </div>
+        {% endif %}
+
+        {% if paginator.next_batch_num %}
+        {% assign next_page = paginator.next_batch_num %}
+        <div class="sibling-page">
+            <div class="sibling-page-arrow"><a href="{{ paginator.batch_urls[next_page] }}">〉</a></div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>

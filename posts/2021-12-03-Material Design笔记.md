@@ -2,13 +2,14 @@
 title: Material Design 相关组件笔记
 date: "2021-12-03"
 description: "整理自《第一行代码》，原文过于啰嗦不便查阅，故摘抄整理之。"
-categories: ["dev"]
-tags:
+category: ["dev"]
+tag:
   - 笔记
   - 归纳整理
   - 安卓
   - Material Design
-comments: true
+comment: true
+layout: post
 ---
 
 > 整理自《第一行代码》，原文过于啰嗦不便查阅，故摘抄整理之。理解肤浅，有错见谅。

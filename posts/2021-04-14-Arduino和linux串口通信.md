@@ -1,13 +1,15 @@
 ---
 title: 'Arduino和linux串口通信'
+description: '手头有一块（伪）Arduino Uno，现在需要把上面测到的电压数据发送到电脑上了。我知道Arduino官方提供了`Serial.write`和`Serial.read`，利用这些函数可以方便地通过串口发数据给电脑，在Arduino IDE提供的串口监视器上显示出来。但我现在需要自己处理数据，需要让Arduino直接和我的程序通信。对此我毫无头绪。一番搜索尝试之后算是找到了办法。'
 date: '2021-04-18'
-categories: ["dev"]
-tags:
+category: ["dev"]
+tag:
   - "arduino"
   - "串口"
   - "posix"
   - "linux"
-comments: true
+comment: true
+layout: post
 ---
 
 ## 前因
