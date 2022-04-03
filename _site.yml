@@ -1,7 +1,7 @@
 site_name: "Empty Space"
 author: "nth233"
-# url: "//fpg2012.github.io/sushi-theme-empty"
-url: "//localhost:5000"
+url: "//fpg2012.github.io"
+#url: "//localhost:5000"
 
 favicon: "/assets/favicon"
 
