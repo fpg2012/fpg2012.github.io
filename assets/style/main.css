@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'Fira Sans';
+    src: url('/assets/font/FiraSans-Regular.woff2');
+}
+
+@font-face {
+    font-family: 'Fira Mono';
+    src: url('/assets/font/FiraMono-Regular.woff2');
+}
+
 html {
     font-size: 15px;
 }
@@ -31,7 +41,7 @@ a:visited {
 header {
     height: 3ex;
     font-size: 1.25rem;
-    padding: 1rem 1rem 1rem 3rem;
+    padding: 1rem 1rem 1rem 1rem;
     font-family: 'Fira Sans', 'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     top: 0px;
     position: sticky;
