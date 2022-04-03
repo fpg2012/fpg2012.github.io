@@ -96,6 +96,7 @@ code {
     font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     display: inline-block;
     padding: 0 0.1em 0 0.1em;
+    word-break: break-all;
 }
 
 pre {
