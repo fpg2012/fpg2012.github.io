@@ -13,11 +13,41 @@
     
     
     
-    <pubDate>Sun, 03 Apr 2022 07:50:20 GMT</pubDate>
-    <lastBuildDate>Sun, 03 Apr 2022 07:50:20 GMT</lastBuildDate>
+    <pubDate>Mon, 04 Apr 2022 17:12:17 GMT</pubDate>
+    <lastBuildDate>Mon, 04 Apr 2022 17:12:17 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
+    
+    <item>
+      <title>来一局线上卡卡颂！——抽牌器+共享画板</title>
+      <link>//nth233.top/posts/2022-04-04-carcasonne.html</link>
+      
+      <description>上个月某日，某人在某群里提到想要在线上玩卡卡颂〔Carcasonne〕。然而卡卡颂官方电子版在steam上价格不低，我又不想上某宝买steam上的桌游模拟器，于是想着不如用点低级的方法「组装」出一个卡卡颂来。游玩卡卡颂时，大概只有四种动作是必要的：抽取土地块，摆放土地块，收放随从，计分。只要有了牌，后三种都可以借由在线画板／白板实现，比方说drawpile。因此关键的问题就在于如何抽牌。</description>
+      
+      <pubDate>2022-04-03</pubDate>
+      <guid>9062190766738773215</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>Carcasonne</category>
+        
+          <category>桌游</category>
+        
+          <category>联机</category>
+        
+          <category>drawpile</category>
+        
+          <category>共享画板</category>
+        
+          <category>卡卡颂</category>
+        
+      
+    </item>
     
     <item>
       <title>「地牢探险指南」——原版《Rogue》游戏规则翻译</title>

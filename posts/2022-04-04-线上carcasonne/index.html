@@ -1,0 +1,65 @@
+<h2 id="tldr">TL;DR</h2>
+<h3 id="配置drawpile">配置Drawpile</h3>
+<p>到<a
+href="https://drawpile.net/">drawpile官网</a>下载并安装最新的drawpile。<del>然后联系我开服</del>。</p>
+<p>开服之后选择菜单中的<code>Session</code>，选择<code>Join</code>，在最下方输入服务端地址，然后连接。</p>
+<h3 id="抽牌器的使用">抽牌器的使用</h3>
+<p>访问<a
+href="https://carcasonne.herokuapp.com">抽牌器页面</a>。（不要过度使用，免费版的heroku有时长限制）</p>
+<ol type="1">
+<li><p>输入名字和游戏创建者给的<code>game code</code>加入游戏。如果<code>game code</code>放空，将建立新游戏</p></li>
+<li><p>点击加入或创建之后，最下方的在线列表将显示所有在线的玩家（<del>如果显示「offline」，请联系我修bug</del>~）</p></li>
+<li><p>如果你是创建者，<code>draw code</code>框中应该有一份<code>draw code</code>，你可以在初始土地块摆放好之后立即抽牌。如果你不是创建者，等轮到你的时候向上家讨要<code>draw code</code>。抽完牌之后记得把<code>draw code</code>告诉下家。</p></li>
+</ol>
+<p>具体的界面如下：</p>
+<figure>
+<img src="./carcasonne_.png" alt="界面" />
+<figcaption aria-hidden="true">界面</figcaption>
+</figure>
+<ol type="1">
+<li>玩家名，可以重名（<del>但是你不觉得重名会很麻烦吗</del>）</li>
+<li><code>game code</code>，一般是6位十六进制数，也就是只包含<code>0~9</code>、<code>A~F</code>这几个字符。如果在<code>game code</code>前面添加一个<code>:</code>字符，那么将进入调试模式，WebSocket连接将不使用SSL（便于本地调试）。</li>
+<li>如果<code>game code</code>为空，那么按钮内容是<code>New</code>，否则是<code>Join</code>。前者代表将新建游戏。</li>
+<li>土地块代码。遵循「上-右-下-左-备注」的顺序进行编码，<code>F</code>表示草地，<code>R</code>表示道路，<code>C</code>表示城市，<code>K</code>表示修道院。备注表明土地块四边中的哪几个边内容是相联通的。如果备注是<code>K</code>，那么表示中间是修道院。如果备注以<code>a</code>，结尾，说明城市带有盾牌。</li>
+<li>上一个抽牌的人和剩余牌数。「base」代表「没人抽牌，现在这张牌是初始块」</li>
+<li>土地块图片。图片加载可能比较缓慢，因此需要时刻检查图片和代码是否匹配。</li>
+<li><code>draw code</code></li>
+<li>为什么没有8？</li>
+<li>抽牌按钮</li>
+<li>在线玩家列表</li>
+</ol>
+<blockquote>
+<p>Tip：如果忘了上一张牌是什么，可以按F12，然后打开浏览器的Console查看。</p>
+</blockquote>
+<p>所有人离开之后，游戏将被清除掉。</p>
+<h3 id="进行游戏">进行游戏</h3>
+<p>drawpile和抽牌器都准备就绪之后，就可以打起语音电话开始游戏了。具体方法就是把抽牌器抽出的牌复制到drawpile里面摆放，简单粗暴，<del>但是有效</del>。</p>
+<h2 id="前因后果">前因后果</h2>
+<p>上个月某日，某人在某群里提到想要在线上玩卡卡颂〔Carcasonne〕。然而卡卡颂官方电子版在steam上价格不低，我又不想上某宝买steam上的桌游模拟器，于是想着不如用点低级的方法「组装」出一个卡卡颂来。</p>
+<p>游玩卡卡颂时，大概只有四种动作是必要的：抽取土地块，摆放土地块，收放随从，计分。只要有了牌，后三种都可以借由在线画板／白板实现，比方说drawpile。因此关键的问题就在于如何抽牌。</p>
+<h3 id="如何抽牌">如何抽牌？</h3>
+<p>抽牌不仅得有序，抽牌结果还得同步到所有客户端，并且抽牌得是随机的。drawpile的确勉勉强强可以实现，但是体验会很差（提前把所有牌有序摆放到一个图层，然后再建一个图层盖住，所有玩家各自生成随机数进行抽取），手撸一个抽牌器几乎是不可避免的。</p>
+<p>抽牌器不仅仅只是一个多端共享的随机数生成器，我还要求它有以下功能：</p>
+<ol type="1">
+<li><p>支持多局游戏同时在服务端上进行</p></li>
+<li><p>尽可能确保抽牌有序，减小误操作的影响</p></li>
+<li><p>掉线可以重连，可以看到有那些人在线</p></li>
+<li><p>界面不丑</p></li>
+<li><p>引用的外部依赖越少越好，页面加载越快越好</p></li>
+<li><p>代码简短</p></li>
+</ol>
+<p>最后我用tornado写了一个几百行的服务端，并且除了tornado之外，没有任何其他依赖。因为要支持多个游戏同时进行，就需要有一个游戏的唯一标识，所以引入了<code>game code</code>。为了保证抽牌有序，我决定阻止一个人连续抽两张牌，以防止网络延迟高的时候玩家狂点抽牌按钮，带来意想不到的结果。另外还引入<code>draw code</code>，每次抽牌都需要凭证，刚刚抽完牌的人不能再抽牌，但是手上会获得一个<code>draw code</code>，他需要把这个<code>draw code</code>发给下一个行动的玩家，这样就最大限度地确保抽牌有序。</p>
+<p>为了精简页面，只用了原生的HTML+CSS+JS来写前端，目前拖慢页面加载速度的是两个webfont（为了美观，我最终还是用了webfont）。</p>
+<p>抽牌程序<a
+href="https://github.com/fpg2012/kks-draw">已经挂上github了</a>。</p>
+<p>把服务端挂到heroku上，抽牌器就算是完成了（当然，还是有些bug要修）。</p>
+<h3 id="drawpile">Drawpile</h3>
+<p>确保已经安装了<code>drawpile-srv</code>。执行<code>drawpile-srv</code>，如果使用默认配置，它就会开始监听本地的27750端口，把这个端口用frp转发出去，外界就可以正常访问了。</p>
+<p>也可以选择在服务器上直接部署drawpile服务器，可以参考<a
+href="https://drawpile.net/help/server-howto/">drawpile的文档</a>。但是因为我服务器上的系统是远古版本的CentOS（服务商的锅），搞起来有点麻烦，所以我最后还是选择比较简单的内网穿透。</p>
+<h3 id="开发插曲">开发插曲</h3>
+<p>一开始我打算把抽牌器部署到腾讯云服务器上，但是因为我没有备案，所以腾讯会限制IP访问（最后变成只有我能连接）。我原以为只有HTTP协议会受到限制，但是实测WebSocket也会（可能是因为WebSocket连接也是从HTTP请求开始的）。把服务端改挂到heroku上就完美解决了，为了这个小东西备案实在是不值得。</p>
+<p>转到heroku上之后，发现还是无法抽牌，这导致我们<a
+href="https://www.bilibili.com/video/BV1g3411H7Ys">第一次游戏</a>只能由我抽牌，然后由我把牌复制到drawpile里面，其他玩家再进行移动。排查原因，发现是连接被heroku切断了，55秒没有数据交互，heroku就认为连接被限制，然后掐断连接，但偏偏实践中两次抽牌间隔往往要超过55秒。查了一下tornado的文档，设置<code>websocket_ping_interval=40</code>之后就解决了这个问题。</p>
+<iframe src="//player.bilibili.com/player.html?aid=425317475&amp;bvid=BV1g3411H7Ys&amp;cid=566006509&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true">
+</iframe>
