@@ -28,7 +28,7 @@ layout: post
 
 具体的界面如下：
 
-![界面](/assets/img/posts/carcasonne_.png)
+![界面](/assets/img/post/carcasonne_.png)
 
 1. 玩家名，允许重名（~~但是你不觉得重名会很麻烦吗~~）
 2. `game code`，一般是6位十六进制数，也就是只包含`0~9`、`A~F`这几个字符。如果在`game code`前面添加一个`:`字符，那么将进入调试模式，WebSocket连接将不使用SSL（便于本地调试）。
