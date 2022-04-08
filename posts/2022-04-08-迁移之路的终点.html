@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - Blog迁移之路的终点</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="从一开始写博客开始，我就不断地更换博客生成器，先是Jekyll，然后是Hexo，之后用了一年的Hugo，因为数学公式渲染的问题又回到Jekyll。终于我忍不住了，自己写（不如说是组装）了一个博客生成器——sushi。">
+        
+
+        
+        <meta name="keywords" content="blog,sushi,ssg">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣 theme</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>Blog迁移之路的终点</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-04-08</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#blog</span>
+    
+        <span class="tag">#sushi</span>
+    
+        <span class="tag">#ssg</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>从一开始写博客开始，我就不断地更换博客生成器，先是Jekyll，然后是Hexo，之后用了一年的Hugo，因为数学公式渲染的问题又回到Jekyll。终于我忍不住了，自己写（不如说是组装）了一个博客生成器——sushi。</p>
+<p>之前多次更换生成器，有时是因为盲从（比如从Hexo换成Hugo），有时是因为喜欢的主题只能用于另一个生成器（比如从Jekyll换成Hexo），不过更多时候是因为不顺手。对于其他生成器来说来说，我一直没法解决使用相对路径插图的问题，也没法解决生成期间渲染KaTeX公式的问题。Jekyll因为一些奇奇怪怪的原因在本地没法使用，并且我不熟悉Ruby，也不想花太多精力学习，一直没有能力排查。终于到了上个月，我终于受不了缓慢的数学公式加载、极不顺手的插图方式，决定自己写一个生成器。肝了几周之后终于组装出了<a
+href="https://crates.io/crates/sushi-gen">sushi</a>。</p>
+<p>虽然sushi还存在一些问题，但我想我不会再迁移了，因为sushi的定制难度要低于我用过的其他生成器。下面几点是sushi已经实现的设计目标：</p>
+<ol type="1">
+<li>渲染器（converter）由用户指定，而且由用户提供。用户把渲染器的可执行文件放到一个文件夹中，然后在配置文件中指定那些文件使用那个渲染器。这使得使用pandoc非常容易，我可以用tex写博客，也可以用markdown，或者别的pandoc支持的语言。借助pandoc
+filter，我还能实现KaTeX公式的静态渲染，大大提高了页面的加载速度。<del>对我而言，Hugo最大的问题就是和Goldmark绑定，对其他渲染器的支持不佳，导致我不能自定义markdown语法。</del></li>
+<li>不改变站点的结构。比方说一个文件在<code>posts/aaa/test</code>文件夹里面，那么无论它是什么文件，在生成的站点中，sushi会确保它依然在这个位置。这点使得我可以随心所欲地使用相对路径，不会有奇奇怪怪的插图问题。</li>
+<li>使用liquid模板语言，但是无视博文中出现的liquid标签。</li>
+<li>支持自定义的分类法（taxonomy）</li>
+<li>不区分所谓“post”和普通的页面文件。站点结构除了少数几个配置相关的文件夹和文件之外，完全由用户自定义</li>
+</ol>
+<p>这几点总结起来，就是sushi不管生成方式、部署方式、主题，只管按要求“套模板”。使得sushi的可定制性优于其他生成器。当然这也式sushi也存在一些问题：</p>
+<ol type="1">
+<li>几乎没有默认配置，所有东西都需要自定义，没有默认主题。即使你使用starter，也无法避免自己配置一些东西</li>
+<li>因为使用了用户提供的渲染器，因此如果你和我一样给pandoc加了各种各样的filter，那么站点的生成速度会比较慢</li>
+<li>没有“一键部署”，部署博客需要自己写脚本。（比如说可以自己写Makefile）</li>
+<li>虽然跨平台，但是因为需要用户提供可执行文件作为converter，因此跨平台体验很一般。</li>
+<li>也许存在一些没有被发现的bug。</li>
+<li>分页器虽然能用，但是不太好用</li>
+<li>虽然标榜可定制性，但是几个默认的配置文件夹和配置文件不允许改名</li>
+</ol>
+<p>但是上述问题我一点都不在意。我更关心“能否轻松自定义”，不太关心能否开箱即用。因为个人博客的页面数量不多，我觉得hugo的那种速度没有必要的。跨平台问题并不难解决。分页器难用，但其实并不需要经常用。因为测试不是太彻底，因此可能有一些bug，但是我会持续进行维护，如果有bug也欢迎到<a
+href="https://github.com/fpg2012/sushi">github仓库</a>提交issue或者PR。</p>
+<p>综上，sushi对我而言就是完美的博客生成器了（毕竟是自己写的）。如果你和我有相似的需求，我强烈推荐使用sushi（虽然目前sushi只有我写的两个主题（<a
+href="https://github.com/fpg2012/sushi-theme-letter">letter</a>和<a
+href="https://github.com/fpg2012/sushi-theme-empty">empty</a>，如果不喜欢，你可能得自己写主题）。</p>
+<p>Blog的迁移之路，终于到了一个终点……</p>
+<blockquote>
+<p>ps.
+关于我的生成器的起名，我觉得「苏轼」很符合博客的气质，而且「sushi」容易发音，如果加上音调，变成sūshì，也不会和「寿司」相混，于是就这样定下来了。不过很可惜gnome有个命令行工具也叫<code>sushi</code>，因此我不得已把命令改成了<code>ssushi</code>。crates.io上已经有<code>sushi</code>这个crate了，我改名成ssushi又不利于搜索，所以最终，在crates.io上，我这个项目名为<code>sushi-gen</code>。</p>
+</blockquote>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2022-04-04-carcasonne.html">来一局线上卡卡颂！...</a></div>
+        <div class="sibling-page-date">2022-04-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2022-04-04-carcasonne.html">〉</a></div>
+    
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    </body>
+</html>

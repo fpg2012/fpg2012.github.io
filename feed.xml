@@ -13,11 +13,35 @@
     
     
     
-    <pubDate>Mon, 04 Apr 2022 17:19:31 GMT</pubDate>
-    <lastBuildDate>Mon, 04 Apr 2022 17:19:31 GMT</lastBuildDate>
+    <pubDate>Fri, 08 Apr 2022 08:40:53 GMT</pubDate>
+    <lastBuildDate>Fri, 08 Apr 2022 08:40:53 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
+    
+    <item>
+      <title>Blog迁移之路的终点</title>
+      <link>//nth233.top/posts/2022-04-08-迁移之路的终点.html</link>
+      
+      <description>从一开始写博客开始，我就不断地更换博客生成器，先是Jekyll，然后是Hexo，之后用了一年的Hugo，因为数学公式渲染的问题又回到Jekyll。终于我忍不住了，自己写（不如说是组装）了一个博客生成器——sushi。</description>
+      
+      <pubDate>2022-04-08</pubDate>
+      <guid>9963733923823433005</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>blog</category>
+        
+          <category>sushi</category>
+        
+          <category>ssg</category>
+        
+      
+    </item>
     
     <item>
       <title>来一局线上卡卡颂！——抽牌器+共享画板</title>
