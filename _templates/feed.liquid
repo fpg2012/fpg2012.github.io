@@ -1,7 +1,7 @@
 <rss version="2.0">
   <channel>
     <title>{{ site.site_name }}</title>
-    <link>{{ site.url }}</link>
+    <link>{{ site.url | prepend: "https:" }}</link>
     
     {% if site.description %}
     <description>{{ site.description }}</description>
@@ -27,7 +27,7 @@
     {% for id in sitetree.posts._list %}
     <item>
       <title>{{ id_to_page[id].title }}</title>
-      <link>{{ id_to_page[id].url }}</link>
+      <link>{{ id_to_page[id].url | prepend: "https:"}}</link>
       {% if id_to_page[id].description %}
       <description>{{ id_to_page[id].description }}</description>
       {% else %}
