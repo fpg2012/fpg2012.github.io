@@ -10,6 +10,48 @@ comment: true
 
 记录写题碰到的生词，以真题为主。尽量日更，若没有日更，请催更。
 
+## 2012
+
+> 2022-04-13 created
+
+1. conveivably adv. 可以想到的
+1. conceive vt. & vi. 构想，想象，怀孕 conceive of ..., "I cannot ~ that he acted alone." - conception
+2. renewable adj. 可更新的，可再生的
+3. conversely adv. 相反地，反之［用于引出相反的陈述］- converse v. 对话 n. 逆否命题 adj. 顺序相反的，逆否的
+4. precede vt. & vi. 先于……
+5. sobersided adj. 稳重的 - sober
+6. formidable adj. 可怕的，令人敬畏的，难以对付的 a ~ opponent
+7. unpretentious adj. 不矫饰的
+8. troupe n. 班子（演员、歌手）
+9. vibrant adj. 震动的，有声有色的，生气勃勃的，鲜艳的
+10. revitalize
+11. repertoire n. （总称某人的）可表演项目
+12. hitherto adv. :up to this or that time "reveals some ~ unknown facts about her life"
+13. cloak vt. 掩盖
+14. scrutinize vt. & vi. 仔细审查 "I closely ~d my opponent's every move." - scrutiny
+15. prevalent adj. 流行的，盛行的 =widespread, dominant 
+16. abound v. 富于 abound in/with ... - abundance
+17. turbulent adj. 动荡的 - turbulence 紊流
+18. deputy n. 副手，代理，（某些国家的）议员
+19. spur vt. 刺激 n. 马刺
+20. disgrace vt. 使……蒙羞 n. 耻辱 "He felt he had ~d himself by failing at school." "His table manners are a ~."
+21. board n. 董事会
+22. infancy n. 婴儿期
+23. hostage n. 人质
+24. stakeholder n. 参与者，利益相关人
+25. leverage n. 杠杆 vt. 发挥杠杆作用，利用
+26. provocative adj. 煽动性的
+27. provoke vt. 煽动，挑衅
+28. rear v. 抚养 =raise n. 后方
+29. gratification n. 满足，满意，奖励
+30. procreation n. 生殖
+31. glamorous adj. 迷人的
+
+### 词组
+
+1. make the jump 跳槽
+2. provoke sb. to do sth.
+
 ## 2016
 
 > 2022-04-12 created
