@@ -27,7 +27,6 @@ $$
  + \frac{1}{2}\int \frac{1}{1+x^2}\cdot \frac{1+\frac{x}{\sqrt{1+x^2}}}{1+\sqrt{1+x^2}}dx \\
 = & -\frac{1}{2}\frac{\ln(x+\sqrt{1+x^2})}{1+x^2}
 + \frac{1}{2}\int \frac{1}{(1+x^2)^{\frac{3}{2}}}dx
-
 \end{aligned} 
 $$
 
