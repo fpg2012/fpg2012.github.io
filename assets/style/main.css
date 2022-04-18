@@ -469,6 +469,7 @@ img {
 .compact-archive .archive-item-text {
 	display: flex;
 	justify-content: space-between;
+	flex-wrap: wrap-reverse;
 }
 
 .archive-content {
