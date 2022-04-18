@@ -465,3 +465,18 @@ img {
     max-height: 3ex;
     margin: 0 0.5em 0 0.5em;
 }
+
+.compact-archive .archive-item-text {
+	display: flex;
+	justify-content: space-between;
+}
+
+.archive-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: gray;
+    padding: 3rem;
+    border-bottom: solid 1px #dedede;
+    font-size: 1.5rem;
+}
