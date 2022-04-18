@@ -1,0 +1,39 @@
+---
+layout: page
+---
+
+<div class="archive-list compact-archive">
+    <div class="archive-content">{{ content }}</div>
+    <ul>
+    {% for pid in paginator.current_batch %}
+    <li>
+        <div class="archive-item">
+            <div class="archive-item-text">
+                <div class="archive-item-title"><a href="{{ id_to_page[pid].url }}" class="archive-item-link">{{ id_to_page[pid].title }}</a></div>
+                <div class="archive-item-information">
+                    <span class="archive-item-date">{{ id_to_page[pid].date | date: "%Y-%m-%d" }}</span>
+                </div>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+    </ul>
+    {% if paginator.batch_num > 1 %}
+    <div class="sibling-pages">
+        
+        {% if paginator.last_batch_num %}
+        {% assign last_page = paginator.last_batch_num %}
+        <div class="sibling-page">
+            <div class="sibling-page-arrow"><a href="{{ paginator.batch_urls[last_page] }}">〈</a></div>
+        </div>
+        {% endif %}
+
+        {% if paginator.next_batch_num %}
+        {% assign next_page = paginator.next_batch_num %}
+        <div class="sibling-page">
+            <div class="sibling-page-arrow"><a href="{{ paginator.batch_urls[next_page] }}">〉</a></div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
