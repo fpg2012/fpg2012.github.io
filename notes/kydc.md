@@ -10,11 +10,51 @@ comment: true
 
 记录写题碰到的生词，以真题为主。尽量日更，若没有日更，请催更。
 
-## 2012
+## 2015
+
+> 2022-04-21 created
+
+1. kinship n. 亲属关系
+2. disruptive adj. 捣乱的，扰乱性的；革新的 "a disruptive weather pattern" - disrupt, disruption
+3. surpass vt. 超过
+4. abdicate vt. 退位，逊位；失职
+5. monachy n. 君主制 /mArn.aki/
+6. transcendent adj. 超凡的，玄奥的
+7. infest vt. 滋生，昆虫群集 /in'fest/ "a slum infested with crime"
+8. strive vi. 努力=endeavor，力争=contend "strive to finish a project"
+9. intrusive adj. 不受欢迎的，打扰的；【地质】侵入岩
+10. aristocratic adj. 贵族的
+11. reckless adj. 不顾后果的；草率的，冒失的，鲁莽的
+12. discern vt. 辨认出，觉察 "discerned a figure approaching through the fog" "discern right from wrong" "unable to discern his motives"
+13. lame adj. 跛的，瘸的
+14. refrain vi. & vt. 克制，抑制
+15. sweeping adj. 影响广泛的
+16. manuscript n. 手稿
+17. editorial n. 社论
+18. impell vt. 驱使，促使
+19. reproduction n. 复制，重现，繁殖
+20. literate adj. 识字的；精通的
+21. diminish vt. 使变少/变小/变弱
+22. dearth n. 缺乏，不足 "a dearth of evidence"
+23. revelation n. 揭露，透露；出人意料的发现
+24. doctrine n. 信条，学说，主义，学说 - doctrinaire
+25. distort
+26. assimilate vt. 吸收，使同化 "Students need to assimilate new concepts." "… the belief that tolerant hosts would be able to assimilate immigrants of whatever creed or colour."
+27. discourse n. 论文，论述，谈话，争论
+28. discord n. 不和，纷争，【音】不和谐
+29. mouthpiece n. 吹嘴
+
+### 词组
+
+1. strive against ...
+2. refrain from ... 
+
+## 2011
 
 > 2022-04-13 created
+> 2022-04-21 updated
 
-1. conveivably adv. 可以想到的
+1. conceivably adv. 可以想到的
 1. conceive vt. & vi. 构想，想象，怀孕 conceive of ..., "I cannot ~ that he acted alone." - conception
 2. renewable adj. 可更新的，可再生的
 3. conversely adv. 相反地，反之［用于引出相反的陈述］- converse v. 对话 n. 逆否命题 adj. 顺序相反的，逆否的
@@ -46,11 +86,19 @@ comment: true
 29. gratification n. 满足，满意，奖励
 30. procreation n. 生殖
 31. glamorous adj. 迷人的
+32. discipline n. 纪律，训练
+33. canon n. 规则，标准，准则；（名家）真迹；经典作品；卡农 - canonical adj. 权威的，标准的
+34. post n. 邮政；岗位，哨所；柱、杆 v. 发布；邮寄；安置（士兵），委派
+35. holistic adj. 【医】功能整体性的
+36. inquire v. 询问；调查 "inquired about the horses" BrE=enquire - inquiry
+37. embark vi. 登船，登机；开始，着手
 
 ### 词组
 
 1. make the jump 跳槽
 2. provoke sb. to do sth.
+3. inquire into ... = search into ... = investigate ...
+4. embark on ... 着手
 
 ## 2016
 
