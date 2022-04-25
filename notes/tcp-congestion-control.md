@@ -1,5 +1,5 @@
 ---
-layout: page
+layout: post
 title: "TCP拥塞控制"
 date: "2022-04-25"
 description: ""
