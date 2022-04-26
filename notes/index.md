@@ -7,6 +7,7 @@ keywords: ["notes", "theme", "sushi", "letter", "sushi-theme-letter", "ssushi", 
 description: "notes about my exploration"
 nolist: true
 has_rss: "/notes/rss.xml"
+date: "1970-1-1"
 ---
 
 只是笔记。

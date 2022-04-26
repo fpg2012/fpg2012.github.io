@@ -5,4 +5,5 @@ paginate: sitetree.notes._list
 paginate_batch: 1000
 title: "rss"
 nolist: true
+date: "1970-1-2"
 ---
