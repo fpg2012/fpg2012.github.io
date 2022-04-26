@@ -2,7 +2,7 @@
 layout: post
 title: "TCP拥塞控制"
 date: "2022-04-25"
-description: ""
+description: "关于TCP的拥塞控制。本文简要概述了为何要引入拥塞控制，拥塞控制面临的问题，以及TCP拥塞控制相关的标准。"
 tag: ["computer", "计算机网络", "TCP/IP"]
 category: ["note"]
 comment: true

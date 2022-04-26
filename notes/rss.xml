@@ -1,0 +1,8 @@
+---
+to_ext: "xml"
+layout: feed2
+paginate: sitetree.notes._list
+paginate_batch: 1000
+title: "rss"
+nolist: true
+---

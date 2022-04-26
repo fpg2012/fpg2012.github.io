@@ -481,3 +481,12 @@ img {
     border-bottom: solid 1px #dedede;
     font-size: 1.5rem;
 }
+
+.archive-rss-feed {
+    font-size: 1rem;
+    align-self: flex-end;
+}
+
+.archive-rss-feed>a {
+    color: darkgray;
+}
