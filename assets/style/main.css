@@ -10,32 +10,100 @@
 
 html {
     font-size: 15px;
+	--body-bg-color: white;
+    --common-font-color: black;
+	--content-bg-color: rgb(247, 243, 239);
+    --common-border-color: #dedede;
+    --common-secondary-color: #737373;
+
+	--link-color: rgb(70, 104, 165);
+	--link-hover-color: rgb(99, 124, 172);
+    --link-active-color: rgb(70, 104, 165);
+	--link-visited-color: cornflowerblue;
+    --link-archive-hover-color: rgba(34, 33, 30, 0.63);
+	
+	--button-hover-color: rgb(236, 211, 178);
+
+    --footer-bg-color: rgba(0, 0, 0, 0.048);
+	--footer-color: rgb(94, 94, 94);
+
+	--post-frontmatter-bg-color: rgba(255, 255, 255, 0.644);
+	--tr-header-bg-color: rgb(236, 211, 178);
+	--tr-odd-child-color: antiquewhite;
+	--tr-even-child-color: rgb(252, 243, 232);
+
+    --header-bg-color: var(--content-bg-color);
+	--archive-list-a-color: var(--common-font-color);
+    --header-logo-color: var(--common-font-color);
+    --block-quote-color: var(--common-secondary-color);
+    --header-menu-color: var(--common-secondary-color);
+    --archive-content-color: var(--common-secondary-color);
+    --figure-caption-color: var(--common-secondary-color);
+    --pre-bg-color: var(--body-bg-color);
+
+    color: var(--common-font-color);
+    background-color: var(--body-bg-color);
 }
 
 html.dark-theme {
-    filter: invert(1);
+    --body-bg-color: rgb(20, 20, 20);
+    --common-font-color: rgb(248, 248, 248);
+	--content-bg-color: rgb(36, 44, 48);
+    --common-border-color: #2b2b2b;
+    --common-secondary-color: #dddddd;
+
+	--link-color: rgb(100, 247, 144);
+	--link-hover-color: rgb(88, 214, 126);
+    --link-active-color: rgb(100, 247, 144);
+	--link-visited-color: rgb(76, 187, 110);
+    --link-archive-hover-color: rgba(34, 33, 30, 0.63);
+	
+	--button-hover-color: rgb(57, 76, 78);
+
+    --footer-bg-color: rgba(255, 255, 255, 0.048);
+	--footer-color: rgb(163, 163, 163);
+
+	--post-frontmatter-bg-color: #595f6370;
+	--tr-header-bg-color: rgb(64, 78, 87);
+	--tr-odd-child-color: rgb(87, 101, 109);
+	--tr-even-child-color: rgb(64, 78, 87);
+    --pre-bg-color: #002b36;
+
+    color: var(--common-font-color);
+    background-color: var(--body-bg-color);
 }
 
 html.dark-theme img {
-    filter: brightness(0.7) invert(1);
+    filter: brightness(0.7);
+}
+
+html.dark-theme button {
+    color: var(--common-font-color);
+    background-color: var(--body-bg-color);
+}
+
+html.dark-theme hr {
+    color: var(--common-font-color);
+    background-color: var(--body-bg-color);
+    border-top: 1px solid var(--common-border-color);
 }
 
 a {
     text-decoration: none;
-    color: rgb(70, 104, 165);
+    color: var(--link-color);
 }
 
 a:hover {
     text-decoration: underline;
-    color: rgb(99, 124, 172);
+    color: var(--link-hover-color);
 }
 
 a:active {
-    color: rgb(70, 104, 165);
+    color: var(--link-active-color); 
 }
 
 a:visited {
-    color: cornflowerblue;
+    color: var(--link-visited-color);
 }
 
 header {
@@ -48,9 +116,9 @@ header {
     z-index: 100;
     display: flex;
     /* background-color: whitesmoke; */
-    background-color: rgb(247, 243, 239);
+    background-color: var(--header-bg-color); 
     justify-content: space-between;
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px var(--common-border-color);
 }
 
 .header-menu {
@@ -64,7 +132,7 @@ header {
 .header-menu a {
     display: block;
     margin: 0 1em 0 1em;
-    color: #888888;
+    color: var(--header-menu-color);
 }
 
 .header-menu button {
@@ -74,21 +142,21 @@ header {
 }
 
 .header-menu button:hover {
-    background:rgb(236, 211, 178);
+    background: var(--button-hover-color);
     border-radius: 5px;
 }
 
 .header-logo a {
-    color: black;
+    color: var(--header-logo-color);
 }
 
 header a:hover {
-    color: black;
+    color: var(--header-logo-color);
     text-decoration: none;
 }
 
 header a:visited {
-    color: black;
+    color: var(--header-logo-color);
     text-decoration: none;
 }
 
@@ -100,28 +168,28 @@ code {
 }
 
 pre {
-    border: solid 1px whitesmoke;
+    border: solid 1px var(--common-border-color);
+    background-color: var(--pre-bg-color);
     padding: 1rem;
     overflow-x: auto;
-    background: white;
     border-radius: 0.3125rem;
     font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     font-size: 0.875rem;
 }
 
 footer {
-    border-top: solid 1px #dedede;
+    border-top: solid 1px var(--common-border-color);
     font-size: 1rem;
     padding: 1rem 1rem 1rem 3rem;
     border-radius: 0.3125rem 0.3125rem 0 0;
     text-align: center;
-    background: rgba(0, 0, 0, 0.048);
-    color: rgb(94, 94, 94);
+    background: var(--footer-bg-color);
+    color: var(--footer-color);
 }
 
 body {
     margin: 0;
-    background-color: white;
+    background-color: var(--body-bg-color);
     font-family: -apple-system, "Fira Sans", "Noto Sans", "Noto Sans CJK SC", "Source Han Sans CN", "Noto Color Emoji", "Segoe UI", Roboto, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
@@ -132,7 +200,7 @@ main {
 
 .post-front-matter {
     border-radius: 0.3125rem 0.3125rem 0 0;
-    background-color: rgba(255, 255, 255, 0.644);
+    background-color: var(--post-frontmatter-bg-color);
     padding: 1em 2em 1em 2em;
 }
 
@@ -147,11 +215,11 @@ main {
 }
 
 .post-area blockquote {
-    border-left: 0.3125rem solid #888888;
+    border-left: 0.3125rem solid var(--block-quote-color);
     margin: 1ex 0 1ex 0;
     padding: 0 1ex 0 1ex;
     font-style: normal;
-    color: #888888;
+    color: var(--block-quote-color);
 }
 
 .post-area table {
@@ -174,7 +242,7 @@ tbody tr:last-child th:last-child {
 }
 
 tr.header {
-    background: rgb(236, 211, 178) !important;
+    background: var(--tr-header-bg-color) !important;
 }
 
 tr.header th:first-child {
@@ -188,11 +256,11 @@ td, th {
 }
 
 table tr:nth-child(odd) {
-    background: antiquewhite;
+    background: var(--tr-odd-child-color);
 }
 
 table tr:nth-child(even) {
-    background: rgb(252, 243, 232)
+    background: var(--tr-even-child-color); 
 }
 
 figure {
@@ -201,7 +269,7 @@ figure {
 
 figure figcaption {
     font-size: 0.875rem;
-    color: dimgray;
+    color: var(--figure-caption-color);
     text-align: center;
 }
 
@@ -211,8 +279,8 @@ img {
 
 .post-area {
     max-width: 50em;
-    background: rgb(247, 243, 239);
-    border: solid 1px #dedede;
+    background: var(--content-bg-color);
+    border: solid 1px var(--common-border-color);
     margin: 0 auto 0 auto;
 }
 
@@ -237,17 +305,17 @@ img {
 
 .category {
     display: inline-block;
-    background: rgba(60, 40, 60);
+    background: var(--common-font-color);
     padding: 0.2em 0.4em 0.2em 0.4em;
     border-radius: 0.3125rem;
     margin-right: 0.1em;
     margin-bottom: 0.1em;
-    color: white;
+    color: var(--body-bg-color);
 }
 
 .tag {
     display: inline-block;
-    background: rgb(255, 255, 255);
+    background: var(--body-bg-color);
     padding: 0.2em 0.4em 0.2em 0.4em;
     border-radius: 0.3125rem;
     margin-right: 0.1em;
@@ -255,7 +323,7 @@ img {
 
 .date {
     font-size: 0.875rem;
-    color: darkgrey;
+    color: var(--common-secondary-color);
 }
 
 .date-bar {
@@ -270,7 +338,7 @@ img {
 }
 
 .archive-list a {
-    color: black;
+    color: var(--archive-list-a-color);
 }
 
 .archive-list>ul {
@@ -288,7 +356,7 @@ img {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px var(--common-border-color);
 }
 
 .archive-item {
@@ -302,7 +370,7 @@ img {
 
 .archive-list>.sibling-pages {
     border-radius: 0.3125rem;
-    background: white;
+    background: var(--body-bg-color);
     margin: 1ex 1ex 1ex 1ex;
     padding: 2ex 0 2ex 0;
     width: unset;
@@ -330,17 +398,17 @@ img {
 }
 
 .archive-item-information {
-    color: darkgray;
+    color: var(--common-secondary-color);
     padding: 0.2ex 0.2ex 1ex 0.2ex;
 }
 
 .archive-item-link {
     text-decoration: none;
-    color: black;
+    color: var(--common-font-color);
 }
 
 .archive-item-link::hover {
-    color: rgba(34, 33, 30, 0.63);
+    color: var(--link-archive-hover-color);
 }
 
 .katex-display {
@@ -352,7 +420,7 @@ img {
     width: 100%;
     display: flex;
     justify-content: space-around;
-    background: white;
+    background: var(--body-bg-color);
     border-radius: 0 0 0.3125rem 0.3125rem;
     padding: 2ex 0 2ex 0;
     flex-direction: row;
@@ -389,7 +457,7 @@ img {
 
 .sibling-page-date {
     height: 2.1ex;
-    color: rgb(70, 96, 146);
+    color: var(--link-active-color);
 }
 
 #fullscreen-img-container {
@@ -437,7 +505,7 @@ img {
     text-align: center;
     line-height: 3rem;
     height: 3rem;
-    background-color: #dedede;
+    background-color: var(--footer-bg-color);
     border-radius: 5px;
     cursor: pointer;
 }
@@ -476,9 +544,9 @@ img {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: gray;
+    color: var(--archive-content-color);
     padding: 3rem;
-    border-bottom: solid 1px #dedede;
+    border-bottom: solid 1px var(--common-border-color);
     font-size: 1.5rem;
 }
 
@@ -488,5 +556,5 @@ img {
 }
 
 .archive-rss-feed>a {
-    color: darkgray;
+    color: var(--link-visited-color);
 }
