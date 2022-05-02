@@ -37,10 +37,11 @@
 </div>
 
 <div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
     <a href="//nth233.top/about/">About</a>
     <a href="//nth233.top/feed.xml">RSS</a>
     <!--<a href="//nth233.top/friends.html">Friends</a>-->
-    <button id="theme-switch">🅣 theme</button>
+    <button id="theme-switch">🅣</button>
 </div>
 
 </header>
@@ -91,15 +92,15 @@ href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。
 <h3 id="数学公式">数学公式</h3>
 <p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
 <p>在<code>theme/layouts/partials</code>里添加一个<code>katex.html</code>，内容如下：</p>
-<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
-    <span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-        <span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span> <span class="p">{</span>
-            <span class="nx">delimiters</span><span class="o">:</span> <span class="p">[</span>
-              <span class="p">{</span><span class="nx">left</span><span class="o">:</span> <span class="s2">&quot;$$&quot;</span><span class="p">,</span> <span class="nx">right</span><span class="o">:</span> <span class="s2">&quot;$$&quot;</span><span class="p">,</span> <span class="nx">display</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span>
-              <span class="p">{</span><span class="nx">left</span><span class="o">:</span> <span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="nx">right</span><span class="o">:</span> <span class="s2">&quot;$&quot;</span><span class="p">,</span> <span class="nx">display</span><span class="o">:</span> <span class="kc">false</span><span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">});</span>
-    <span class="p">});</span>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="w"></span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nx">delimiters</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
+<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span><span class="w"></span>
+<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="p">]</span><span class="w"></span>
+<span class="w">        </span><span class="p">});</span><span class="w"></span>
+<span class="w">    </span><span class="p">});</span><span class="w"></span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;</span>
 <span class="cm">&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;</span>
@@ -143,30 +144,30 @@ Font。在<code>head.html</code>加入：</p>
 <p>我习惯使用Typora作为markdown编辑器。当我把图片粘贴进来是，Typora就会把图片从剪贴板保存到<code>./${filename}</code>中，很方便，但是这样与hugo查找图片的方式冲突了。</p>
 <p>为了方便，只好用Js。现学了一点js后，编写了以下代码。虽然此策不优雅，但是还算能用。</p>
 <p>在<code>static/js</code>里面添加一个js文件：</p>
-<div class="highlight"><pre><span></span><span class="c1">// replace image source</span>
-<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">imgs</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kd">var</span> <span class="nx">img</span> <span class="o">=</span> <span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
-        <span class="kd">var</span> <span class="nx">temp_arr</span> <span class="o">=</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
-        <span class="kd">var</span> <span class="nx">repl</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-        <span class="kd">var</span> <span class="nx">flag</span> <span class="o">=</span> <span class="kc">false</span><span class="p">;</span>
-        <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="mf">0</span><span class="p">;</span><span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">&gt;=</span> <span class="mf">2</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;posts&#39;</span> <span class="o">&amp;&amp;</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span> <span class="o">==</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span> <span class="p">{</span>
-                <span class="nx">flag</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
-                <span class="k">continue</span><span class="p">;</span>
-            <span class="p">}</span>
-            <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
-            <span class="k">if</span><span class="p">(</span><span class="nx">j</span> <span class="o">!=</span> <span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mf">1</span><span class="p">)</span> <span class="p">{</span> 
-                <span class="nx">repl</span> <span class="o">=</span> <span class="nx">repl</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-        <span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
-            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replace &#39;</span> <span class="o">+</span> <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">+</span> <span class="s1">&#39; to &#39;</span> <span class="o">+</span> <span class="nx">repl</span><span class="p">);</span>
-            <span class="nx">img</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">repl</span><span class="p">;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<div class="highlight"><pre><span></span><span class="c1">// replace image source</span><span class="w"></span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">imgs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">temp_arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="nx">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="nx">j</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;posts&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">                </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">                </span><span class="k">continue</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">            </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="w"></span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="nx">j</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
+<span class="w">                </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span><span class="w"></span>
+<span class="w">            </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replace &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; to &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">repl</span><span class="p">);</span><span class="w"></span>
+<span class="w">            </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 
 <p>然后把它添加到配置文件的customJs中，即可。</p>
