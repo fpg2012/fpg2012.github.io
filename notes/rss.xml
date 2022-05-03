@@ -15,8 +15,8 @@
     
     
     
-    <pubDate>Mon, 02 May 2022 08:58:53 GMT</pubDate>
-    <lastBuildDate>Mon, 02 May 2022 08:58:53 GMT</lastBuildDate>
+    <pubDate>Tue, 03 May 2022 05:28:33 GMT</pubDate>
+    <lastBuildDate>Tue, 03 May 2022 05:28:33 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
@@ -116,6 +116,32 @@
           <category>考研</category>
         
           <category>English</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>高数（下）笔记</title>
+      <link>https://nth233.top/notes/gaoshu_2.html</link>
+      
+      <description>记录高数的一些概念、解法和证明</description>
+      
+      <pubDate>2020-02-26</pubDate>
+      <guid>6637772292655270122</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>math</category>
+        
+          <category>笔记</category>
+        
+          <category>数学</category>
         
       
     </item>
