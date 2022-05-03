@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Tue, 03 May 2022 05:28:33 GMT</pubDate>
-    <lastBuildDate>Tue, 03 May 2022 05:28:33 GMT</lastBuildDate>
+    <pubDate>Tue, 03 May 2022 16:38:40 GMT</pubDate>
+    <lastBuildDate>Tue, 03 May 2022 16:38:40 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>Jacobian Matrix笔记</title>
+      <link>https://nth233.top/notes/jacobian_simple_proof.html</link>
+      
+      <description>之前学高数的时候最怕的就是用雅可比矩阵〔Jacobian Matrix〕，只觉得形式难记，意义也不明。根本原因就是学的时候*自己没有推*，老师也没有细讲，作业也不怎么需要泳道，于是稀里糊涂就过去了。复习的时候发现只要推一下就不难，不推则永远没法搞懂。</description>
+      
+      <pubDate>2022-05-03</pubDate>
+      <guid>2688686019967948108</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>math</category>
+        
+          <category>雅可比矩阵</category>
+        
+      
+    </item>
     
     
     
