@@ -10,9 +10,39 @@ comment: true
 
 记录写题碰到的生词，以真题为主。尽量日更，若没有日更，请催更。
 
+## 2012
+
+> 2022-05-04 created
+
+1. legitimacy n. 合法性，正统性
+2. code n. 法典，法规；代码，密码
+3. framer n. 组成者
+4. envision vt. 想象，展望
+5. resort n. 度假圣地；诉诸，采取
+6. evade vi. 逃脱，逃避；回避 "evaded the real issues"
+7. amiable adj. 和蔼的，亲切的 /'eimi.abl/
+8. lest conj. 〈正式〉以免 "hesitant to speak out lest he be fired"
+9. exert vt. 施加，运用，行使 "the force is exerted sideways" "the force is exerted sideways" "exerted a bad influence on his students"
+10. plead vi. /pled/ 抗辩，辩护，陈述案情，恳求 "plead not guilty"
+11. steer vt. & vi. 掌舵，引导
+12. virtuous adj. 品行端正的，德高望重的 /verchu.es/ - virtue
+13. haze n. 烟雾，迷雾；vt. 使笼罩在雾中
+14. stun n. 震惊；晕眩；vt. 使昏迷，打昏
+15. stunning adj. 令人震惊的，极有魅力的
+16. affirm vt. 断言；申明；
+17. defy vt. 蔑视，违抗；使无法 "defy public opinion" "in trouble for defying a court order" "the paintings defy classification" "defied us to name a better movie"
+18. deception n. 欺骗；骗术 - deceive
+
+### 词组
+
+1. code of conduct 行动准则
+2. resort to 诉诸于，采取 "have resort to outside help" 
+
+
 ## 2015
 
 > 2022-04-21 created
+> 2022-05-04 corrected
 
 1. kinship n. 亲属关系
 2. disruptive adj. 捣乱的，扰乱性的；革新的 "a disruptive weather pattern" - disrupt, disruption
@@ -31,7 +61,7 @@ comment: true
 15. sweeping adj. 影响广泛的
 16. manuscript n. 手稿
 17. editorial n. 社论
-18. impell vt. 驱使，促使
+18. impel vt. 驱使，促使
 19. reproduction n. 复制，重现，繁殖
 20. literate adj. 识字的；精通的
 21. diminish vt. 使变少/变小/变弱
