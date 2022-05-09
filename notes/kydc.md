@@ -13,6 +13,7 @@ comment: true
 ## 2012
 
 > 2022-05-04 created
+> 2022-05-08 updated
 
 1. legitimacy n. 合法性，正统性
 2. code n. 法典，法规；代码，密码
@@ -32,6 +33,15 @@ comment: true
 16. affirm vt. 断言；申明；
 17. defy vt. 蔑视，违抗；使无法 "defy public opinion" "in trouble for defying a court order" "the paintings defy classification" "defied us to name a better movie"
 18. deception n. 欺骗；骗术 - deceive
+19. impulse n. 脉冲；冲动；动力 - impulsive - impulsion
+20. fleeting adj. 飞逝的，短暂的 "... the often fleeting nature of fame and fortune ..." - fleet adj. 快速的，敏捷的 n. fleet 船队，车队 - fleet of foot 走得快的
+21. visionary adj. 有远见的，（复数）visionaries 幻想家，有远见者 - vision
+22. explicate vt. 详细分析，解释 - explicatory/explicable adj. - explication, eplicator n.
+23. bewilder vt. 使迷惑，使糊涂 "bewildered by the city's maze of roads" "His decision bewildered her" - bewilderment
+24. courtship n. 求爱期
+25. innate adj. 先天的，固有的，天然的
+26. dictate vt. 命令；支配，影响；n. 命令 "Choices is often dictated by availability" - dictator 独裁者
+27. lineage n. 血统 /liniidj/
 
 ### 词组
 
