@@ -13,11 +13,35 @@
     
     
     
-    <pubDate>Mon, 09 May 2022 15:21:55 GMT</pubDate>
-    <lastBuildDate>Mon, 09 May 2022 15:21:55 GMT</lastBuildDate>
+    <pubDate>Sat, 14 May 2022 16:41:33 GMT</pubDate>
+    <lastBuildDate>Sat, 14 May 2022 16:41:33 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
+    
+    <item>
+      <title>SVD的理解</title>
+      <link>https://nth233.top/posts/2022-05-14-SVD的理解/index.html</link>
+      
+      <description>奇异值分解〔SVD，Singular Value Decomposition〕在不少方面有应用，不过初看的话不太容易理解。本文整理了我对SVD的理解，难免存在不严谨的地方，不过希望可以帮助读者理解SVD。</description>
+      
+      <pubDate>2022-05-14</pubDate>
+      <guid>9964790179642870328</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>math</category>
+        
+          <category>线性代数</category>
+        
+          <category>SVD</category>
+        
+      
+    </item>
     
     <item>
       <title>Blog迁移之路的终点</title>
