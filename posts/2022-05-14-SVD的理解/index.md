@@ -355,11 +355,11 @@ array([[0.89442719, 0.4472136 ],
        [0.4472136 , 1.34164079]])
 ```
 
-可以把它的图像画出来，如下图，访问[这里](asset/geogebra-export.html)可以进行交互。可以看到只是做了个旋转罢了，这就是极分解做的事情。
+可以把它的图像画出来，如下图，访问[这里](asset/svd.html)可以进行交互。可以看到只是做了个旋转罢了，这就是极分解做的事情。
 
 ![最后一个例子](geogebra-export.png)
 
-顺便可以通过[可交互的图](asset/geogebra-export.html)验证一下SVD的结果和画出来的图是否相合。
+顺便可以通过[可交互的图](asset/svd.html)验证一下SVD的结果和画出来的图是否相合。
 
 ```python
 U, Sigma, VT = np.linalg.svd(np.array([[1, 1], [0,1]]))
