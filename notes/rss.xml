@@ -15,8 +15,8 @@
     
     
     
-    <pubDate>Sun, 15 May 2022 03:38:19 GMT</pubDate>
-    <lastBuildDate>Sun, 15 May 2022 03:38:19 GMT</lastBuildDate>
+    <pubDate>Fri, 27 May 2022 05:42:28 GMT</pubDate>
+    <lastBuildDate>Fri, 27 May 2022 05:42:28 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
@@ -166,6 +166,30 @@
           <category>笔记</category>
         
           <category>数学</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>高数笔记</title>
+      <link>https://nth233.top/notes/高數筆記.html</link>
+      
+      <description>陈年高数笔记</description>
+      
+      <pubDate>2019-10-01</pubDate>
+      <guid>4020655897487492925</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>math</category>
+        
+          <category>高数</category>
         
       
     </item>
