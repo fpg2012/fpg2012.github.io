@@ -2,7 +2,7 @@
 layout: about
 comment: true
 category: ["about"]
-tag: ["about"]
+tag: ["about", "friends"]
 no_sibling_bar: true
 date: "2022-04-03"
 title: "About"
@@ -15,3 +15,9 @@ title: "About"
 若要联系我，请发送邮件至我的邮箱[fpg2012@yeah.net](mailto:fpg2012@yeah.net)。
 
 是为about，以上。
+
+---
+
+## Friends
+
+- [Chipen's Blog](https://zsiothsu.github.io)
