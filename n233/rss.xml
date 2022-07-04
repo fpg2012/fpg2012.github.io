@@ -15,57 +15,33 @@
     
     
     
-    <pubDate>Sun, 03 Jul 2022 17:30:45 GMT</pubDate>
-    <lastBuildDate>Sun, 03 Jul 2022 17:30:45 GMT</lastBuildDate>
+    <pubDate>Mon, 04 Jul 2022 00:28:53 GMT</pubDate>
+    <lastBuildDate>Mon, 04 Jul 2022 00:28:53 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
     
     
     <item>
-      <title>Jacobian Matrix笔记</title>
-      <link>https://nth233.top/notes/jacobian_simple_proof.html</link>
+      <title>sushi-gen 0.2.7发布</title>
+      <link>https://nth233.top/n233/2022-07-04-sushi新版本发布.html</link>
       
-      <description>之前学高数的时候最怕的就是用雅可比矩阵〔Jacobian Matrix〕，只觉得形式难记，意义也不明。根本原因就是学的时候*自己没有推*，老师也没有细讲，作业也不怎么需要泳道，于是稀里糊涂就过去了。复习的时候发现只要推一下就不难，不推则永远没法搞懂。</description>
+      <description>sushi-gen 0.2.7发布，添加了一个重要的新功能</description>
       
-      <pubDate>2022-05-03</pubDate>
-      <guid>2688686019967948108</guid>
-      
-        
-          <category>note</category>
-        
-      
+      <pubDate>2022-07-04</pubDate>
+      <guid>13585831975787312704</guid>
       
         
-          <category>math</category>
-        
-          <category>雅可比矩阵</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>TCP拥塞控制</title>
-      <link>https://nth233.top/notes/tcp-congestion-control.html</link>
-      
-      <description>关于TCP的拥塞控制。本文简要概述了为何要引入拥塞控制，拥塞控制面临的问题，以及TCP拥塞控制相关的标准。</description>
-      
-      <pubDate>2022-04-25</pubDate>
-      <guid>4933463398164955399</guid>
-      
-        
-          <category>note</category>
+          <category>233</category>
         
       
       
         
-          <category>computer</category>
+          <category>233</category>
         
-          <category>计算机网络</category>
+          <category>破事水</category>
         
-          <category>TCP/IP</category>
+          <category>sushi更新</category>
         
       
     </item>
@@ -73,13 +49,13 @@
     
     
     <item>
-      <title>一道积分：利用分部积分和三角换元</title>
-      <link>https://nth233.top/notes/mathproblem1.html</link>
+      <title>第一条破事水</title>
+      <link>https://nth233.top/n233/firstn322.html</link>
       
-      <description>利用分部积分和三角换元，也许是硬算</description>
+      <description>第一条破事水</description>
       
-      <pubDate>2022-04-16</pubDate>
-      <guid>6824165857437878619</guid>
+      <pubDate>2022-07-03</pubDate>
+      <guid>6465464542962196894</guid>
       
         
           <category>other</category>
@@ -87,109 +63,9 @@
       
       
         
-          <category>math</category>
+          <category>233</category>
         
-          <category>积分</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>为什么我积出来和答案不一样？——关于arcsin的积分</title>
-      <link>https://nth233.top/notes/mathproblem2/index.html</link>
-      
-      <description>arcsin的神奇性质</description>
-      
-      <pubDate>2022-04-16</pubDate>
-      <guid>15390027456873187544</guid>
-      
-        
-          <category>other</category>
-        
-      
-      
-        
-          <category>math</category>
-        
-          <category>积分</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>考研真题词单</title>
-      <link>https://nth233.top/notes/kydc.html</link>
-      
-      <description>记录写题碰到的生词，以真题为主。尽量日更，若没有日更，请催更。</description>
-      
-      <pubDate>2022-04-12</pubDate>
-      <guid>661089738070668370</guid>
-      
-        
-          <category>note</category>
-        
-      
-      
-        
-          <category>word</category>
-        
-          <category>考研</category>
-        
-          <category>English</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>高数（下）笔记</title>
-      <link>https://nth233.top/notes/gaoshu_2.html</link>
-      
-      <description>记录高数的一些概念、解法和证明</description>
-      
-      <pubDate>2020-02-26</pubDate>
-      <guid>6637772292655270122</guid>
-      
-        
-          <category>note</category>
-        
-      
-      
-        
-          <category>math</category>
-        
-          <category>笔记</category>
-        
-          <category>数学</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>高数笔记</title>
-      <link>https://nth233.top/notes/高數筆記.html</link>
-      
-      <description>陈年高数笔记</description>
-      
-      <pubDate>2019-10-01</pubDate>
-      <guid>4020655897487492925</guid>
-      
-        
-          <category>note</category>
-        
-      
-      
-        
-          <category>math</category>
-        
-          <category>高数</category>
+          <category>破事水</category>
         
       
     </item>
