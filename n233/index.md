@@ -1,6 +1,6 @@
 ---
 layout: archive
-title: notes
+title: 破事水
 paginate: sitetree.n233._list
 paginate_batch: 100
 keywords: ["233", "daily", "theme", "sushi", "letter", "sushi-theme-letter", "ssushi", "demo", "blog", "generator", "nth233"]
