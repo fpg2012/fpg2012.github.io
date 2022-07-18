@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 阿里云轻量应用服务器开swap——乱水</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="之前的云服务器到期了，这次看阿里新加坡的轻量应用服务器价格不错，就买了。但是到手之后发现如果启动mc服务器，服务器的内存有时会有些不足。大概是因为服务器加载新区块的时候可能会突然增加一些内存需求。然而系统内存不够用，服务端就崩掉了。此时一般都会想到开swap文件，方便系统在缺内存的时候把一些进程suspend，swap到交换空间里面。然而谁知道阿里的这个破镜像竟然没有自带`mkswap`和`swapon`这种基础命令。因此需要手动安装。我用debian，所以下面的内容都针对debian（理论上debian系的都一样）">
+        
+
+        
+        <meta name="keywords" content="note,云服务,破事水,swap">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>阿里云轻量应用服务器开swap——乱水</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-07-19</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔note〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#note</span>
+    
+        <span class="tag">#云服务</span>
+    
+        <span class="tag">#破事水</span>
+    
+        <span class="tag">#swap</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <h2 id="起因">起因</h2>
+<p>之前的云服务器到期了，这次看阿里新加坡的轻量应用服务器价格不错，就买了。但是到手之后发现如果启动mc服务器，服务器的内存有时会有些不足。大概是因为服务器加载新区块的时候可能会突然增加一些内存需求。然而系统内存不够用，服务端就崩掉了。</p>
+<p>此时一般都会想到开swap文件，方便系统在缺内存的时候把一些进程suspend，swap到交换空间里面。然而谁知道阿里的这个破镜像竟然没有自带<code>mkswap</code>和<code>swapon</code>这种基础命令。因此需要手动安装。我用debian，所以下面的内容都针对debian（理论上debian系的都一样）</p>
+<h2 id="流程">流程</h2>
+<div class="highlight"><pre><span></span>sudo apt reinstall util-linux
+</pre></div>
+
+<p>然后新建一个4G大小的空文件</p>
+<div class="highlight"><pre><span></span>sudo fallocate -l 1G /swapfile
+</pre></div>
+
+<blockquote>
+<p>或者也可以用<code>dd</code>.</p>
+<div class="highlight"><pre><span></span><span class="nv">sudo</span> <span class="nv">dd</span> <span class="k">if</span><span class="o">=/</span><span class="nv">dev</span><span class="o">/</span><span class="nv">zero</span> <span class="nv">of</span><span class="o">=/</span><span class="nv">swapfile</span> <span class="nv">bs</span><span class="o">=</span><span class="mi">1024</span> <span class="nv">count</span><span class="o">=</span><span class="mi">1</span><span class="nv">G</span>
+</pre></div>
+
+<p><code>bs</code>表示一次操作的字节数。</p>
+<p>有空我可以整理一下<code>dd</code>的常见用法。</p>
+</blockquote>
+<p>接着修改权限</p>
+<div class="highlight"><pre><span></span>sudo chmod 600 /swapfile
+</pre></div>
+
+<p>然后<code>mkswap</code></p>
+<div class="highlight"><pre><span></span>sudo mkswap /swapfile
+</pre></div>
+
+<p>接下来就可以启用了</p>
+<div class="highlight"><pre><span></span>sudo swapon /swapfile
+</pre></div>
+
+<h2 id="调整swappiness">调整<code>swappiness</code></h2>
+<p>理论上至此应该完成了，但是阿里的镜像中默认把swappiness参数调成了0，这会导致内核根本不会使用swap。所以需要把这个参数调整到大于0的某个值，比如60。数字越高，表示swap使用策略越激进。</p>
+<div class="highlight"><pre><span></span>sudo sysctl vm.swappiness=50
+</pre></div>
+
+<h2 id="额外操作">额外操作</h2>
+<p>如果要停止使用交换文件，使用<code>swapoff</code>。</p>
+<div class="highlight"><pre><span></span>sudo swapoff -v /swapfile
+</pre></div>
+
+<p>另外，按上述方式配置，每次服务器重启都得重新手动启动swap。如果要开机自动启用交换文件，可以修改<code>/etc/fstab</code>。添加下面这行，这样每次开机都会自动挂上交换文件。</p>
+<div class="highlight"><pre><span></span>/swapfile   swap    swap    default 0   0
+</pre></div>
+
+<h2 id="关于swap的讨论">关于swap的讨论</h2>
+<p>swap其实并不能完美解决内存不足的问题，一旦涉及到硬盘I/O，很多工作都会变得很慢。不过我的目的只是让mc服务器这个内存占用大户在偶尔需要大量内存的时候，不至于因为内存不足而直接崩掉。那么swap已经让我达到目的了。</p>
+<h2 id="参考">参考</h2>
+<p>本文的内容并非十分的“原创”，参考了以下来源</p>
+<ul>
+<li><a href="https://linuxize.com/post/create-a-linux-swap-file/">Create
+a Linux Swap File - linuxize</a></li>
+<li><a href="https://access.redhat.com/solutions/103833">What does
+swappiness do and how does it affect swap_tendency?</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Util-linux">util-linux -
+wikipedia</a></li>
+</ul>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/notes/jacobian_simple_proof.html">Jacobian ...</a></div>
+        <div class="sibling-page-date">2022-05-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/jacobian_simple_proof.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>
