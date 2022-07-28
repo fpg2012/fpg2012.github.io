@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Mon, 18 Jul 2022 16:19:00 GMT</pubDate>
-    <lastBuildDate>Mon, 18 Jul 2022 16:19:00 GMT</lastBuildDate>
+    <pubDate>Thu, 28 Jul 2022 10:46:23 GMT</pubDate>
+    <lastBuildDate>Thu, 28 Jul 2022 10:46:23 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>双曲函数和反双曲函数笔记</title>
+      <link>https://nth233.top/notes/sinh.html</link>
+      
+      <description>双曲函数的相关内容偶尔要用，却经常忘记，尤其是反双曲函数的表达式，以及和它们相关的积分</description>
+      
+      <pubDate>2022-07-28</pubDate>
+      <guid>1356510578629807706</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>note</category>
+        
+          <category>math， 双曲函数</category>
+        
+      
+    </item>
     
     
     
