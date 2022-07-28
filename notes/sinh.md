@@ -1,4 +1,5 @@
 ---
+layout: post
 title: 双曲函数和反双曲函数笔记
 description: 双曲函数的相关内容偶尔要用，却经常忘记，尤其是反双曲函数的表达式，以及和它们相关的积分
 tag: [note, math， 双曲函数]
