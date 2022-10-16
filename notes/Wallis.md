@@ -19,8 +19,8 @@ $$
 $$
 \begin{aligned}
 & S_n = \frac{n-1}{n}S_{n-2} \\
-& S_0 = 0 \\
-& S_1 = \frac{\pi}{2}
+& S_0 = \frac{\pi}{2} \\
+& S_1 = 1
 \end{aligned}
 $$
 
