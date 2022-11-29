@@ -90,24 +90,24 @@ href="https://www.zhihu.com/question/49997128/answer/119951802">BMCL作者的说
 </ol>
 <h3 id="mc的目录结构">MC的目录结构</h3>
 <p>举个例子：</p>
-<div class="highlight"><pre><span></span><span class="na">.minecraft</span><span class="err">/</span><span class="w"></span>
-<span class="w">    </span><span class="nf">assets</span><span class="err">/</span><span class="w"></span>
-<span class="w">        </span><span class="nf">indexes</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面有一些以版本号命名的json</span>
-<span class="w">        </span><span class="nf">objects</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面都是乱七八糟的东西</span>
-<span class="w">    </span><span class="nf">libraries</span><span class="err">/</span><span class="w">                 </span><span class="c1">// 里面是MC运行所依赖的jar包，按照包名建好了一层一层的文件夹</span>
-<span class="w">    </span><span class="nf">logs</span><span class="err">/</span><span class="w">                      </span><span class="c1">// 顾名思义，都是日志文件 </span>
-<span class="w">    </span><span class="nf">resourcepacks</span><span class="err">/</span><span class="w">             </span><span class="c1">// 顾名思义，都是资源包，也叫材质包</span>
-<span class="w">    </span><span class="nf">saves</span><span class="err">/</span><span class="w">                     </span><span class="c1">// 顾名思义，里面放存档</span>
-<span class="w">    </span><span class="nf">screenshots</span><span class="err">/</span><span class="w">               </span><span class="c1">// 顾名思义，里面放截屏</span>
-<span class="w">    </span><span class="nf">versions</span><span class="err">/</span><span class="w">                  </span><span class="c1">// 放置不同版本的minecraft主程序</span>
-<span class="w">        </span><span class="err">1</span><span class="nf">.7.2</span><span class="err">/</span><span class="w"></span>
-<span class="w">            </span><span class="err">1</span><span class="nf">.7.2.jar</span><span class="w">              </span><span class="c1">// 1.7.2版本的minecraft主程序</span>
-<span class="w">            </span><span class="err">1</span><span class="nf">.7.2.json</span><span class="w">             </span><span class="c1">// 列出了所依赖的jar包及其下载地址。这些jar包在libraries中可找到</span>
-<span class="w">        </span><span class="err">1</span><span class="nf">.7.10</span><span class="err">/</span><span class="w"></span>
-<span class="w">            </span><span class="err">1</span><span class="nf">.7.10.jar</span><span class="w"></span>
-<span class="w">            </span><span class="err">1</span><span class="nf">.7.10.json</span><span class="w"></span>
-<span class="w">    </span><span class="nf">options.txt</span><span class="w">                </span><span class="c1">// minecraft游戏的具体设置，比如鼠标灵敏度、键盘控制等等</span>
-<span class="w">    </span><span class="nf">usercache.json</span><span class="w">             </span><span class="c1">// 玩家信息的缓存，内含游戏名、uuid、最后登陆时间</span>
+<div class="highlight"><pre><span></span>.minecraft/
+    assets/
+        indexes/                 // 里面有一些以版本号命名的json
+        objects/                 // 里面都是乱七八糟的东西
+    libraries/                 // 里面是MC运行所依赖的jar包，按照包名建好了一层一层的文件夹
+    logs/                      // 顾名思义，都是日志文件 
+    resourcepacks/             // 顾名思义，都是资源包，也叫材质包
+    saves/                     // 顾名思义，里面放存档
+    screenshots/               // 顾名思义，里面放截屏
+    versions/                  // 放置不同版本的minecraft主程序
+        1.7.2/
+            1.7.2.jar              // 1.7.2版本的minecraft主程序
+            1.7.2.json             // 列出了所依赖的jar包及其下载地址。这些jar包在libraries中可找到
+        1.7.10/
+            1.7.10.jar
+            1.7.10.json
+    options.txt                // minecraft游戏的具体设置，比如鼠标灵敏度、键盘控制等等
+    usercache.json             // 玩家信息的缓存，内含游戏名、uuid、最后登陆时间
 </pre></div>
 
 <h3 id="启动参数说明">启动参数说明</h3>

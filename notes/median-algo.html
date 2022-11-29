@@ -81,20 +81,20 @@
 <li>若(k = n/2 )，那么(x)就是中位数</li>
 </ol>
 <p>()伪代码如下</p>
-<div class="highlight"><pre><span></span><span class="k">partition</span><span class="p">(</span><span class="n">A</span><span class="err">[]</span><span class="p">,</span><span class="w"> </span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
-<span class="w">    </span><span class="n">p_i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">random</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">等概率在</span><span class="o">[</span><span class="n">l, r)中选取一个整数</span>
-<span class="n">    swap(A[r-1</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="o">[</span><span class="n">p_i</span><span class="o">]</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="k">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="o">[</span><span class="n">r-1</span><span class="o">]</span><span class="w"></span>
-<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">A</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="k">pivot</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">            </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="w"></span>
-<span class="w">            </span><span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">)</span><span class="w"></span>
-<span class="w">        </span><span class="err">}</span><span class="w"></span>
-<span class="w">        </span><span class="o">++</span><span class="n">j</span><span class="w"></span>
-<span class="w">    </span><span class="err">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">//</span><span class="w"> </span><span class="n">返回分块后主元的位置</span><span class="w"></span>
-<span class="err">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span>partition(A[], l, r) {
+    i = l-1, j = l
+    p_i = random(l, r) // 等概率在[l, r)中选取一个整数
+    swap(A[r-1], A[p_i])
+    pivot = A[r-1]
+    while (j &lt; r) {
+        if (A[j] &lt;= pivot) {
+            i = i + 1
+            swap(A[j], A[i])
+        }
+        ++j
+    }
+    return i // 返回分块后主元的位置
+}
 </pre></div>
 
 <p>下面分析时间复杂度，可以得到递归式</p>

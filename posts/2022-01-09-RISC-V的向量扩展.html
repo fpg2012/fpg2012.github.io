@@ -94,12 +94,12 @@ Harmful》一文中，Patterson和Waterman提出了以下理由，说明为什�
 </ol>
 <p>SIMD指令本质上缺乏灵活性，因此随着指令架构的演进不可避免地变得非常庞大、复杂。比如，Intel的IA-32从1978年至今从80条指令演化到了1400条指令，这么大数量的增加很大程度上是为了SIMD指令。对比Intel的指令集文档和RISC-V的文档页数，前者不仅分成好几卷，一卷基本上就有几千页，后者总共核心内容只有几十页，总共加在一起应该也没有500页。SIMD指令很大程度上使得指令级非常复杂，并且复杂程度很可能随着架构演进，还要继续增加。</p>
 <p>关于第三点，两位作者对一个平凡而简单的程序进行了分析，统计指令的数量，假设n=1000</p>
-<div class="highlight"><pre><span></span><span class="w">    </span><span class="n">void</span><span class="w"> </span><span class="n">daxpy</span><span class="p">(</span><span class="n">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">const</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">x</span><span class="err">[]</span><span class="p">,</span><span class="w"> </span><span class="k">double</span><span class="w"> </span><span class="n">y</span><span class="err">[]</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="err">{</span><span class="w"></span>
-<span class="w">     </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="err">{</span><span class="w"></span>
-<span class="w">       </span><span class="n">y</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="o">*</span><span class="n">x</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span><span class="w"></span>
-<span class="w">     </span><span class="err">}</span><span class="w"></span>
-<span class="w">    </span><span class="err">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span>    void daxpy(size_t n, double a, const double x[], double y[])
+    {
+     for (size_t i = 0; i &lt; n; i++) {
+       y[i] = a*x[i] + y[i];
+     }
+    }
 </pre></div>
 
 <p><img
@@ -134,12 +134,12 @@ Engheim的文章），不同于SIMD，一次只使用一个ALU，只对一对元
 
 <p>从内存中加载向量使用<code>vl</code>系列指令，写回内存中使用<code>vs</code>系列指令。加载和写回都有三种寻址方式，如同课上说过的，unit-stride（单位步长）、stride（常数步长）、indexed（索引）。第一种指定位置开始，一次取一个元素。第二种从指定位置开始，先取一个元素，然后走一个给定的步长后再取下一个元素（适合行主序存储时取列），索引则需要提供另一个向量提供各个元素的偏移量（适合稀疏的数据）。</p>
 <p>spec举例如下。<code>vd</code>代表目标向量寄存器。<code>(rs1)</code>代表主存中的地址，用一个通用寄存器给出，<code>vm</code>是掩码，此处不讨论。</p>
-<div class="highlight"><pre><span></span><span class="n">vle8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 8-bit unit-stride load</span><span class="w"></span>
-<span class="n">vlse8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 8-bit strided load</span><span class="w"></span>
-<span class="n">vle32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 32-bit unit-stride load</span><span class="w"></span>
-<span class="n">vlse32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vm</span><span class="w">    </span><span class="c1"># 32-bit strided load</span><span class="w"></span>
-<span class="n">vluxei8</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vs2</span><span class="p">,</span><span class="w"> </span><span class="n">vm</span><span class="w">  </span><span class="c1"># unorderd 8-bit indexed load of SEW data</span><span class="w"></span>
-<span class="n">vluxei32</span><span class="o">.</span><span class="n">v</span><span class="w"> </span><span class="n">vd</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">rs1</span><span class="p">),</span><span class="w"> </span><span class="n">vs2</span><span class="p">,</span><span class="w"> </span><span class="n">vm</span><span class="w"> </span><span class="c1"># unorderd 32-bit indexed load of SEW data</span><span class="w"></span>
+<div class="highlight"><pre><span></span>vle8.v vd, (rs1), vm    # 8-bit unit-stride load
+vlse8.v vd, (rs1), vm    # 8-bit strided load
+vle32.v vd, (rs1), vm    # 32-bit unit-stride load
+vlse32.v vd, (rs1), vm    # 32-bit strided load
+vluxei8.v vd, (rs1), vs2, vm  # unorderd 8-bit indexed load of SEW data
+vluxei32.v vd, (rs1), vs2, vm # unorderd 32-bit indexed load of SEW data
 </pre></div>
 
 <p>写回内存只需将指令换成对应的<code>vs</code>系列指令。</p>
@@ -154,58 +154,58 @@ vadd.vi vd, vs2, imm, vm # vector add immediate
 <h3 id="简单程序">简单程序</h3>
 <p>上面<code>daxpy</code>函数，Patterson的文章给出了RISC-V指令集和IA-32
 AVX的汇编代码</p>
-<div class="highlight"><pre><span></span><span class="c1"># a0 is n, a1 is pointer to x[0], a2 is pointer to y[0], fa0 is a</span><span class="w"></span>
-<span class="w">  </span><span class="mi">0</span><span class="p">:</span><span class="w">  </span><span class="n">li</span><span class="w"> </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&lt;&lt;</span><span class="mi">25</span><span class="w"></span>
-<span class="w">  </span><span class="mi">4</span><span class="p">:</span><span class="w">  </span><span class="n">vsetdcfg</span><span class="w"> </span><span class="n">t0</span><span class="w">             </span><span class="c1"># enable 2 64b Fl.Pt. registers</span><span class="w"></span>
-<span class="n">loop</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="mi">8</span><span class="p">:</span><span class="w">  </span><span class="n">setvl</span><span class="w">  </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="w">           </span><span class="c1"># vl = t0 = min(mvl, n)</span><span class="w"></span>
-<span class="w">  </span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">vld</span><span class="w">    </span><span class="n">v0</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="w">           </span><span class="c1"># load vector x</span><span class="w"></span>
-<span class="w">  </span><span class="mi">10</span><span class="p">:</span><span class="w">  </span><span class="n">slli</span><span class="w">   </span><span class="n">t1</span><span class="p">,</span><span class="w"> </span><span class="n">t0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w">        </span><span class="c1"># t1 = vl * 8 (in bytes)</span><span class="w"></span>
-<span class="w">  </span><span class="mi">14</span><span class="p">:</span><span class="w">  </span><span class="n">vld</span><span class="w">    </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="w">           </span><span class="c1"># load vector y</span><span class="w"></span>
-<span class="w">  </span><span class="mi">18</span><span class="p">:</span><span class="w">  </span><span class="n">add</span><span class="w">    </span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">a1</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="w">       </span><span class="c1"># increment pointer to x by vl*8</span><span class="w"></span>
-<span class="w">  </span><span class="mi">1</span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">vfmadd</span><span class="w"> </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">v0</span><span class="p">,</span><span class="w"> </span><span class="n">fa0</span><span class="p">,</span><span class="w"> </span><span class="n">v1</span><span class="w">  </span><span class="c1"># v1 += v0 * fa0 (y = a * x + y)</span><span class="w"></span>
-<span class="w">  </span><span class="mi">20</span><span class="p">:</span><span class="w">  </span><span class="n">sub</span><span class="w">    </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">t0</span><span class="w">       </span><span class="c1"># n -= vl (t0)</span><span class="w"></span>
-<span class="w">  </span><span class="mi">24</span><span class="p">:</span><span class="w">  </span><span class="n">vst</span><span class="w">    </span><span class="n">v1</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="w">           </span><span class="c1"># store Y</span><span class="w"></span>
-<span class="w">  </span><span class="mi">28</span><span class="p">:</span><span class="w">  </span><span class="n">add</span><span class="w">    </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">a2</span><span class="p">,</span><span class="w"> </span><span class="n">t1</span><span class="w">       </span><span class="c1"># increment pointer to y by vl*8</span><span class="w"></span>
-<span class="w">  </span><span class="mi">2</span><span class="n">c</span><span class="p">:</span><span class="w">  </span><span class="n">bnez</span><span class="w">   </span><span class="n">a0</span><span class="p">,</span><span class="w"> </span><span class="n">loop</span><span class="w">         </span><span class="c1"># repeat if n != 0</span><span class="w"></span>
-<span class="w">  </span><span class="mi">30</span><span class="p">:</span><span class="w">  </span><span class="n">ret</span><span class="w">                     </span><span class="c1"># return</span><span class="w"></span>
+<div class="highlight"><pre><span></span># a0 is n, a1 is pointer to x[0], a2 is pointer to y[0], fa0 is a
+  0:  li t0, 2&lt;&lt;25
+  4:  vsetdcfg t0             # enable 2 64b Fl.Pt. registers
+loop:
+  8:  setvl  t0, a0           # vl = t0 = min(mvl, n)
+  c:  vld    v0, a1           # load vector x
+  10:  slli   t1, t0, 3        # t1 = vl * 8 (in bytes)
+  14:  vld    v1, a2           # load vector y
+  18:  add    a1, a1, t1       # increment pointer to x by vl*8
+  1c:  vfmadd v1, v0, fa0, v1  # v1 += v0 * fa0 (y = a * x + y)
+  20:  sub    a0, a0, t0       # n -= vl (t0)
+  24:  vst    v1, a2           # store Y
+  28:  add    a2, a2, t1       # increment pointer to y by vl*8
+  2c:  bnez   a0, loop         # repeat if n != 0
+  30:  ret                     # return
 </pre></div>
 
-<div class="highlight"><pre><span></span><span class="c1"># eax is i, n is esi, a is xmm1,</span><span class="w"></span>
-<span class="c1"># pointer to x[0] is ebx, pointer to y[0] is ecx</span><span class="w"></span>
-<span class="w"> </span><span class="mi">0</span><span class="p">:</span><span class="w"> </span><span class="n">push</span><span class="w">   </span><span class="n">esi</span><span class="w"></span>
-<span class="w"> </span><span class="mi">1</span><span class="p">:</span><span class="w"> </span><span class="n">push</span><span class="w">   </span><span class="n">ebx</span><span class="w"></span>
-<span class="w"> </span><span class="mi">2</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">esi</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0xc</span><span class="p">]</span><span class="w">   </span><span class="c1"># esi = n</span><span class="w"></span>
-<span class="w"> </span><span class="mi">6</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">ebx</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x18</span><span class="p">]</span><span class="w">  </span><span class="c1"># ebx = x</span><span class="w"></span>
-<span class="w"> </span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="n">xmm1</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x10</span><span class="p">]</span><span class="w"> </span><span class="c1"># xmm1 = a</span><span class="w"></span>
-<span class="w"> </span><span class="mi">10</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">ecx</span><span class="p">,[</span><span class="n">esp</span><span class="o">+</span><span class="mh">0x1c</span><span class="p">]</span><span class="w">  </span><span class="c1"># ecx = y</span><span class="w"></span>
-<span class="w"> </span><span class="mi">14</span><span class="p">:</span><span class="w"> </span><span class="n">vmovddup</span><span class="w"> </span><span class="n">xmm2</span><span class="p">,</span><span class="n">xmm1</span><span class="w">     </span><span class="c1"># xmm2 = {a,a}</span><span class="w"></span>
-<span class="w"> </span><span class="mi">18</span><span class="p">:</span><span class="w"> </span><span class="n">mov</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="n">esi</span><span class="w"></span>
-<span class="w"> </span><span class="mi">1</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="ow">and</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="mh">0xfffffffc</span><span class="w">  </span><span class="c1"># eax = floor(n/4)*4</span><span class="w"></span>
-<span class="w"> </span><span class="mi">1</span><span class="n">d</span><span class="p">:</span><span class="w"> </span><span class="n">vinsertf128</span><span class="w"> </span><span class="n">ymm2</span><span class="p">,</span><span class="n">ymm2</span><span class="p">,</span><span class="n">xmm2</span><span class="p">,</span><span class="mh">0x1</span><span class="w"> </span><span class="c1"># ymm2 = {a,a,a,a}</span><span class="w"></span>
-<span class="w"> </span><span class="mi">23</span><span class="p">:</span><span class="w"> </span><span class="n">je</span><span class="w">     </span><span class="mi">3</span><span class="n">e</span><span class="w">              </span><span class="c1"># if n &lt; 4 goto Fringe</span><span class="w"></span>
-<span class="w"> </span><span class="mi">25</span><span class="p">:</span><span class="w"> </span><span class="n">xor</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="n">edx</span><span class="w">         </span><span class="c1"># edx = 0</span><span class="w"></span>
-<span class="n">Main</span><span class="w"> </span><span class="n">Loop</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="mi">27</span><span class="p">:</span><span class="w"> </span><span class="n">vmovapd</span><span class="w"> </span><span class="n">ymm0</span><span class="p">,[</span><span class="n">ebx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># load 4 elements of x</span><span class="w"></span>
-<span class="w"> </span><span class="mi">2</span><span class="n">c</span><span class="p">:</span><span class="w"> </span><span class="n">vfmadd213pd</span><span class="w"> </span><span class="n">ymm0</span><span class="p">,</span><span class="n">ymm2</span><span class="p">,[</span><span class="n">ecx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># 4 mul adds</span><span class="w"></span>
-<span class="w"> </span><span class="mi">32</span><span class="p">:</span><span class="w"> </span><span class="n">vmovapd</span><span class="w"> </span><span class="p">[</span><span class="n">ecx</span><span class="o">+</span><span class="n">edx</span><span class="o">*</span><span class="mi">8</span><span class="p">],</span><span class="n">ymm0</span><span class="w"> </span><span class="c1"># store into 4 elements of y</span><span class="w"></span>
-<span class="w"> </span><span class="mi">37</span><span class="p">:</span><span class="w"> </span><span class="n">add</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="mh">0x4</span><span class="w"></span>
-<span class="w"> </span><span class="mi">3</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">edx</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># compare to n</span><span class="w"></span>
-<span class="w"> </span><span class="mi">3</span><span class="n">c</span><span class="p">:</span><span class="w"> </span><span class="n">jb</span><span class="w">     </span><span class="mi">27</span><span class="w">               </span><span class="c1"># repeat loop if &lt; n</span><span class="w"></span>
-<span class="n">Fringe</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="mi">3</span><span class="n">e</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">esi</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># any fringe elements?</span><span class="w"></span>
-<span class="w"> </span><span class="mi">40</span><span class="p">:</span><span class="w"> </span><span class="n">jbe</span><span class="w">    </span><span class="mi">59</span><span class="w">               </span><span class="c1"># if (n mod 4) == 0 go to Done</span><span class="w"></span>
-<span class="n">Fringe</span><span class="w"> </span><span class="n">Loop</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="mi">42</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="n">xmm0</span><span class="p">,[</span><span class="n">ebx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># load element of x</span><span class="w"></span>
-<span class="w"> </span><span class="mi">47</span><span class="p">:</span><span class="w"> </span><span class="n">vfmadd213sd</span><span class="w"> </span><span class="n">xmm0</span><span class="p">,</span><span class="n">xmm1</span><span class="p">,[</span><span class="n">ecx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">]</span><span class="w"> </span><span class="c1"># 1 mul add</span><span class="w"></span>
-<span class="w"> </span><span class="mi">4</span><span class="n">d</span><span class="p">:</span><span class="w"> </span><span class="n">vmovsd</span><span class="w"> </span><span class="p">[</span><span class="n">ecx</span><span class="o">+</span><span class="n">eax</span><span class="o">*</span><span class="mi">8</span><span class="p">],</span><span class="n">xmm0</span><span class="w"> </span><span class="c1"># store into element of y</span><span class="w"></span>
-<span class="w"> </span><span class="mi">52</span><span class="p">:</span><span class="w"> </span><span class="n">add</span><span class="w">    </span><span class="n">eax</span><span class="p">,</span><span class="mh">0x1</span><span class="w">          </span><span class="c1"># increment Fringe count</span><span class="w"></span>
-<span class="w"> </span><span class="mi">55</span><span class="p">:</span><span class="w"> </span><span class="n">cmp</span><span class="w">    </span><span class="n">esi</span><span class="p">,</span><span class="n">eax</span><span class="w">          </span><span class="c1"># compare Loop and Fringe counts</span><span class="w"></span>
-<span class="w"> </span><span class="mi">57</span><span class="p">:</span><span class="w"> </span><span class="n">jne</span><span class="w">    </span><span class="mi">42</span><span class="w"> </span><span class="o">&lt;</span><span class="n">daxpy</span><span class="o">+</span><span class="mh">0x42</span><span class="o">&gt;</span><span class="w">  </span><span class="c1"># repeat FringeLoop if != 0</span><span class="w"></span>
-<span class="n">Done</span><span class="p">:</span><span class="w"></span>
-<span class="w"> </span><span class="mi">59</span><span class="p">:</span><span class="w"> </span><span class="n">pop</span><span class="w">    </span><span class="n">ebx</span><span class="w">              </span><span class="c1"># function epilogue</span><span class="w"></span>
-<span class="w"> </span><span class="mi">5</span><span class="n">a</span><span class="p">:</span><span class="w"> </span><span class="n">pop</span><span class="w">    </span><span class="n">esi</span><span class="w"></span>
-<span class="w"> </span><span class="mi">5</span><span class="n">b</span><span class="p">:</span><span class="w"> </span><span class="n">ret</span><span class="w"></span>
+<div class="highlight"><pre><span></span># eax is i, n is esi, a is xmm1,
+# pointer to x[0] is ebx, pointer to y[0] is ecx
+ 0: push   esi
+ 1: push   ebx
+ 2: mov    esi,[esp+0xc]   # esi = n
+ 6: mov    ebx,[esp+0x18]  # ebx = x
+ a: vmovsd xmm1,[esp+0x10] # xmm1 = a
+ 10: mov    ecx,[esp+0x1c]  # ecx = y
+ 14: vmovddup xmm2,xmm1     # xmm2 = {a,a}
+ 18: mov    eax,esi
+ 1a: and    eax,0xfffffffc  # eax = floor(n/4)*4
+ 1d: vinsertf128 ymm2,ymm2,xmm2,0x1 # ymm2 = {a,a,a,a}
+ 23: je     3e              # if n &lt; 4 goto Fringe
+ 25: xor    edx,edx         # edx = 0
+Main Loop:
+ 27: vmovapd ymm0,[ebx+edx*8] # load 4 elements of x
+ 2c: vfmadd213pd ymm0,ymm2,[ecx+edx*8] # 4 mul adds
+ 32: vmovapd [ecx+edx*8],ymm0 # store into 4 elements of y
+ 37: add    edx,0x4
+ 3a: cmp    edx,eax          # compare to n
+ 3c: jb     27               # repeat loop if &lt; n
+Fringe:
+ 3e: cmp    esi,eax          # any fringe elements?
+ 40: jbe    59               # if (n mod 4) == 0 go to Done
+Fringe Loop:
+ 42: vmovsd xmm0,[ebx+eax*8] # load element of x
+ 47: vfmadd213sd xmm0,xmm1,[ecx+eax*8] # 1 mul add
+ 4d: vmovsd [ecx+eax*8],xmm0 # store into element of y
+ 52: add    eax,0x1          # increment Fringe count
+ 55: cmp    esi,eax          # compare Loop and Fringe counts
+ 57: jne    42 &lt;daxpy+0x42&gt;  # repeat FringeLoop if != 0
+Done:
+ 59: pop    ebx              # function epilogue
+ 5a: pop    esi
+ 5b: ret
 </pre></div>
 
 <p>后者在真正开始计算前需要做很多准备工作，但是循环体中的指令少；前者整体更简洁，但是循环体中的指令多。但是依靠向量指令和流水线，后者可以规避这一点。看完程序之后我不得不同意RISC-V确实更加优雅。</p>

@@ -527,13 +527,13 @@ Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
 <li><p>使用<code>o</code>命令</p></li>
 <li><p>设置<code>ROGUEOPTS</code>环境变量，由逗号分隔的选项组成，比如</p></li>
 </ol>
-<div class="highlight"><pre><span></span><span class="c">% setenv ROGUEOPTS &quot;jump,nopassgo,name=Blue Meanie&quot;</span><span class="w"></span>
+<div class="highlight"><pre><span></span>% setenv ROGUEOPTS &quot;jump,nopassgo,name=Blue Meanie&quot;
 </pre></div>
 
 <blockquote>
 <p>sh用户应这样设置环境变量：</p>
-<div class="highlight"><pre><span></span>$ <span class="nv">ROGUEOPTS</span><span class="o">=</span><span class="s2">&quot;jump,nopassgo,name=Blue Meanie&quot;</span>
-$ <span class="nb">export</span> ROGUEOPTS
+<div class="highlight"><pre><span></span>$ ROGUEOPTS=&quot;jump,nopassgo,name=Blue Meanie&quot;
+$ export ROGUEOPTS
 </pre></div>
 
 </blockquote>
@@ -582,7 +582,7 @@ $ <span class="nb">export</span> ROGUEOPTS
 <h2 id="计分">计分</h2>
 <p>Rogue会记录一个得分榜。当你退出时，会带出所有的金币进入下一次游戏。死亡时，则只能带出90%的金币，余下的10%交给地牢巫师作为费用。所以，如果生命值不足，战斗前请三思。</p>
 <p>如果你想看本机的排行榜，却不想进入游戏，可以使用<code>-s</code>命令行选项。</p>
-<div class="highlight"><pre><span></span><span class="c">% rogue -s</span><span class="w"></span>
+<div class="highlight"><pre><span></span>% rogue -s
 </pre></div>
 
 <blockquote>
