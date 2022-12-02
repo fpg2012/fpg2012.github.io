@@ -15,8 +15,8 @@ comment: true
 步骤：
 
 1. 任选一个元素$x$作为主元，应用快排$\text{Partition}$的对数组进行分块（小的在前），记分块后$x$的下标为$k$
-2. 若$k\lt \lfloor n/2\rfloor $，那么说明中位数大于$x$，对右侧执行第一步
-3. 若$k\gt \lfloor n/2\rfloor $，那么说明中位数小于$x$，对左侧执行第一步
+2. 若$k\lt \lfloor n/2\rfloor$，那么说明中位数大于$x$，对右侧执行第一步
+3. 若$k\gt \lfloor n/2\rfloor$，那么说明中位数小于$x$，对左侧执行第一步
 4. 若$k = \lfloor n/2 \rfloor$，那么$x$就是中位数
 
 $\text{Partition}$伪代码如下
