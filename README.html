@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - About</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="About">
+        
+
+        
+        <meta name="keywords" content="about,friends">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch">🅣</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>About</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-04-03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔about〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#about</span>
+    
+        <span class="tag">#friends</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    
+<p>我是nth233（又fpg2012），在这里写些无用的东西。</p>
+<p>四处辗转，几番折腾，用了hugo、jekyll，最后竟然自己写了一个生成器。</p>
+<p>若要联系我，请发送邮件至我的邮箱<a
+href="mailto:fpg2012@yeah.net">fpg2012@yeah.net</a>。</p>
+<p>是为about，以上。</p>
+<hr />
+<h2 id="friends">Friends</h2>
+<ul>
+<li><a href="https://zsiothsu.github.io">Chipen’s Blog</a></li>
+</ul>
+
+
+</div>
+
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>
