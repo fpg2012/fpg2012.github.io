@@ -2,7 +2,7 @@
 layout: post
 title: "使用无头的wayvnc做远程桌面——乱水"
 date: "2022-12-5"
-description: "虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroot做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。"
+description: "虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroots做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。"
 tag: [note, "破事水", "远程桌面", "wayvnc", "wayland", "sway"]
 category: [note]
 comment: true
@@ -14,17 +14,17 @@ comment: true
 
 正巧，远古MC存档的备份就在百度网盘上……最后折腾了半天，也没成功把远程桌面搞起来，最后还是用`BaiduPanPCS-Go`这个第三方CLI客户端解决的问题。
 
-不过前几天我发现了`WayVNC`，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用`wlroot`做合成器〔Compositor〕的窗口管理器，比如`sway`，十分的轻量。
+不过前几天我发现了`WayVNC`，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用`wlroots`做合成器〔Compositor〕的窗口管理器，比如`sway`，十分的轻量。
 
 ## 搭建
 
-因为阿里云的服务器用的是debian 10 buster这个远古版本，包基本上旧得不行，比如就没有sway。要安装可以参照[sway的wiki关于debian 10的这篇文章](https://github.com/swaywm/sway/wiki/Debian-10-\(Buster\)-Installationi)手动编译，麻烦的很。所以选择用Nix。
+因为阿里云的服务器用的是debian 10 buster这个远古版本，包基本上旧得不行，比如就没有sway。要安装可以参照[sway的wiki关于debian 10的这篇文章](https://github.com/swaywm/sway/wiki/Debian-10-\(Buster\)-Installation)手动编译，麻烦的很。所以选择用Nix。
 
 ### 安装Nix
 
-参照[Nix的文档](https://nixos.org/download.html#download-nix)
+参照[Nix的文档](https://nixos.org/download.html#download-nix).
 
-执行脚本，安装Nix（多用户）
+执行脚本，安装Nix（多用户）:
 
 ```bash
 $ sh <(curl -L https://nixos.org/nix/install) --daemon
@@ -67,7 +67,7 @@ export WLR_LIBINPUT_NO_DEVICES=1
 export WAYLAND_DISPLAY=waylan-1
 ```
 
-然后启动sway
+然后启动sway：
 
 ```bash
 sway & # 加上&是为了sway可以在后台运行
