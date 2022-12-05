@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "使用无头的wayvnc做远程桌面——乱水"
-date: "2022-07-19"
+date: "2022-12-5"
 description: "虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroot做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。"
 tag: [note, "破事水", "远程桌面", "wayvnc", "wayland", "sway"]
 category: [note]
@@ -75,7 +75,7 @@ sway & # 加上&是为了sway可以在后台运行
 
 然后启动WayVNC
 
-```
+```bash
 wayvnc 0.0.0.0 2304 # 端口号改成自己需要的
 ```
 
@@ -85,7 +85,7 @@ wayvnc 0.0.0.0 2304 # 端口号改成自己需要的
 
 如果要调整屏幕的大小：
 
-```
+```bash
 swaymsg output "HEADLESS-1" resolution 1920x1080 # 大小自己调
 ```
 
