@@ -9,7 +9,7 @@
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroot做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。">
+        <meta name="description" content="虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroots做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。">
         
 
         
@@ -84,16 +84,16 @@
     <h2 id="起因">起因</h2>
 <p>虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑，比如百度网盘。</p>
 <p>正巧，远古MC存档的备份就在百度网盘上……最后折腾了半天，也没成功把远程桌面搞起来，最后还是用<code>BaiduPanPCS-Go</code>这个第三方CLI客户端解决的问题。</p>
-<p>不过前几天我发现了<code>WayVNC</code>，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用<code>wlroot</code>做合成器〔Compositor〕的窗口管理器，比如<code>sway</code>，十分的轻量。</p>
+<p>不过前几天我发现了<code>WayVNC</code>，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用<code>wlroots</code>做合成器〔Compositor〕的窗口管理器，比如<code>sway</code>，十分的轻量。</p>
 <h2 id="搭建">搭建</h2>
 <p>因为阿里云的服务器用的是debian 10
 buster这个远古版本，包基本上旧得不行，比如就没有sway。要安装可以参照<a
-href="https://github.com/swaywm/sway/wiki/Debian-10-(Buster)-Installationi">sway的wiki关于debian
+href="https://github.com/swaywm/sway/wiki/Debian-10-(Buster)-Installation">sway的wiki关于debian
 10的这篇文章</a>手动编译，麻烦的很。所以选择用Nix。</p>
 <h3 id="安装nix">安装Nix</h3>
 <p>参照<a
-href="https://nixos.org/download.html#download-nix">Nix的文档</a></p>
-<p>执行脚本，安装Nix（多用户）</p>
+href="https://nixos.org/download.html#download-nix">Nix的文档</a>.</p>
+<p>执行脚本，安装Nix（多用户）:</p>
 <div class="highlight"><pre><span></span>$ sh &lt;<span class="o">(</span>curl -L https://nixos.org/nix/install<span class="o">)</span> --daemon
 </pre></div>
 
@@ -123,7 +123,7 @@ href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以�
 <span class="nb">export</span> <span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>waylan-1
 </pre></div>
 
-<p>然后启动sway</p>
+<p>然后启动sway：</p>
 <div class="highlight"><pre><span></span>sway <span class="p">&amp;</span> <span class="c1"># 加上&amp;是为了sway可以在后台运行</span>
 </pre></div>
 
