@@ -99,11 +99,11 @@ href="https://nixos.org/download.html#download-nix">Nix的文档</a>.</p>
 
 <p>然后重启一下服务器。Nix就安装好了。</p>
 <h3 id="安装所需的软件包">安装所需的软件包</h3>
-<div class="highlight"><pre><span></span>nix --install --attr sway wayvnc
+<div class="highlight"><pre><span></span>nix-env --install --attr sway wayvnc
 </pre></div>
 
 <p>我习惯安个浏览器和终端仿真器</p>
-<div class="highlight"><pre><span></span>nix --install --attr firefox konsole
+<div class="highlight"><pre><span></span>nix-env --install --attr firefox konsole
 </pre></div>
 
 <blockquote>
@@ -120,7 +120,7 @@ href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以�
 <p>设置三个环境变量</p>
 <div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">WLR_BACKENDS</span><span class="o">=</span>headless
 <span class="nb">export</span> <span class="nv">WLR_LIBINPUT_NO_DEVICES</span><span class="o">=</span><span class="m">1</span>
-<span class="nb">export</span> <span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>waylan-1
+<span class="nb">export</span> <span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-1
 </pre></div>
 
 <p>然后启动sway：</p>
@@ -136,7 +136,7 @@ href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以�
 <p>注意！如果不进一步配置，那么这个连接没有任何密码、没有加密，也就不安全。如果要长期开着WayVNC，建议加上身份校验，参考<a
 href="https://github.com/any1/wayvnc">WayVNC的GitHub页面</a>。</p>
 </blockquote>
-<p>如果要调整屏幕的大小：</p>
+<p>如果要调整屏幕的大小，开启sway之后执行下面的命令：</p>
 <div class="highlight"><pre><span></span>swaymsg output <span class="s2">&quot;HEADLESS-1&quot;</span> resolution 1920x1080 <span class="c1"># 大小自己调</span>
 </pre></div>
 
