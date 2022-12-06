@@ -35,13 +35,13 @@ $ sh <(curl -L https://nixos.org/nix/install) --daemon
 ### 安装所需的软件包
 
 ```bash
-nix --install --attr sway wayvnc
+nix-env --install --attr sway wayvnc
 ```
 
 我习惯安个浏览器和终端仿真器
 
 ```bash
-nix --install --attr firefox konsole
+nix-env --install --attr firefox konsole
 ```
 
 > 为什么是Qt写的konsole？因为我发现更轻量的kitty和alacritty都没法用，似乎都和openGL没法使用有关。至于为什么openGL没法用，我不太懂。
@@ -64,7 +64,7 @@ nix-shell -p sway wayvnc firefox konsole
 ```bash
 export WLR_BACKENDS=headless
 export WLR_LIBINPUT_NO_DEVICES=1
-export WAYLAND_DISPLAY=waylan-1
+export WAYLAND_DISPLAY=wayland-1
 ```
 
 然后启动sway：
@@ -83,7 +83,7 @@ wayvnc 0.0.0.0 2304 # 端口号改成自己需要的
 
 > 注意！如果不进一步配置，那么这个连接没有任何密码、没有加密，也就不安全。如果要长期开着WayVNC，建议加上身份校验，参考[WayVNC的GitHub页面](https://github.com/any1/wayvnc)。
 
-如果要调整屏幕的大小：
+如果要调整屏幕的大小，开启sway之后执行下面的命令：
 
 ```bash
 swaymsg output "HEADLESS-1" resolution 1920x1080 # 大小自己调
