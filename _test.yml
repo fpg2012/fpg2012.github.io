@@ -1,8 +1,8 @@
 site_name: "Empty Space"
 author: "nth233"
-url: "//nth233.top"
-#url: "//localhost:5000"
-#gen_dir: "_test_gen"
+#url: "//nth233.top"
+url: "//localhost:5000"
+gen_dir: "_test_gen"
 favicon: "/assets/favicon"
 
 valine:
