@@ -15,10 +15,38 @@
     
     
     
-    <pubDate>Wed, 28 Dec 2022 07:25:17 GMT</pubDate>
-    <lastBuildDate>Wed, 28 Dec 2022 07:25:17 GMT</lastBuildDate>
+    <pubDate>Thu, 29 Dec 2022 14:36:04 GMT</pubDate>
+    <lastBuildDate>Thu, 29 Dec 2022 14:36:04 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>如何更好地使用sushi</title>
+      <link>https://nth233.top/posts/2022-12-29-如何更好地使用sushi.html</link>
+      
+      <description>今年三月份的时候因为受不了jekyll的种种问题，便花了点时间写了个自用的生成器。sushi的自定义灵活度应该要比jekyll和hugo之流要高得多，一旦配置完成，应该会十分顺手——所以就有了这篇介绍如何配置sushi的文章。</description>
+      
+      <pubDate>2022-12-29</pubDate>
+      <guid>5309310314482458374</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>sushi</category>
+        
+          <category>blog generator</category>
+        
+          <category>博客生成器</category>
+        
+          <category>best practice</category>
+        
+      
+    </item>
     
     
     

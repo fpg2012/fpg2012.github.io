@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 如何更好地使用sushi</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="今年三月份的时候因为受不了jekyll的种种问题，便花了点时间写了个自用的生成器。sushi的自定义灵活度应该要比jekyll和hugo之流要高得多，一旦配置完成，应该会十分顺手——所以就有了这篇介绍如何配置sushi的文章。">
+        
+
+        
+        <meta name="keywords" content="sushi,blog generator,博客生成器,best practice">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>如何更好地使用sushi</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-12-29</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#sushi</span>
+    
+        <span class="tag">#blog generator</span>
+    
+        <span class="tag">#博客生成器</span>
+    
+        <span class="tag">#best practice</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>今年三月份的时候因为受不了jekyll的种种问题，便花了点时间写了个自用的生成器。sushi的自定义灵活度应该要比jekyll和hugo之流要高得多，一旦配置完成，应该会十分顺手——所以就有了这篇介绍如何配置sushi的文章。</p>
+<h2 id="使用sushi的理由">使用sushi的理由</h2>
+<p>灵活性和自定义是sushi的特色。</p>
+<p>sushi力争做到<strong>KISS</strong>〔Keep It Simple
+Stupid〕，不做任何多余的事情。sushi只做一件事情，用一句话概括，就是：根据各处的配置，调用converter把你的博文转化为html格式，然后放到约定好的位置，<strong>其余的事情一概不做</strong>。</p>
+<p>这件事情十分简单，使得sushi的代码本身十分的简单。而“其余的事情”就交给其余的程序去做，sushi不会强制用户选择哪个程序来完成这些”外围“的工作，允许用户发挥想象力，进行灵活的自定义，比如：</p>
+<ol type="1">
+<li><p>把markdown或者其他格式翻译为html（交给pandoc，或者用户自己写一个翻译器）</p></li>
+<li><p>主题管理</p></li>
+<li><p>部署（如果在本地测试，可以用sfz；正式部署可以用nginx、caddy等）</p></li>
+<li><p>统一管理图片等资源（这个工作完全是多余的）</p></li>
+<li><p>全文检索（交给专门的全文检索软件）</p></li>
+</ol>
+<p>但也不是说sushi什么都不做，sushi本身围绕着组织站点结构这一任务展开，对于分类〔taxonomy〕、分页〔pagination〕、套模板〔template〕也有简单但是灵活的接口。</p>
+<p>后记中具体举了一些例子，说明为什么这些灵活性是很重要的。多个简单的程序之间分工合作，也能实现很多复杂的任务，而灵活性是这种分工的前提。</p>
+<p>当然，如果你不需要这些灵活性，不在乎自定义性，而是需要一个包打天下、囊括所有任务的生成器，那么就没有必要使用sushi，可能你更适合WordPress或者Jekyll、Hugo。</p>
+<h2 id="sushi原理简介">sushi原理简介</h2>
+<p>因为sushi遵循KISS原则，所以使用sushi必须对其原理有个大致的了解。</p>
+<h3 id="站点结构">站点结构</h3>
+<p>sushi对于站点结构的要求很少，但站点必须放在一个文件夹内（下面称为站点目录）。站点目录下必须要有<code>_site.yml</code>（站点配置文件），以及<code>_converters</code>（转换器目录）、<code>_includes</code>（页面片段目录）、<code>_templates</code>（模板目录）。sushi会自动把生成后的站点放到<code>_gen</code>（生成目录）中。如下：</p>
+<div class="highlight"><pre><span></span>site-example # 站点目录
+├── _converters # 转换器目录
+├── _gen # 生成目录
+├── _includes # 页面片段目录
+├── _site.yml # 站点配置
+└── _templates # 模板目录
+</pre></div>
+
+<p>这些下划线<code>_</code>开头的目录和文件总体的作用，就是为sushi生成页面提供必要的信息，具体作用后面将会解释。</p>
+<blockquote>
+<p>这些目录和文件的命名是可以修改的，sushi不强制用户使用默认的命名。如果要使用自定义命名，则需要在命令行参数或者配置文件中指明。</p>
+</blockquote>
+<h3 id="工作流程">工作流程</h3>
+<p>首先，sushi会读取<code>_site.yml</code>作为站点配置文件，构建。然后紧接着读取<code>_gen</code>，再然后是<code>_converters</code>、<code>_templates</code>、<code>_includes</code>。读取结束后，sushi就掌握了这个站点整体有哪些配置、有哪些可用的转换器、哪些可用的模板、哪些页面片段、已经生成了哪些页面。</p>
+<p>接下来，sushi开始遍历整个站点树，所有不以下划线<code>_</code>开头的文件和文件夹都会被访问一遍，访问的同时sushi用自己内部的数据结构表示这一站点树。以<code>_</code>下划线开头的文件和目录都会被sushi忽略。</p>
+<p>然后进入生成阶段。sushi根据遍历得到的站点树，开始进行生成。sushi会在<code>_gen</code>目录中创建一个<strong>一模一样</strong>的站点树。在这个生成后的站点树中，所有的页面文件都被替换为渲染后的HTML文件或者其他的某种文件。</p>
+<p>这里展开说明生成一个页面的过程：首先会读取它的扉页内容〔Front
+Matter〕，然后读取其主体部分。如果配置文件中指定了生成器，那么就调用指定的生成器（生成器是一个可执行程序，sushi会把页面的主体部分送入生成器的标准输入，然后读取其标准输出作为渲染的结果）。接着sushi把渲染后的结果，连同站点配置、站点树、扉页中的页面配置、所需的<strong>页面片段</strong>填入指定的liquid<strong>模板</strong>中，最后把最终结果输出到站点树的对应位置；如果没有指定生成器，sushi则执行默认操作，即原封不动地把文件复制到生成的站点树的对应位置。</p>
+<p>再展开说套用模板的过程：sushi使用liquid模板语言，有关详情可以参照liquid的文档。sushi会将读取的站点配置存到<code>site</code>对象中，扉页的配置存到<code>page</code>对象中，分页器相关的内容放到<code>paginator</code>对象中，站点树的内容存放到<code>sitetree</code>对象中等等。这些对象使得模板编写变得十分灵活（虽然有时可能会显得不太优雅），具体详情可以参照README。</p>
+<h2 id="基本使用">基本使用</h2>
+<p>开始之前先安装sushi。目前（2022.12.29）暂时建议使用cargo安装。</p>
+<div class="highlight"><pre><span></span>cargo install sushi-gen
+</pre></div>
+
+<p>然后，找个站点主题（或者自己做一个），比如<a
+href="https://github.com/fpg2012/sushi-theme-empty">Empty</a>。</p>
+<div class="highlight"><pre><span></span>git clone https://github.com/fpg2012/sushi-theme-empty
+</pre></div>
+
+<p>然后，找个合适的位置，然后创建站点，假设你的站点名字叫做<code>Hey</code></p>
+<div class="highlight"><pre><span></span>ssushi init --theme ${path_to_theme} Hey
+</pre></div>
+
+<p>把<code>${path-to-theme}</code>替换成你刚才下载的主题的路径。然后站点就创建完成了。</p>
+<p>以Empty主题为例，所有posts文件夹下的内容都会被列到主页<code>index.html</code>中。以这个主题出发，参考文档进行自定义应该会容易很多。</p>
+<h2 id="外部工具">外部工具</h2>
+<h4 id="pandoc">Pandoc</h4>
+<p>sushi本身不提供页面渲染的功能，它只调用你提供的渲染器。这里十分推荐使用pandoc，因为它很方便自定义。如果在可以写个shell脚本直接调用Pandoc。比如在Linux下，可以写成：</p>
+<div class="highlight"><pre><span></span>#!/bin/bash
+pandoc -t html
+</pre></div>
+
+<p>如果引入了自定义的pandoc过滤器，那么自行添加相应的参数。然后给这个脚本可执行权限，然后在<code>_site.yml</code>中指定使用它。假如这个脚本叫做<code>convert.sh</code>，那么<code>_site.yml</code>中这样写可以让sushi把所有的md文件都转换成html：</p>
+<div class="highlight"><pre><span></span><span class="nt">convert_ext</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># 让sushi把md文件看作是需要渲染的页面文件，而非普通文件</span><span class="w"></span>
+<span class="nt">converter_choice</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;convert.sh&quot;</span><span class="w"> </span><span class="c1"># md文件选用刚才的脚本进行转换</span><span class="w"></span>
+</pre></div>
+
+<h4 id="github-pages">GitHub Pages</h4>
+<p>要部署到GitHub Pages，首先你需要创建一个GitHub项目，然后启用GitHub
+Pages功能。然后把生成的<code>_gen</code>目录中的内容传上去。</p>
+<p>如果你想要把站点的源文件和生成后的页面放在一个仓库中。可以考虑使用git
+worktree。比如说把源文件放在<code>main</code>分支中，把生成后的页面放在<code>gh-page</code>分支中，可以这样：</p>
+<div class="highlight"><pre><span></span>git checkout -b gh-page # 创建gh-page分支
+git checkout -b main # 回到main分支
+git worktree add --track - gh-page _gen
+</pre></div>
+
+<p>然后删除<code>_gen</code>中的所有内容。那么之后sushi生成的东西会自动放到gh-page分支中。详情参考worktree的用法。</p>
+<h4 id="pygments">Pygments</h4>
+<p>实现代码高亮。有现成的用pygments实现高亮的pandoc
+filter，直接使用之。</p>
+<h4 id="sfz">SFZ</h4>
+<p>sfz可以简化在本地部署静态页面，这对于发布前预览页面尤其有用。sushi没有类似<code>jekyll serve</code>的功能，这部分工作就交给sfz或者其他代劳了。下面给出了一种方法。</p>
+<p>首先，把<code>_site.yml</code>复制一份，重命名为<code>_test.yml</code>。然后，修改<code>_test.yml</code>，把里面的<code>url</code>改成<code>http://localhost:5000</code>或者其他本地的地址。然后添加一项：</p>
+<div class="highlight"><pre><span></span>gen_dir: _test_gen
+</pre></div>
+
+<p>之后，可以用以下命令模拟<code>jekyll serve</code>。</p>
+<div class="highlight"><pre><span></span>ssushi build -A -c _test.yml &amp;&amp; sfz -r _test_gen
+</pre></div>
+
+<h4 id="just">Just</h4>
+<p>sushi生成站点的命令可能会显得有点长。just可以帮助缩短这些命令。</p>
+<p>可以创建一个<code>justfile</code>：</p>
+<div class="highlight"><pre><span></span><span class="nf">all</span><span class="o">:</span>
+    ssushi build -A
+
+<span class="nf">inc</span><span class="o">:</span>
+    ssushi build
+
+<span class="nf">test</span><span class="o">:</span>
+    ssushi build -c _test.yml
+    sfz -r _test_gen
+
+<span class="nf">test-all</span><span class="o">:</span>
+    ssushi build -A -c _test.yml
+    sfz -r _test_gen
+
+<span class="nf">clean-gen</span><span class="o">:</span>
+    <span class="nb">cd</span> _gen
+    rm -rf *
+    <span class="nb">cd</span> ..
+
+<span class="nf">deploy-gen</span><span class="o">:</span>
+    <span class="nb">cd</span> _gen
+    git add .
+    git commit -m <span class="s2">&quot;Update: `date`&quot;</span>
+    git push
+    <span class="nb">cd</span> ..
+
+<span class="nf">deploy</span><span class="o">:</span> <span class="n">deploy</span>-<span class="n">gen</span>
+    git commit -a
+    git push
+</pre></div>
+
+<p>之后要生成站点，直接敲<code>just</code>，增量生成则敲<code>just inc</code>。</p>
+<p>要执行类似<code>jekyll serve</code>的操作，直接<code>just test-all</code>或者<code>just test</code>。</p>
+<p>你可以按自己的需要修改<code>justfile</code>。</p>
+<h2 id="主题编写">主题编写</h2>
+<p>实际上sushi并不存在什么主题，所谓主题其实也和一般站点没有任何差别。<code>ssushi init</code>做的事情其实是把主题的那个文件夹原封不动地拷贝过来。</p>
+<p>一般而言，编写主题和写一般的网站基本没有区别，主要的区别在于使用liquid的模板。关于liquid模板，可以参照其文档。</p>
+<p>这里建议对于一般的博客，至少准备<code>page</code>、<code>post</code>、<code>archive</code>、<code>home</code>四个模板便于用户使用，如果可以的话还可以加入rss的模板。模板之间可以有“继承关系”，比如套post模板后的内容需要再套入<code>page</code>模板，这些可以通过模板的扉页来实现。</p>
+<p>而通用的Javascript脚本、页面header、footer等部分放到<code>_includes</code>文件夹中，用liquid的<code>include</code>语句包含进来。</p>
+<p>上面提到的Empty主题是个不错的起点，可以在其基础上参照文档进行修改和扩展。</p>
+<h2 id="后记">后记</h2>
+<p>我最初编写sushi其实是为了解决两个简单的问题：</p>
+<ol type="1">
+<li><p>在渲染页面时直接转换数学公式。</p></li>
+<li><p>图片可以随心所欲地放在任何位置，并被任何一个markdown页面引用。并且确保在markdown编辑器（比如Typora中）可以正确地查看图片。</p></li>
+</ol>
+<p>这两个看起来微不足道的需求，居然没有办法很好地用Jekyll或者Hugo实现。</p>
+<p>第一条不能解决，是因为它们为了追求渲染速度和开箱即用，使用了自己的markdown渲染器，用户很难做修改，除非改源码。但如果要渲染数学公式，就非得修改markdown的渲染过程不可，到这里我就卡住了。主流解决方案是把数学公式渲染的工作甩锅给前端JavaScript，但这会带来一大堆问题；还有人修改了Hugo的源码，但这也非常麻烦。</p>
+<p>第二条不能解决，是因为它们对站点结构做了太多的限制，连插图这点小事也要管。为什么就不能保持我站点树的结构不要做修改呢？</p>
+<p>所以就有了sushi。渲染器自己定，那就没有什么不能渲染的了（刚好有Pandoc这个神器，自己写filter、reader、writer，什么文档都能转换）；不改变站点树，那么自定义站点、使用现有工具都会变得简单。</p>
+<p>当然sushi也有自己的问题：</p>
+<ol type="1">
+<li><p>为了灵活性牺牲了速度。sushi为了调用用户提供的、外部的渲染器，需要通过管道传递数据，速度掉了一大截。如果你用pandoc，并且使用Python编写的pandoc过滤器，那就更慢了。增量生成部分地解决了速度慢的问题，但目前的增量生成仍不完美，依然有待改进。</p></li>
+<li><p>开箱即用有一定的门槛。</p></li>
+<li><p>用的人少</p></li>
+</ol>
+<p>当然这些缺点都是可以克服的……比如速度慢，你可以修改ssushi的源码（和Jekyll与Hugo的源码不同，sushi的源码很短），使它直接调用Rust编写的渲染器。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2022-08-19-《春分之后》/index.html">《春分之后》...</a></div>
+        <div class="sibling-page-date">2022-08-19</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2022-08-19-《春分之后》/index.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>
