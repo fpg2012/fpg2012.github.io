@@ -12,13 +12,13 @@ test-all:
 	ssushi build -A -c _test.yml
 	sfz -r _test_gen
 
-deploy_gen:
+deploy-gen:
 	cd _gen
 	git add .
-	git commit -m "update: `date`"
+	git commit -m "Update: `date`"
 	git push
 	cd ..
 
-deploy: deploy_gen
+deploy: deploy-gen
 	git commit -a
 	git push
