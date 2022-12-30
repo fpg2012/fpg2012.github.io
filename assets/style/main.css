@@ -161,10 +161,18 @@ header a:visited {
 }
 
 code {
-    font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    font-family:  'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     display: inline-block;
     padding: 0 0.1em 0 0.1em;
     word-break: break-all;
+    border: 1px solid var(--common-border-color);
+    border-radius: 0.25em;
+    margin: 0 0.1em 0 0.1em;
+    background: var(--tr-even-child-color);
+}
+
+.vcard code {
+    border: none;
 }
 
 pre {
@@ -173,7 +181,7 @@ pre {
     padding: 1rem;
     overflow-x: auto;
     border-radius: 0.3125rem;
-    font-family: 'Jetbrains Mono', 'Fira Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    font-family: 'Fira Code', 'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     font-size: 0.875rem;
 }
 
@@ -196,6 +204,7 @@ body {
 main {
     margin: 1em 1em 1em 1em;
     font-size: 1rem;
+    line-break: normal;
 }
 
 .post-front-matter {
