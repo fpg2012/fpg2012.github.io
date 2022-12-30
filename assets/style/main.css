@@ -165,6 +165,13 @@ code {
     display: inline-block;
     padding: 0 0.1em 0 0.1em;
     word-break: break-all;
+    border: 1px solid var(--common-border-color);
+    border-radius: 0.25em;
+    margin: 0 0.1em 0 0.1em;
+}
+
+.vcard code {
+    border: none;
 }
 
 pre {
@@ -196,6 +203,7 @@ body {
 main {
     margin: 1em 1em 1em 1em;
     font-size: 1rem;
+    line-break: normal;
 }
 
 .post-front-matter {
