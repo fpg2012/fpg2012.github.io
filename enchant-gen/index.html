@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+  <meta name="description" content="A Minecraft enchantment /give command generator. | 我的世界附魔/give指令生成器。 by nth233">
+  <meta name="keywords" content="minecraft,mc,enchantment,helper,generator,give,command,我的世界,附魔,指令,生成器,fpg2012,nth233">
+  <link rel="stylesheet" href="enchant-gen.css">
+  <link rel="icon" href="favicon.webp" type="image/x-icon" />
+  <title>EnchantGen</title>
+</head>
+
+<body>
+  <main>
+    <div class="title-bar">
+      <img src="favicon.webp">
+      <h1>EnchantGen</h1>
+    </div>
+    <div class="misc-bar">
+      <div class="by-author">
+        By <a href="https://nth233.top">nth233</a>
+      </div>
+      <div class="lang" id="lang-btn" onclick="changeLang();">EN | 中文</div>
+    </div>
+    <!--Command Area-->
+    <div id="command-area">
+      <h2 onclick="copyCommand();" style="cursor: pointer;">Command <small>(click to copy)</small></h2>
+      <input type="text" id="command" title="Click to Copy">
+    </div>
+    <!--Selection Area-->
+    <div id="selection-area">
+      <!--Item Area-->
+      <div id="item-selection-area">
+        <h2>Item</h2>
+        <div id="item-selection" class="span-sel">
+
+        </div>
+      </div>
+      <!--Materials Area-->
+      <div id="material-selection-area">
+        <h2>Materials</h2>
+        <div id="material-selection" class="span-sel">
+
+        </div>
+        <h2>Player</h2>
+        <input type="text" value="@p" id="player-name">
+        <h2>Ammount</h2>
+        <input type="number" value="1" id="ammount">
+      </div>
+      <!--Enchantment Area-->
+      <div id="enchantment-selection-area">
+        <h2>Enchantment</h2>
+        <div id="enchantment-selection">
+
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div>
+      © 2023 by <a href="https://nth233.top">nth233</a>
+    </div>
+  </footer>
+  <script src="enchant-gen.js"></script>
+</body>
+</html>

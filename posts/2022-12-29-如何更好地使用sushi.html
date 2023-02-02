@@ -140,9 +140,9 @@ pandoc -t html
 </pre></div>
 
 <p>如果引入了自定义的pandoc过滤器，那么自行添加相应的参数。然后给这个脚本可执行权限，然后在<code>_site.yml</code>中指定使用它。假如这个脚本叫做<code>convert.sh</code>，那么<code>_site.yml</code>中这样写可以让sushi把所有的md文件都转换成html：</p>
-<div class="highlight"><pre><span></span><span class="nt">convert_ext</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># 让sushi把md文件看作是需要渲染的页面文件，而非普通文件</span><span class="w"></span>
-<span class="nt">converter_choice</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;convert.sh&quot;</span><span class="w"> </span><span class="c1"># md文件选用刚才的脚本进行转换</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="nt">convert_ext</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># 让sushi把md文件看作是需要渲染的页面文件，而非普通文件</span>
+<span class="nt">converter_choice</span><span class="p">:</span>
+<span class="w">  </span><span class="s">&quot;md&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;convert.sh&quot;</span><span class="w"> </span><span class="c1"># md文件选用刚才的脚本进行转换</span>
 </pre></div>
 
 <h4 id="github-pages">GitHub Pages</h4>
@@ -173,34 +173,34 @@ filter，直接使用之。</p>
 <p>sushi生成站点的命令可能会显得有点长。just可以帮助缩短这些命令。</p>
 <p>可以创建一个<code>justfile</code>：</p>
 <div class="highlight"><pre><span></span><span class="nf">all</span><span class="o">:</span>
-    ssushi build -A
+<span class="w">    </span>ssushi<span class="w"> </span>build<span class="w"> </span>-A
 
 <span class="nf">inc</span><span class="o">:</span>
-    ssushi build
+<span class="w">    </span>ssushi<span class="w"> </span>build
 
 <span class="nf">test</span><span class="o">:</span>
-    ssushi build -c _test.yml
-    sfz -r _test_gen
+<span class="w">    </span>ssushi<span class="w"> </span>build<span class="w"> </span>-c<span class="w"> </span>_test.yml
+<span class="w">    </span>sfz<span class="w"> </span>-r<span class="w"> </span>_test_gen
 
 <span class="nf">test-all</span><span class="o">:</span>
-    ssushi build -A -c _test.yml
-    sfz -r _test_gen
+<span class="w">    </span>ssushi<span class="w"> </span>build<span class="w"> </span>-A<span class="w"> </span>-c<span class="w"> </span>_test.yml
+<span class="w">    </span>sfz<span class="w"> </span>-r<span class="w"> </span>_test_gen
 
 <span class="nf">clean-gen</span><span class="o">:</span>
-    <span class="nb">cd</span> _gen
-    rm -rf *
-    <span class="nb">cd</span> ..
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>_gen
+<span class="w">    </span>rm<span class="w"> </span>-rf<span class="w"> </span>*
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>..
 
 <span class="nf">deploy-gen</span><span class="o">:</span>
-    <span class="nb">cd</span> _gen
-    git add .
-    git commit -m <span class="s2">&quot;Update: `date`&quot;</span>
-    git push
-    <span class="nb">cd</span> ..
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>_gen
+<span class="w">    </span>git<span class="w"> </span>add<span class="w"> </span>.
+<span class="w">    </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update: `date`&quot;</span>
+<span class="w">    </span>git<span class="w"> </span>push
+<span class="w">    </span><span class="nb">cd</span><span class="w"> </span>..
 
-<span class="nf">deploy</span><span class="o">:</span> <span class="n">deploy</span>-<span class="n">gen</span>
-    git commit -a
-    git push
+<span class="nf">deploy</span><span class="o">:</span><span class="w"> </span><span class="n">deploy</span>-<span class="n">gen</span>
+<span class="w">    </span>git<span class="w"> </span>commit<span class="w"> </span>-a
+<span class="w">    </span>git<span class="w"> </span>push
 </pre></div>
 
 <p>之后要生成站点，直接敲<code>just</code>，增量生成则敲<code>just inc</code>。</p>
@@ -252,7 +252,7 @@ filter，直接使用之。</p>
 
         </main>
         <footer>
-<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
         <div id="fullscreen-img-container" class="hidden">
         </div>

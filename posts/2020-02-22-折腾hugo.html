@@ -79,7 +79,7 @@
 <li><p>首先安装go。得益于<a
 href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。</p></li>
 <li><p>然后编译安装hugo</p>
-<div class="highlight"><pre><span></span>go install --tags extended
+<div class="highlight"><pre><span></span>go<span class="w"> </span>install<span class="w"> </span>--tags<span class="w"> </span>extended
 </pre></div>
 
 <p>如果不要Sass/Scss支持的话可以把后面的选项去掉。</p></li>
@@ -92,15 +92,15 @@ href="https://golang.google.cn">go的国内镜像</a>，下载速度还算快。
 <h3 id="数学公式">数学公式</h3>
 <p>这样弄完之后发现数学公式没法渲染，于是乎添加KaTex的支持。</p>
 <p>在<code>theme/layouts/partials</code>里添加一个<code>katex.html</code>，内容如下：</p>
-<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nx">delimiters</span><span class="o">:</span><span class="w"> </span><span class="p">[</span><span class="w"></span>
-<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span><span class="w"></span>
-<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="p">]</span><span class="w"></span>
-<span class="w">        </span><span class="p">});</span><span class="w"></span>
-<span class="w">    </span><span class="p">});</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="w">    </span><span class="nb">document</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s2">&quot;DOMContentLoaded&quot;</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nx">renderMathInElement</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">delimiters</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">},</span>
+<span class="w">              </span><span class="p">{</span><span class="nx">left</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">right</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;$&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">display</span><span class="o">:</span><span class="w"> </span><span class="kc">false</span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">});</span>
 <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
 <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css&quot;</span> <span class="na">integrity</span><span class="o">=</span><span class="s">&quot;sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq&quot;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&quot;anonymous&quot;</span><span class="p">&gt;</span>
 <span class="cm">&lt;!-- The loading of KaTeX is deferred to speed up page rendering --&gt;</span>
@@ -127,10 +127,10 @@ Matter里面加上<code>katex: true</code>即可。</p>
 <h3 id="对主题的微调">对主题的微调</h3>
 <p>这个主题并不是尽如人意，有些地方还是得自己调整，这是最花时间的。</p>
 <p>首先是代码块的样式有点丑。这个主题使用了highlight.js进行代码高亮，但却没有禁用hugo自带的高亮，就会出来一些奇奇怪怪的问题，比如代码块的圆角之外会有黑角，因为hugo默认采用monokai作为高亮主题，背景是暗色的。在配置文件中加入以下片段来禁用hugo自带的高亮。</p>
-<div class="highlight"><pre><span></span><span class="k">[markup]</span><span class="w"></span>
-<span class="w">  </span><span class="k">[markup.highlight]</span><span class="w"></span>
-<span class="w">    </span><span class="n">codeFences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="w"></span>
-<span class="w">    </span><span class="n">lineNos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kc">false</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="k">[markup]</span>
+<span class="w">  </span><span class="k">[markup.highlight]</span>
+<span class="w">    </span><span class="n">codeFences</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span>
+<span class="w">    </span><span class="n">lineNos</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kc">false</span>
 </pre></div>
 
 <p>然后我几乎把所有元素的<code>border-radius</code>都改成了<code>0px</code>。（吐血</p>
@@ -144,30 +144,30 @@ Font。在<code>head.html</code>加入：</p>
 <p>我习惯使用Typora作为markdown编辑器。当我把图片粘贴进来是，Typora就会把图片从剪贴板保存到<code>./${filename}</code>中，很方便，但是这样与hugo查找图片的方式冲突了。</p>
 <p>为了方便，只好用Js。现学了一点js后，编写了以下代码。虽然此策不优雅，但是还算能用。</p>
 <p>在<code>static/js</code>里面添加一个js文件：</p>
-<div class="highlight"><pre><span></span><span class="c1">// replace image source</span><span class="w"></span>
-<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">imgs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span><span class="w"></span>
-<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">temp_arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="nx">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="nx">j</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;posts&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">                </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span><span class="w"></span>
-<span class="w">                </span><span class="k">continue</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">            </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="c1">// replace image source</span>
+<span class="nb">window</span><span class="p">.</span><span class="nx">onload</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">imgs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="p">.</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s1">&#39;img&#39;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">imgs</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="w"> </span><span class="nx">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">img</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">imgs</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">temp_arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">);</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="w">        </span><span class="kd">var</span><span class="w"> </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="k">for</span><span class="p">(</span><span class="kd">let</span><span class="w"> </span><span class="nx">j</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0</span><span class="p">;</span><span class="nx">j</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span><span class="nx">j</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="nx">j</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mf">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;posts&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="o">-</span><span class="mf">1</span><span class="p">])</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nx">flag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">true</span><span class="p">;</span>
+<span class="w">                </span><span class="k">continue</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">[</span><span class="nx">j</span><span class="p">]</span>
 <span class="w">            </span><span class="k">if</span><span class="p">(</span><span class="nx">j</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nx">temp_arr</span><span class="p">.</span><span class="nx">length</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mf">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>
-<span class="w">                </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span><span class="w"></span>
-<span class="w">            </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replace &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; to &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">repl</span><span class="p">);</span><span class="w"></span>
-<span class="w">            </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="w">                </span><span class="nx">repl</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39;/&#39;</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;replace &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s1">&#39; to &#39;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">repl</span><span class="p">);</span>
+<span class="w">            </span><span class="nx">img</span><span class="p">.</span><span class="nx">src</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">repl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>然后把它添加到配置文件的customJs中，即可。</p>
@@ -184,28 +184,28 @@ pages，但是会出现莫名其妙的404问题。于是干脆搞到自己的云
 page的静态网页，分支<code>master</code>
 专门管理源码，分支<code>gh-pages</code>专门管理构建好的网页。参考下面某条链接……</p>
 <p>在要放网页文件的地方克隆<code>gh-pages</code>分支。然后在裸仓库的<code>hook</code>里面添加<code>post-update</code>文件，内容大致如下：</p>
-<div class="highlight"><pre><span></span><span class="nb">unset</span> GIT_DIR
-<span class="nb">echo</span> <span class="s2">&quot;Hello!&quot;</span>
+<div class="highlight"><pre><span></span><span class="nb">unset</span><span class="w"> </span>GIT_DIR
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Hello!&quot;</span>
 <span class="nv">DEPLOY_PATH</span><span class="o">=</span><span class="s2">&quot;放网页的目录&quot;</span>
-<span class="nb">cd</span> <span class="nv">$DEPLOY_PATH</span>
-git pull origin gh-pages
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$DEPLOY_PATH</span>
+git<span class="w"> </span>pull<span class="w"> </span>origin<span class="w"> </span>gh-pages
 </pre></div>
 
 <p>下次push时就会自动把网页拉到这里来了。</p>
 <p>为了更自动化一些，本地也添加一个脚本<code>deploy.sh</code>。</p>
 <div class="highlight"><pre><span></span>hugo
-<span class="nb">cd</span> public
-git add .
-git commit -m <span class="s2">&quot;Update - `date +%Y-%m-%d`&quot;</span>
-<span class="nb">cd</span> ..
-git push origin gh-pages
-git add .
-git commit -a
-git push origin master
+<span class="nb">cd</span><span class="w"> </span>public
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Update - `date +%Y-%m-%d`&quot;</span>
+<span class="nb">cd</span><span class="w"> </span>..
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>gh-pages
+git<span class="w"> </span>add<span class="w"> </span>.
+git<span class="w"> </span>commit<span class="w"> </span>-a
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>master
 </pre></div>
 
 <p>下次写完博文，直接</p>
-<div class="highlight"><pre><span></span>sh deploy.sh
+<div class="highlight"><pre><span></span>sh<span class="w"> </span>deploy.sh
 </pre></div>
 
 <p>或者双击脚本即可。</p>
@@ -256,7 +256,7 @@ git push origin master
 
         </main>
         <footer>
-<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
         <div id="fullscreen-img-container" class="hidden">
         </div>

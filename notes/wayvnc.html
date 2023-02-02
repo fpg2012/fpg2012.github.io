@@ -94,16 +94,16 @@ href="https://github.com/swaywm/sway/wiki/Debian-10-(Buster)-Installation">sway�
 <p>参照<a
 href="https://nixos.org/download.html#download-nix">Nix的文档</a>.</p>
 <p>执行脚本，安装Nix（多用户）:</p>
-<div class="highlight"><pre><span></span>$ sh &lt;<span class="o">(</span>curl -L https://nixos.org/nix/install<span class="o">)</span> --daemon
+<div class="highlight"><pre><span></span>$<span class="w"> </span>sh<span class="w"> </span>&lt;<span class="o">(</span>curl<span class="w"> </span>-L<span class="w"> </span>https://nixos.org/nix/install<span class="o">)</span><span class="w"> </span>--daemon
 </pre></div>
 
 <p>然后重启一下服务器。Nix就安装好了。</p>
 <h3 id="安装所需的软件包">安装所需的软件包</h3>
-<div class="highlight"><pre><span></span>nix-env --install --attr sway wayvnc
+<div class="highlight"><pre><span></span>nix-env<span class="w"> </span>--install<span class="w"> </span>--attr<span class="w"> </span>sway<span class="w"> </span>wayvnc
 </pre></div>
 
 <p>我习惯安个浏览器和终端仿真器</p>
-<div class="highlight"><pre><span></span>nix-env --install --attr firefox konsole
+<div class="highlight"><pre><span></span>nix-env<span class="w"> </span>--install<span class="w"> </span>--attr<span class="w"> </span>firefox<span class="w"> </span>konsole
 </pre></div>
 
 <blockquote>
@@ -112,23 +112,23 @@ href="https://nixos.org/download.html#download-nix">Nix的文档</a>.</p>
 <p>然后记得配置一下sway。</p>
 <h3 id="启动wayvnc">启动<code>wayvnc</code></h3>
 <p>首先进入<code>nix-shell</code>。</p>
-<div class="highlight"><pre><span></span>nix-shell -p sway wayvnc firefox konsole
+<div class="highlight"><pre><span></span>nix-shell<span class="w"> </span>-p<span class="w"> </span>sway<span class="w"> </span>wayvnc<span class="w"> </span>firefox<span class="w"> </span>konsole
 </pre></div>
 
 <p>然后按照<a
 href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以无头〔headless〕模式启动sway。</p>
 <p>设置三个环境变量</p>
-<div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">WLR_BACKENDS</span><span class="o">=</span>headless
-<span class="nb">export</span> <span class="nv">WLR_LIBINPUT_NO_DEVICES</span><span class="o">=</span><span class="m">1</span>
-<span class="nb">export</span> <span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-1
+<div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">WLR_BACKENDS</span><span class="o">=</span>headless
+<span class="nb">export</span><span class="w"> </span><span class="nv">WLR_LIBINPUT_NO_DEVICES</span><span class="o">=</span><span class="m">1</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-1
 </pre></div>
 
 <p>然后启动sway：</p>
-<div class="highlight"><pre><span></span>sway <span class="p">&amp;</span> <span class="c1"># 加上&amp;是为了sway可以在后台运行</span>
+<div class="highlight"><pre><span></span>sway<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="c1"># 加上&amp;是为了sway可以在后台运行</span>
 </pre></div>
 
 <p>然后启动WayVNC</p>
-<div class="highlight"><pre><span></span>wayvnc <span class="m">0</span>.0.0.0 <span class="m">2304</span> <span class="c1"># 端口号改成自己需要的</span>
+<div class="highlight"><pre><span></span>wayvnc<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span><span class="m">2304</span><span class="w"> </span><span class="c1"># 端口号改成自己需要的</span>
 </pre></div>
 
 <p>如果一切正常，那么现在可以用VNC工具，比如<code>vinagre</code>，连接远程桌面了。</p>
@@ -137,7 +137,7 @@ href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以�
 href="https://github.com/any1/wayvnc">WayVNC的GitHub页面</a>。</p>
 </blockquote>
 <p>如果要调整屏幕的大小，开启sway之后执行下面的命令：</p>
-<div class="highlight"><pre><span></span>swaymsg output <span class="s2">&quot;HEADLESS-1&quot;</span> resolution 1920x1080 <span class="c1"># 大小自己调</span>
+<div class="highlight"><pre><span></span>swaymsg<span class="w"> </span>output<span class="w"> </span><span class="s2">&quot;HEADLESS-1&quot;</span><span class="w"> </span>resolution<span class="w"> </span>1920x1080<span class="w"> </span><span class="c1"># 大小自己调</span>
 </pre></div>
 
 <h2 id="后记">后记</h2>
@@ -165,7 +165,7 @@ href="https://github.com/any1/wayvnc">WayVNC的GitHub页面</a>。</p>
 
         </main>
         <footer>
-<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
         <div id="fullscreen-img-container" class="hidden">
         </div>

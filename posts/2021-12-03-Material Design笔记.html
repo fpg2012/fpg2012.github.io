@@ -111,19 +111,19 @@ Resource，添加<code>&lt;item&gt;</code>和对应的action按钮，<code>andro
 <ol type="1">
 <li><p>直接使用<code>DrawerLayout</code>，其下第一个子控件为主界面，第二个子控件为抽屉中的内容（<code>layout_gravity</code>最好设为<code>start</code>）</p></li>
 <li><p>在<code>Toolbar</code>最左侧添加菜单按钮「Home按钮」：在Activity中，设置</p>
-<div class="highlight"><pre><span></span><span class="n">supportActionBar</span><span class="o">?.</span><span class="na">let</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="nb">it</span><span class="p">.</span><span class="na">setDisplayHomeAsUpEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="c1">// 启用菜单按钮</span><span class="w"></span>
-<span class="w">    </span><span class="nb">it</span><span class="p">.</span><span class="na">setHomeAsUpIndicator</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">drawable</span><span class="p">.</span><span class="na">ic_menu</span><span class="p">)</span><span class="w"> </span><span class="c1">// 图标</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">supportActionBar</span><span class="o">?.</span><span class="na">let</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nb">it</span><span class="p">.</span><span class="na">setDisplayHomeAsUpEnabled</span><span class="p">(</span><span class="kc">true</span><span class="p">)</span><span class="w"> </span><span class="c1">// 启用菜单按钮</span>
+<span class="w">    </span><span class="nb">it</span><span class="p">.</span><span class="na">setHomeAsUpIndicator</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">drawable</span><span class="p">.</span><span class="na">ic_menu</span><span class="p">)</span><span class="w"> </span><span class="c1">// 图标</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>然后在重写的<code>onOptionsItemSelected</code>中，当菜单按钮被按下时唤出抽屉</p>
-<div class="highlight"><pre><span></span><span class="c1">// ...</span><span class="w"></span>
-<span class="k">when</span><span class="w"> </span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">itemId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// home按钮的id永远是home</span><span class="w"></span>
-<span class="w">    </span><span class="n">android</span><span class="p">.</span><span class="na">R</span><span class="p">.</span><span class="na">id</span><span class="p">.</span><span class="na">home</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">drawerLayout</span><span class="p">.</span><span class="na">openDrawer</span><span class="p">(</span><span class="n">GravityCompat</span><span class="p">.</span><span class="na">START</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
-<span class="c1">// ...</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="c1">// ...</span>
+<span class="k">when</span><span class="w"> </span><span class="p">(</span><span class="n">item</span><span class="p">.</span><span class="na">itemId</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// home按钮的id永远是home</span>
+<span class="w">    </span><span class="n">android</span><span class="p">.</span><span class="na">R</span><span class="p">.</span><span class="na">id</span><span class="p">.</span><span class="na">home</span><span class="w"> </span><span class="o">-&gt;</span><span class="w"> </span><span class="n">drawerLayout</span><span class="p">.</span><span class="na">openDrawer</span><span class="p">(</span><span class="n">GravityCompat</span><span class="p">.</span><span class="na">START</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="c1">// ...</span>
 </pre></div>
 </li>
 </ol>
@@ -134,10 +134,10 @@ src="https://lh3.googleusercontent.com/W4QDMYeNtcm37g2JfKKj5lv8rJ6KGLb9vZdYUNEpj
 <p>包括两个部分：<code>headerLayout</code>和<code>menu</code>。分别需要定义对应部分的布局。menu还需要有个xml文件定义菜单中的具体项目。</p>
 <p>设置完成所需的xml后，将<code>NavigationView</code>添加到<code>DrawerLayout</code>中。</p>
 <p>要处理对应的点击事件，只要调用<code>NavigationView</code>对象的<code>setNavigationItemSelectedListener</code>进行设置，比如</p>
-<div class="highlight"><pre><span></span><span class="n">navView</span><span class="p">.</span><span class="na">setNavigationItemSelectedListener</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">drawerLayout</span><span class="p">.</span><span class="na">closeDrawers</span><span class="p">()</span><span class="w"></span>
-<span class="w">    </span><span class="kc">true</span><span class="w"> </span><span class="c1">// 表示事件已经被处理</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">navView</span><span class="p">.</span><span class="na">setNavigationItemSelectedListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">drawerLayout</span><span class="p">.</span><span class="na">closeDrawers</span><span class="p">()</span>
+<span class="w">    </span><span class="kc">true</span><span class="w"> </span><span class="c1">// 表示事件已经被处理</span>
+<span class="p">}</span>
 </pre></div>
 
 <h2 id="悬浮按钮-floatingactionbutton">悬浮按钮
@@ -157,11 +157,11 @@ alt="Example of snackbar on a mobile screen" />
 screen</figcaption>
 </figure>
 <p>用法类似Toast，比如</p>
-<div class="highlight"><pre><span></span><span class="n">Snackbar</span><span class="p">.</span><span class="na">make</span><span class="p">(</span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Can&#39;t send photo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Snakebar</span><span class="p">.</span><span class="na">LENGTH_SHORT</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">.</span><span class="na">setAction</span><span class="p">(</span><span class="s">&quot;Retry&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// retry</span><span class="w"></span>
-<span class="w">    </span><span class="p">}.</span><span class="na">show</span><span class="p">()</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">Snackbar</span><span class="p">.</span><span class="na">make</span><span class="p">(</span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Can&#39;t send photo&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">Snakebar</span><span class="p">.</span><span class="na">LENGTH_SHORT</span><span class="p">)</span>
+<span class="w">    </span><span class="p">.</span><span class="na">setAction</span><span class="p">(</span><span class="s">&quot;Retry&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// retry</span>
+<span class="w">    </span><span class="p">}.</span><span class="na">show</span><span class="p">()</span>
+<span class="p">}</span>
 </pre></div>
 
 <h2 id="协调布局-coordinatorlayout">协调布局 CoordinatorLayout</h2>
@@ -176,23 +176,23 @@ SwipeRefreshLayout</h2>
 <p>Material
 Design风格的下拉刷新。使用的时候可以把RecyclerView包裹到下拉刷新布局中。</p>
 <p>假设<code>SwipeRefreshLayout</code>的id为<code>swipeRefresh</code>，那么用例如下</p>
-<div class="highlight"><pre><span></span><span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setColorSchemeResources</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">color</span><span class="p">.</span><span class="na">colorPrimary</span><span class="p">)</span><span class="w"></span>
-<span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setOnRefreshListener</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="c1">// 刷新逻辑</span><span class="w"></span>
-<span class="w">    </span><span class="n">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setColorSchemeResources</span><span class="p">(</span><span class="n">R</span><span class="p">.</span><span class="na">color</span><span class="p">.</span><span class="na">colorPrimary</span><span class="p">)</span>
+<span class="n">swipeRefresh</span><span class="p">.</span><span class="na">setOnRefreshListener</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 刷新逻辑</span>
+<span class="w">    </span><span class="n">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">)</span>
+<span class="p">}</span>
 </pre></div>
 
-<div class="highlight"><pre><span></span><span class="kd">private</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">:</span><span class="w"> </span><span class="n">XXXAdapter</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">thread</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">        </span><span class="c1">// Thread.sleep(2000)</span><span class="w"></span>
-<span class="w">        </span><span class="n">runOnUiThread</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">            </span><span class="c1">// ...</span><span class="w"></span>
-<span class="w">            </span><span class="n">adapter</span><span class="p">.</span><span class="na">notifyDataSetChanged</span><span class="p">()</span><span class="w"></span>
-<span class="w">            </span><span class="n">swipeRefresh</span><span class="p">.</span><span class="na">isRefreshing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<div class="highlight"><pre><span></span><span class="kd">private</span><span class="w"> </span><span class="kd">fun</span><span class="w"> </span><span class="nf">myRefresh</span><span class="p">(</span><span class="n">adapter</span><span class="p">:</span><span class="w"> </span><span class="n">XXXAdapter</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">thread</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Thread.sleep(2000)</span>
+<span class="w">        </span><span class="n">runOnUiThread</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// ...</span>
+<span class="w">            </span><span class="n">adapter</span><span class="p">.</span><span class="na">notifyDataSetChanged</span><span class="p">()</span>
+<span class="w">            </span><span class="n">swipeRefresh</span><span class="p">.</span><span class="na">isRefreshing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">false</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 
 <p>下拉自动开始刷新（显示刷新进度条，并用<code>thread</code>函数开新线程执行刷新逻辑），刷新完成后，用<code>runOnUiThread</code>回到界面线程并停止刷新（隐藏刷新进度条）。</p>
@@ -227,7 +227,7 @@ Design风格的下拉刷新。使用的时候可以把RecyclerView包裹到下�
 
         </main>
         <footer>
-<span>© nth233 2022 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
         <div id="fullscreen-img-container" class="hidden">
         </div>
