@@ -450,6 +450,11 @@ function updateEnchantments() {
         level_input.setAttribute('min', 0);
         level_input.setAttribute('max', ench.max_lv);
         level_input.value = ench.max_lv;
+        level_input.addEventListener('change', event => {
+            STATE.enchant_lv_map[ench.name] = level_input.value;
+            updateCommand();
+        })
+        level_input.addEventListener('click', event => event.stopPropagation());
 
         var li = document.createElement('div');
         li.appendChild(ech_name);
@@ -479,6 +484,11 @@ function updateEnchantments() {
         level_input.setAttribute('min', 0);
         level_input.setAttribute('max', ench.max_lv);
         level_input.value = ench.max_lv;
+        level_input.addEventListener('change', event => {
+            STATE.enchant_lv_map[ench.name] = level_input.value;
+            updateCommand();
+        })
+        level_input.addEventListener('click', event => event.stopPropagation());
 
         var li = document.createElement('div');
         li.appendChild(ech_name);
@@ -578,7 +588,9 @@ function init() {
         STATE.enchant_lv_map[ench.name] = ench.max_lv;
         level_input.addEventListener('change', event => {
             STATE.enchant_lv_map[ench.name] = level_input.value;
+            updateCommand();
         })
+        level_input.addEventListener('click', event => event.stopPropagation());
 
         var li = document.createElement('div');
         li.appendChild(ech_name);
