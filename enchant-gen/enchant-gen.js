@@ -116,15 +116,15 @@ const item_list = [
 const enchant_list = [
     {
         "name": "aqua_affinity",
-        "name_cn": "水下呼吸",
+        "name_cn": "水下速掘",
         "incompatible_to": [],
-        "appliable_to": ["helmet", "turtle_shell", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "enchanted_book"],
         "max_lv": 1
     },
     {
         "name": "bane_of_arthropods",
         "name_cn": "节肢杀手",
-        "incompatible_to": ["smite", "sharpness", "book"],
+        "incompatible_to": ["smite", "sharpness", "enchanted_book"],
         "appliable_to": ["sword", "axe"],
         "max_lv": 5
     },
@@ -132,21 +132,21 @@ const enchant_list = [
         "name": "blast_protection",
         "name_cn": "爆炸保护",
         "incompatible_to": ["fire_protection", "protection", "projectile_protection"],
-        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "channeling",
         "name_cn": "引雷",
         "incompatible_to": ["riptide"],
-        "appliable_to": ["trident", "book"],
+        "appliable_to": ["trident", "enchanted_book"],
         "max_lv": 1
     },
     {
         "name": "binding_curse",
         "name_cn": "绑定诅咒",
         "incompatible_to": [],
-        "appliable_to": ["helmet", "leggings", "boots", "elytra", "chestplate", "turtle_shell", "book"],
+        "appliable_to": ["helmet", "leggings", "boots", "elytra", "chestplate", "turtle_shell", "enchanted_book"],
         "max_lv": 1
     },
     {
@@ -160,69 +160,69 @@ const enchant_list = [
         "name": "depth_strider",
         "name_cn": "水下行走",
         "incompatible_to": ["frost_walker"],
-        "appliable_to": ["boots", "book"],
+        "appliable_to": ["boots", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "efficiency",
         "name_cn": "效率",
         "incompatible_to": [],
-        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "shears", "book"],
+        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "shears", "enchanted_book"],
         "max_lv": 5
     },
     {
         "name": "feather_falling",
         "name_cn": "掉落保护",
         "incompatible_to": [],
-        "appliable_to": ["boots", "book"],
+        "appliable_to": ["boots", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "fire_aspect",
         "name_cn": "火焰附加",
         "incompatible_to": [],
-        "appliable_to": ["sword", "axe", "book"],
+        "appliable_to": ["sword", "axe", "enchanted_book"],
         "max_lv": 2
     },
     {
         "name": "fire_protection",
         "name_cn": "火焰保护",
         "incompatible_to": ["blast_protection", "projectile_protection", "protection"],
-        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "flame",
         "name_cn": "火矢",
         "incompatible_to": [],
-        "appliable_to": ["bow", "book"],
+        "appliable_to": ["bow", "enchanted_book"],
         "max_lv": 1
     },
     {
         "name": "fortune",
         "name_cn": "时运",
         "incompatible_to": ["silk_touch"],
-        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "book"],
+        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "frost_walker",
         "name_cn": "冰霜行者",
         "incompatible_to": ["depth_strider"],
-        "appliable_to": ["boots", "book"],
+        "appliable_to": ["boots", "enchanted_book"],
         "max_lv": 2
     },
     {
         "name": "impaling",
         "name_cn": "穿刺",
         "incompatible_to": [],
-        "appliable_to": ["trident", "book"],
+        "appliable_to": ["trident", "enchanted_book"],
         "max_lv": 5
     },
     {
         "name": "infinity",
         "name_cn": "无限",
-        "incompatible_to": ["mending", "book"],
+        "incompatible_to": ["mending", "enchanted_book"],
         "appliable_to": ["bow"],
         "max_lv": 1
     },
@@ -230,41 +230,41 @@ const enchant_list = [
         "name": "knockback",
         "name_cn": "击退",
         "incompatible_to": [],
-        "appliable_to": ["sword", "book"],
+        "appliable_to": ["sword", "enchanted_book"],
         "max_lv": 2
     },
     {
         "name": "looting",
         "name_cn": "抢夺",
         "incompatible_to": [],
-        "appliable_to": ["sword", "book"],
+        "appliable_to": ["sword", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "loyalty",
         "name_cn": "忠诚",
         "incompatible_to": ["riptide"],
-        "appliable_to": ["trident", "book"],
+        "appliable_to": ["trident", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "luck_of_sea",
         "name_cn": "海之眷顾",
         "incompatible_to": [],
-        "appliable_to": ["fishing_rod", "book"],
+        "appliable_to": ["fishing_rod", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "lure",
         "name_cn": "饵钓",
         "incompatible_to": [],
-        "appliable_to": ["fishing_rod", "book"],
+        "appliable_to": ["fishing_rod", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "mending",
         "name_cn": "经验修补",
-        "incompatible_to": ["infinity", "book"],
+        "incompatible_to": ["infinity", "enchanted_book"],
         "appliable_to": [],
         "max_lv": 1
     },
@@ -272,112 +272,112 @@ const enchant_list = [
         "name": "multishot",
         "name_cn": "多发",
         "incompatible_to": ["piercing"],
-        "appliable_to": ["crossbow", "book"],
+        "appliable_to": ["crossbow", "enchanted_book"],
         "max_lv": 1
     },
     {
         "name": "piercing",
         "name_cn": "穿透",
         "incompatible_to": ["multishot"],
-        "appliable_to": ["crossbow", "book"],
+        "appliable_to": ["crossbow", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "power",
         "name_cn": "力量",
         "incompatible_to": [],
-        "appliable_to": ["bow", "book"],
+        "appliable_to": ["bow", "enchanted_book"],
         "max_lv": 5
     },
     {
         "name": "projectile_protection",
         "name_cn": "弹射物保护",
         "incompatible_to": ["protection", "blast_protection", "fire_protection"],
-        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "protection",
         "name_cn": "保护",
         "incompatible_to": ["projectile_protection", "blast_protection", "fire_protection"],
-        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "chestplate", "leggings", "boots", "enchanted_book"],
         "max_lv": 4
     },
     {
         "name": "punch",
         "name_cn": "冲击",
         "incompatible_to": [],
-        "appliable_to": ["bow", "book"],
+        "appliable_to": ["bow", "enchanted_book"],
         "max_lv": 2
     },
     {
         "name": "quick_charge",
         "name_cn": "快速装填",
         "incompatible_to": [],
-        "appliable_to": ["crossbow", "book"],
+        "appliable_to": ["crossbow", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "respiration",
         "name_cn": "水下呼吸",
         "incompatible_to": [],
-        "appliable_to": ["helmet", "turtle_shell", "book"],
+        "appliable_to": ["helmet", "turtle_shell", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "riptide",
         "name_cn": "激流",
         "incompatible_to": ["channeling", "loyalty"],
-        "appliable_to": ["trident", "book"],
+        "appliable_to": ["trident", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "sharpness",
         "name_cn": "锋利",
         "incompatible_to": ["smite", "bane_of_arthropods"],
-        "appliable_to": ["sword", "axe", "book"],
+        "appliable_to": ["sword", "axe", "enchanted_book"],
         "max_lv": 5
     },
     {
         "name": "silk_touch",
         "name_cn": "精准采集",
         "incompatible_to": ["fortune"],
-        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "book"],
+        "appliable_to": ["pickaxe", "axe", "hoe", "shovel", "enchanted_book"],
         "max_lv": 1
     },
     {
         "name": "smite",
         "name_cn": "亡灵杀手",
         "incompatible_to": ["sharpness", "bane_of_arthropods"],
-        "appliable_to": ["sword", "axe", "book"],
+        "appliable_to": ["sword", "axe", "enchanted_book"],
         "max_lv": 5
     },
     {
         "name": "soul_speed",
         "name_cn": "灵魂疾行",
         "incompatible_to": [],
-        "appliable_to": ["boots", "book"],
+        "appliable_to": ["boots", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "sweeping_edge",
         "name_cn": "横扫之刃",
         "incompatible_to": [],
-        "appliable_to": ["sword", "book"],
+        "appliable_to": ["sword", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "swift_sneak",
         "name_cn": "快速潜行",
         "incompatible_to": [],
-        "appliable_to": ["leggings", "book"],
+        "appliable_to": ["leggings", "enchanted_book"],
         "max_lv": 3
     },
     {
         "name": "thorns",
         "name_cn": "荆棘",
         "incompatible_to": [],
-        "appliable_to": ["chestplate", "helmet", "leggings", "boots", "turtle_shell", "book"],
+        "appliable_to": ["chestplate", "helmet", "leggings", "boots", "turtle_shell", "enchanted_book"],
         "max_lv": 3
     },
     {
