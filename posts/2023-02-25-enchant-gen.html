@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - Enchant-Gen——MC附魔指令生成器</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="我写了附魔生成器，[Enchant-Gen](https://fpg2012.github.io/enchant-gen/)。只要动动鼠标在网页上按几个按钮就能生成附魔工具所需的`/give`指令，粘贴到MC中可以直接使用，免去手敲指令的烦恼">
+        
+
+        
+        <meta name="keywords" content="我的世界,附魔,网页工具,enchant-gen,Minecraft,enchantment,mc,nth233,command,generator">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>Enchant-Gen——MC附魔指令生成器</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-02-25</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔post〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#我的世界</span>
+    
+        <span class="tag">#附魔</span>
+    
+        <span class="tag">#网页工具</span>
+    
+        <span class="tag">#enchant-gen</span>
+    
+        <span class="tag">#Minecraft</span>
+    
+        <span class="tag">#enchantment</span>
+    
+        <span class="tag">#mc</span>
+    
+        <span class="tag">#nth233</span>
+    
+        <span class="tag">#command</span>
+    
+        <span class="tag">#generator</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>你是否还在为MC附魔指令太长而烦恼？或是为了搞到一把“火焰附加2+击退2+抢夺3+经验修补+锋利5+横扫之刃3+耐久3”的钻石剑，不得不在铁砧上面敲敲打打半天。如果要输指令生成，那么是这样的</p>
+<div class="highlight"><pre><span></span>/give @p diamond_sword{&quot;Enchantments&quot;:[{&quot;id&quot;:&quot;fire_aspect&quot;,&quot;lvl&quot;:2},{&quot;id&quot;:&quot;knockback&quot;,&quot;lvl&quot;:2},{&quot;id&quot;:&quot;looting&quot;,&quot;lvl&quot;:3},{&quot;id&quot;:&quot;mending&quot;,&quot;lvl&quot;:1},{&quot;id&quot;:&quot;sharpness&quot;,&quot;lvl&quot;:5},{&quot;id&quot;:&quot;sweeping_edge&quot;,&quot;lvl&quot;:3},{&quot;id&quot;:&quot;unbreaking&quot;,&quot;lvl&quot;:3}]} 1
+</pre></div>
+
+<p>这个指令长度，手敲的速度甚至不如铁砧慢慢附魔。</p>
+<p>因此我写了附魔生成器，<a
+href="https://fpg2012.github.io/enchant-gen/">Enchant-Gen</a>。只要动动鼠标在网页上按几个按钮就能生成附魔工具所需的<code>/give</code>指令，粘贴到MC中可以直接使用。地址如下</p>
+<p><a
+href="https://fpg2012.github.io/enchant-gen/">https://fpg2012.github.io/enchant-gen/</a></p>
+<blockquote>
+<p>只支持1.8以上的版本</p>
+</blockquote>
+<figure>
+<img src="/assets/enchant-gen.png" alt="网页截图" />
+<figcaption aria-hidden="true">网页截图</figcaption>
+</figure>
+<hr />
+<p>做这个东西的起因，其实是因为某一次挂机不小心被怪打死了，身上穿了很久的神装没找回来。因为懒得自己敲命令，就写了这个工具。不过事实证明，写这东西比自己真的去手敲命令费时多了……</p>
+<p>Enchant-Gen的页面逻辑完全使用原生Javascript实现，没有使用任何框架，所以代码看起来很直截了当。附魔相关的数据直接存在一个数组里面。</p>
+<p>欢迎在<a
+href="https://github.com/fpg2012/enchant-gen">GitHub</a>上贡献代码和提交issue。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2022-12-29-如何更好地使用sushi.html">如何更好地使用su...</a></div>
+        <div class="sibling-page-date">2022-12-29</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2022-12-29-如何更好地使用sushi.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

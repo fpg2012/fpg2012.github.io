@@ -15,10 +15,50 @@
     
     
     
-    <pubDate>Thu, 02 Feb 2023 11:58:32 GMT</pubDate>
-    <lastBuildDate>Thu, 02 Feb 2023 11:58:32 GMT</lastBuildDate>
+    <pubDate>Sat, 25 Feb 2023 10:54:48 GMT</pubDate>
+    <lastBuildDate>Sat, 25 Feb 2023 10:54:48 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>Enchant-Gen——MC附魔指令生成器</title>
+      <link>https://nth233.top/posts/2023-02-25-enchant-gen.html</link>
+      
+      <description>我写了附魔生成器，[Enchant-Gen](https://fpg2012.github.io/enchant-gen/)。只要动动鼠标在网页上按几个按钮就能生成附魔工具所需的`/give`指令，粘贴到MC中可以直接使用，免去手敲指令的烦恼</description>
+      
+      <pubDate>2023-02-25</pubDate>
+      <guid>13978710758892057975</guid>
+      
+        
+          <category>post</category>
+        
+      
+      
+        
+          <category>我的世界</category>
+        
+          <category>附魔</category>
+        
+          <category>网页工具</category>
+        
+          <category>enchant-gen</category>
+        
+          <category>Minecraft</category>
+        
+          <category>enchantment</category>
+        
+          <category>mc</category>
+        
+          <category>nth233</category>
+        
+          <category>command</category>
+        
+          <category>generator</category>
+        
+      
+    </item>
     
     
     
