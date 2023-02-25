@@ -22,7 +22,7 @@ date: 2023-02-25
 
 > 只支持1.8以上的版本
 
-![网页截图](/assets/enchant-gen.png)
+![网页截图](/assets/img/post/enchant-gen.png)
 
 ---
 
