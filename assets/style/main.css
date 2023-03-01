@@ -161,7 +161,7 @@ header a:visited {
 }
 
 code {
-    font-family:  'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    font-family: 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
     display: inline-block;
     padding: 0 0.1em 0 0.1em;
     word-break: break-all;
@@ -181,8 +181,8 @@ pre {
     padding: 1rem;
     overflow-x: auto;
     border-radius: 0.3125rem;
-    font-family: 'Fira Code', 'Fira Mono', 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
-    font-size: 0.875rem;
+    font-family: 'Jetbrains Mono', 'Roboto Mono', 'Consolas', 'Source Code Pro', 'Liberation Mono', monospace;
+    font-size: 0.9rem;
 }
 
 footer {
