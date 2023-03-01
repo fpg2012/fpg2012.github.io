@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - Hyprland的配置</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="本文主要介绍[Hyprland](https://hyprland.org/)的基本配置。虽然Hyprland已经有了一个官方文档，但是和i3wm的文档相比，可读性还是差了很多。单看文档，不给一个配置范例的话，还是很难上手。很可惜的是，Hyprland的默认配置和Sway相比差远了，必须要一番折腾才堪用。因此才有了这篇文章，一方面是分享一下我的配置，另一方面是分享一下踩的坑。本文只涵盖最基本的配置，由于我觉得Hyprland默认的特效已经很炫酷了，因此没有对特效做任何修改，本文也就不会包含任何与特效配置相关的内容。">
+        
+
+        
+        <meta name="keywords" content="Linux桌面,窗口管理器， Hyprland,Wayland,archlinux">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <button id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>Hyprland的配置</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-02-26</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔post〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#Linux桌面</span>
+    
+        <span class="tag">#窗口管理器， Hyprland</span>
+    
+        <span class="tag">#Wayland</span>
+    
+        <span class="tag">#archlinux</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>本文主要介绍<a
+href="https://hyprland.org/">Hyprland</a>的基本配置。虽然Hyprland已经有了一个官方文档，但是和i3wm的文档相比，可读性还是差了很多。单看文档，不给一个配置范例的话，还是很难上手。很可惜的是，Hyprland的默认配置和Sway相比差远了，必须要一番折腾才堪用。</p>
+<p>因此才有了这篇文章，一方面是分享一下我的配置，另一方面是分享一下踩的坑。本文只涵盖最基本的配置，由于我觉得Hyprland默认的特效已经很炫酷了，因此没有对特效做任何修改，本文也就不会包含任何与特效配置相关的内容。</p>
+<figure>
+<img src="/assets/img/post/myhyprland.png" alt="我的Hyprland" />
+<figcaption aria-hidden="true">我的Hyprland</figcaption>
+</figure>
+<h2 id="为什么要用hyprland">为什么要用Hyprland？</h2>
+<p>特效？wlroots？平铺式布局？其实我也忘了我为什么要用Hyprland。当初觉得Gnome资源占用太高，就去用Sway。但是Sway的动画简陋而且不适配N卡，就试着使用了一下Hyprland，于是一路折腾过来，就用上了。不过没过多久，我还是回到了Gnome和Sway。日常使用Gnome，需要低占用就用Sway，似乎真的没有使用Hyprland的理由。</p>
+<p>如果你不愿意使用臃肿DE、想要使用平铺式的WM、愿意使用Wayland、想要自己配置炫酷的特效、乐于折腾，那么Hyprland确实值得一试。如果你从未尝试过平铺式WM，那么我建议先尝试一下i3或者Sway，初次尝试可能会觉得不适应，但一旦习惯了平铺式WM，就会觉得传统的层叠式WM十分低效。</p>
+<h2 id="在archlinux上安装hyprland">在ArchLinux上安装Hyprland</h2>
+<blockquote>
+<p>我个人不建议使用任何“一键安装脚本”进行安装，除非你很清楚脚本在做什么。如果读过别人写的bash脚本，就会知道这东西可读性极差，与其对脚本进行费时费脑的审查，不如直接手动装了。</p>
+</blockquote>
+<p>Hyprland尚未进入Arch的官方仓库，因此得从AUR安装。</p>
+<div class="highlight"><pre><span></span>yay -S hyprland
+</pre></div>
+
+<p>安装完成后，理论上Hyprland就可以用了（实际上此时Hyprland使用的默认配置不仅丑，而且十分难用）。可以注销登录进Hyprland，看看配置前的Hyprland是什么样子的。</p>
+<h2 id="hyprland本体的基本配置">Hyprland本体的基本配置</h2>
+<p>打开<code>$HOME/.config/hypr/hyprland.conf</code>修改配置。要做的第一件事是把“自动生成”的标志给注释掉，否则每次启动Hyprland都会报警告。把下面这行注释掉：</p>
+<div class="highlight"><pre><span></span>autogenerated = 1 # remove this line to remove the warning
+</pre></div>
+
+<p>改为</p>
+<div class="highlight"><pre><span></span>#autogenerated = 1 # remove this line to remove the warning
+</pre></div>
+
+<h3 id="键位绑定">键位绑定</h3>
+<p>我习惯把快捷键改得像Sway。如果有特殊的需要，可以自己修改。<code>$mainMod</code>键类似i3中的<code>mod</code>键，建议把所有和WM相关的快捷键都设置为以<code>mod</code>这个键开头，这样比较有条理。一般设Super键为<code>$mainMod</code>，因为大部分程序的快捷键都不涉及Super键。</p>
+<div class="highlight"><pre><span></span>$mainMod = SUPER # 用super键作为mod键
+</pre></div>
+
+<p>然后逐个绑定快捷键。绑定快捷键的语法如下：</p>
+<div class="highlight"><pre><span></span>bind=MODS,key,dispatcher,params
+</pre></div>
+
+<p><code>MODS</code>表示快捷键中的“模式键”，譬如SUPER、SHIFT、CTRL等等。<code>key</code>则表示快捷键组合中最后的那一个键。<code>dispatcher</code>则表示是Hyprland内置的命令，比如<code>exec</code>运行、<code>movefocus</code>移动焦点等等，详见<a
+href="https://wiki.hyprland.org/Configuring/Binds/">Hyprland的wiki</a>，<code>params</code>表示<code>dispatcher</code>的参数。</p>
+<p>下面是我个人习惯使用的配置：</p>
+<h4 id="应用">应用</h4>
+<div class="highlight"><pre><span></span>bind = $mainMod, return, exec, kitty # 打开终端
+bind = $mainMod SHIFT, return, exec, gnome-terminal # 有时我需要用gnome-terminal
+bind = $mainMod SHIFT, q, killactive, # 关闭当前窗口
+bind = $mainMod SHIFT, e, exit, # 注销
+bind = $mainMod, n, exec, nautilus # 文件管理器，我习惯用nautilus
+bind = $mainMod, p, exec, firefox # 浏览器，我习惯用firefox
+bind = $mainMod, space, togglefloating, # 切换悬浮模式，悬浮的窗口和层叠式WM中的窗口行为类似，会浮动在平铺的窗口上面
+#bind = $mainMod, tab, exec, wofi --show drun # 使用wofi选择应用
+bind = $mainMod, tab, exec, rofi -show drun # 使用rofi选择应用，之后解释
+bind = $mainMod, x, exec, hyprland-interactive-screenshot # 截图，之后解释
+</pre></div>
+
+<h4 id="窗口和工作区">窗口和工作区</h4>
+<div class="highlight"><pre><span></span>bind = $mainMod, d, pseudo, # dwindle # 伪平铺，后面解释
+bind = $mainMod, V, togglesplit, # 修改划分方式（切换纵横向切分）
+bind = $mainMod, S, togglegroup, # 切换编组（打开编组模式后，同组的窗口会叠在一起）
+bind = $mainMod CTRL, l, changegroupactive # 切换编组中的窗口
+bind = $mainMod SHIFT, f, fullscreen # 切换全屏
+bind = $mainMod, H, movefocus, l # 选中左边的窗口
+bind = $mainMod, L, movefocus, r # 选中右边的窗口
+bind = $mainMod, K, movefocus, u # 选中上面的窗口
+bind = $mainMod, J, movefocus, d # 选中下面的窗口，这四个快捷键受vim启发
+bind = $mainMod, 1, workspace, 1 # 选中工作区1，下面同理
+bind = $mainMod, 2, workspace, 2
+bind = $mainMod, 3, workspace, 3
+bind = $mainMod, 4, workspace, 4
+bind = $mainMod, 5, workspace, 5
+bind = $mainMod, 6, workspace, 6
+bind = $mainMod, 7, workspace, 7
+bind = $mainMod, 8, workspace, 8
+bind = $mainMod, 9, workspace, 9
+bind = $mainMod SHIFT, 1, movetoworkspace, 1 # 把窗口移动到工作区1，下面同理
+bind = $mainMod SHIFT, 2, movetoworkspace, 2
+bind = $mainMod SHIFT, 3, movetoworkspace, 3
+bind = $mainMod SHIFT, 4, movetoworkspace, 4
+bind = $mainMod SHIFT, 5, movetoworkspace, 5
+bind = $mainMod SHIFT, 6, movetoworkspace, 6
+bind = $mainMod SHIFT, 7, movetoworkspace, 7
+bind = $mainMod SHIFT, 8, movetoworkspace, 8
+bind = $mainMod SHIFT, 9, movetoworkspace, 9
+bind = $mainMod, mouse_down, workspace, e+1 # 鼠标滚轮切换工作区，下面同理
+bind = $mainMod, mouse_up, workspace, e-1
+bind = $mainMod ALT, h, workspace, -1 # 键盘切换到上一个工作区
+bind = $mainMod ALT, l, workspace, +1 # 键盘切换到下一个工作区
+bind = $mainMod ALT, left, workspace, -1
+bind = $mainMod ALT, right, workspace, +1
+</pre></div>
+
+<h4 id="鼠标">鼠标</h4>
+<div class="highlight"><pre><span></span>bindm = $mainMod, mouse:272, movewindow # 按住mod用鼠标左键拖动窗口
+bindm = $mainMod, mouse:273, resizewindow # 按住mod用鼠标右键拖动窗口
+</pre></div>
+
+<h4 id="音量和亮度控制">音量和亮度控制</h4>
+<div class="highlight"><pre><span></span>bind = , xf86audioraisevolume, exec, amixer set Master 5%+ # 调大音量
+bind = , xf86audiolowervolume, exec, amixer set Master 5%- # 调小音量
+bind = , xf86monbrightnessdown, exec, brightnessctl set 5%- # 调高亮度
+bind = , xf86monbrightnessup, exec, brightnessctl set 5%+ # 调低亮度
+</pre></div>
+
+<p>可以根据需要再加入其他的<a
+href="https://wiki.archlinux.org/title/Xbindkeys">X绑定功能键（XBindKeys）</a>。</p>
+<h3 id="窗口规则">窗口规则</h3>
+<p>可以强制让一些窗口默认悬浮。比如rofi、QQ的图片查看器。</p>
+<div class="highlight"><pre><span></span>windowrulev2 = float, title:rofi.*
+windowrulev2 = float, title:Lutris
+windowrulev2 = float, title:QQ
+windowrulev2 = float, title:图片查看器
+</pre></div>
+
+<h3 id="输入法">输入法</h3>
+<p>在Hyprland启动的时候，顺便启动fcitx5。</p>
+<div class="highlight"><pre><span></span>exec-once=fcitx5 -d
+</pre></div>
+
+<h2 id="一些必装的工具">一些必装的工具</h2>
+<p>完成上面的配置之后，Hyprland勉强算是可以用了，但是体验会非常糟糕。要想日常使用，下面这些工具基本上是必装的。</p>
+<h3 id="壁纸swaybg">壁纸：swaybg</h3>
+<p>swaybg没有花里胡哨的功能，就单纯是显示一张静态壁纸，对我来说已经很够用了。如果需要自动切换壁纸，可以用<a
+href="https://github.com/Horus645/swww">swww</a>；如果需要花里胡哨的动态壁纸，可以试试<a
+href="https://github.com/GhostNaN/mpvpaper">mpvpaper</a>。</p>
+<p>首先安装swaybg</p>
+<div class="highlight"><pre><span></span># pacman -S swaybg
+</pre></div>
+
+<p>然后在<code>hyprland.conf</code>中调用它（就是在Hyprland启动后顺便执行swaybg）。记得把<code>"$HOME/Pictures/wallpaper/brown-mountain.jpg"</code>改成你壁纸的路径。</p>
+<div class="highlight"><pre><span></span>exec-once=swaybg -i &quot;$HOME/Pictures/wallpaper/brown-mountain.jpg&quot;
+</pre></div>
+
+<h3 id="状态栏waybar">状态栏：Waybar</h3>
+<p>状态栏有<a
+href="https://wiki.hyprland.org/Useful-Utilities/Status-Bars/">很多种选择</a>，我使用最保守的waybar。Hyprland的文档中建议使用定制版的waybar，也就是AUR上的<code>waybar-hyprland-git</code>。</p>
+<div class="highlight"><pre><span></span># yay -S waybar-hyprland-git
+</pre></div>
+
+<p>然后对它进行配置。配置文件有两个，默认都在<code>.config/waybar/</code>下：</p>
+<ol type="1">
+<li><code>config</code>：用JSON格式描述的状态栏结构。</li>
+<li><code>style.css</code>：CSS样式，用于调整布局的细节。</li>
+</ol>
+<p>整体配置起来就像在写一个网页。</p>
+<p>我个人比较喜欢像GNOME的状态栏，配置如下。</p>
+<p><code>config</code>中内容如下。主要是定义了启动应用、托盘、CPU内存占用、音量调整、亮度调整、工作区、网络显示、电量、日期时间这些内容。日期和时间默认只显示时间，鼠标悬停显示日期，右键单击用<code>lunar-date</code>显示农历。</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;layer&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;top&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;modules-left&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;custom/launcher&quot;</span><span class="p">,</span><span class="s2">&quot;cpu&quot;</span><span class="p">,</span><span class="s2">&quot;memory&quot;</span><span class="p">,</span><span class="s2">&quot;tray&quot;</span><span class="p">,</span><span class="s2">&quot;hyprland/window&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;modules-center&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;clock&quot;</span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;modules-right&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;wlr/workspaces&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;backlight&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;pulseaudio&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;network&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;battery&quot;</span><span class="p">,</span><span class="s2">&quot;custom/power&quot;</span><span class="p">],</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="nt">&quot;pulseaudio&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;tooltip&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;scroll-step&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{icon} {volume}%&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format-muted&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{icon} {volume}%&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-click&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;pavucontrol&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format-icons&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;hyprland/window&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;b&gt;{}&lt;/b&gt;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;max-length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;wlr/workspaces&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{icon}&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-click&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;activate&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-scroll-up&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hyprctl dispatch workspace e+1&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-scroll-down&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;hyprctl dispatch workspace e-1&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;network&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;tooltip&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format-wifi&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {essid}&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format-ethernet&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;wired&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;backlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;tooltip&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {}%&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;interval&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-scroll-up&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brightnessctl set 5%+&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-scroll-down&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;brightnessctl set 5%-&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;battery&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;states&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;good&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">95</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;warning&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">40</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;critical&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{icon}  {capacity}%&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;format-charging&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {capacity}%&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;format-plugged&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {capacity}%&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;format-alt&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;{time} {icon}&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;format-icons&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;tray&quot;</span><span class="p">:{</span>
+<span class="w">        </span><span class="nt">&quot;icon-size&quot;</span><span class="p">:</span><span class="mi">18</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;spacing&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;clock&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;b&gt;{:%H:%M}&lt;/b&gt;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;tooltip-format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;big&gt;{:%Y-%m-%d %A %Z}&lt;/big&gt;&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-double-click&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gnome-clocks&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-click-right&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kitty --hold lunar-date `date +&#39;%Y %m&#39;`&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;cpu&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {}%&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;max-length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;on-click&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kitty htop&quot;</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;memory&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;interval&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot; {}%&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;max-length&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">    </span><span class="p">},</span>
+<span class="w">    </span><span class="nt">&quot;custom/launcher&quot;</span><span class="p">:{</span>
+<span class="w">            </span><span class="nt">&quot;format&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;on-click&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rofi -show drun&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;on-click-right&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;rofi -show run&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="p">}</span>
+</pre></div>
+
+<p><code>style.css</code>样式如下：</p>
+<div class="highlight"><pre><span></span><span class="o">*</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fira Sans Compressed&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Noto Sans CJK SC&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">17</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">min-height</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">waybar</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="w">    </span><span class="k">min-height</span><span class="p">:</span><span class="w"> </span><span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">window</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">transparent</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Fira Sans SemiBold&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Noto Sans CJK SC&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">workspaces</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#EEEEEE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Liberation Mono&quot;</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="p">#</span><span class="nn">workspaces</span><span class="w"> </span><span class="nt">button</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">2</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">#</span><span class="nn">workspaces</span><span class="w"> </span><span class="nt">button</span><span class="p">:</span><span class="nd">hover</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">black</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">network</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">pulseaudio</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">battery</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">backlight</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">transparent</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">network</span><span class="p">:</span><span class="nd">hover</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">pulseaudio</span><span class="p">:</span><span class="nd">hover</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">battery</span><span class="p">:</span><span class="nd">hover</span><span class="o">,</span>
+<span class="p">#</span><span class="nn">backlight</span><span class="p">:</span><span class="nd">hover</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">battery</span><span class="p">.</span><span class="nc">charging</span><span class="o">,</span><span class="w"> </span><span class="p">#</span><span class="nn">battery</span><span class="p">.</span><span class="nc">plugged</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">battery</span><span class="p">.</span><span class="nc">critical</span><span class="p">:</span><span class="nd">not</span><span class="o">(</span><span class="p">.</span><span class="nc">charging</span><span class="o">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">animation-name</span><span class="p">:</span><span class="w"> </span><span class="kc">blink</span><span class="p">;</span>
+<span class="w">        </span><span class="k">animation-duration</span><span class="p">:</span><span class="w"> </span><span class="mf">0.5</span><span class="kt">s</span><span class="p">;</span>
+<span class="w">        </span><span class="k">animation-timing-function</span><span class="p">:</span><span class="w"> </span><span class="kc">linear</span><span class="p">;</span>
+<span class="w">        </span><span class="k">animation-iteration-count</span><span class="p">:</span><span class="w"> </span><span class="kc">infinite</span><span class="p">;</span>
+<span class="w">        </span><span class="k">animation-direction</span><span class="p">:</span><span class="w"> </span><span class="kc">alternate</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">@</span><span class="k">keyframes</span><span class="w"> </span><span class="nt">blink</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">to</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#BF616A</span><span class="p">;</span>
+<span class="w">        </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#B5E8E0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">clock</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">22</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">font-family</span><span class="p">:</span><span class="w"> </span><span class="n">Fira</span><span class="w"> </span><span class="n">Code</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">transparent</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">memory</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="p">#</span><span class="nn">cpu</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">white</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">80</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">tray</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">transparent</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="p">#</span><span class="nn">custom-launcher</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">font-size</span><span class="p">:</span><span class="w"> </span><span class="mi">24</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">border-radius</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+<span class="w">    </span><span class="k">transition</span><span class="p">:</span><span class="w"> </span><span class="kc">none</span><span class="p">;</span>
+<span class="w">    </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="nb">rgb</span><span class="p">(</span><span class="mi">134</span><span class="p">,</span><span class="w"> </span><span class="mi">216</span><span class="p">,</span><span class="w"> </span><span class="mi">231</span><span class="p">);</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">rgb</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span><span class="w"> </span><span class="mi">19</span><span class="p">,</span><span class="w"> </span><span class="mi">32</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>最后在hyprland中启用。</p>
+<h3
+id="应用程序选择菜单rofi或者wofi">应用程序选择菜单：rofi或者wofi</h3>
+<p>如果没有rofi或者wofi这类启动器，纯WM的体验真的会很糟糕。这里我使用rofi。</p>
+<div class="highlight"><pre><span></span># pacman -S rofi
+</pre></div>
+
+<p>在Hyprland一侧的配置刚才已经完整了，如果按照我上面的配置文件，按<code>Mod</code>+<code>Tab</code>打开rofi。如果觉得默认的rofi比较丑，可以自己安装主题，比如<a
+href="https://draculatheme.com/rofi">dracula</a>。</p>
+<p>可以把<code>.config/rofi/config.rasi</code>中的<code>show-icons</code>设为<code>true</code>，这样rofi会自动显示图标。</p>
+<h3 id="通知dunst">通知：dunst</h3>
+<p>Hyprland默认没有显示通知的工具。要显示统治，dunst是不错的选择。</p>
+<div class="highlight"><pre><span></span># pacman -S dunst
+</pre></div>
+
+<p>然后在<code>hyprland.conf</code>中调用。</p>
+<div class="highlight"><pre><span></span>exec-once=dunst
+</pre></div>
+
+<p>如果觉得dunst默认的主题太丑，也可以换主题，比如<a
+href="https://draculatheme.com/dunst">dracula</a>。</p>
+<h3 id="锁屏">锁屏</h3>
+<p>WM在锁屏这方面一直没有太好的解决方案。我目前习惯超时直接挂起。用swayidle实现超时自动调用，下面的timeout可以自己改，单位是秒。</p>
+<div class="highlight"><pre><span></span>exec-once=swayidle -w timeout 1800 &#39;systemctl suspend&#39; 
+</pre></div>
+
+<p>swaylock也是不错的选择，但我觉得不好用。</p>
+<div class="highlight"><pre><span></span># yay -S swaylock-effects-git
+</pre></div>
+
+<p>然后修改配置<code>~/.config/swaylock/config</code>。</p>
+<div class="highlight"><pre><span></span>ignore-empty-password
+font=Fira Sans Compressed
+
+clock
+timestr=%R
+datestr=%a, %e of %B
+
+screenshots
+
+fade-in=0.2
+
+effect-blur=20x2
+#effect-greyscale
+effect-scale=0.3
+
+indicator
+indicator-radius=360
+indicator-thickness=60
+indicator-caps-lock
+
+key-hl-color=228833
+
+separator-color=00000000
+
+inside-color=00000099
+inside-clear-color=ffd20400
+inside-caps-lock-color=009ddc00
+inside-ver-color=d9d8d800
+inside-wrong-color=ee2e2400
+
+ring-color=231f20D9
+ring-clear-color=231f20D9
+ring-caps-lock-color=231f20D9
+ring-ver-color=231f20D9
+ring-wrong-color=231f20D9
+
+line-color=00000000
+line-clear-color=ffd2000
+line-caps-lock-color=009ddc00
+line-ver-color=d9d8d800
+line-wrong-color=ee2e2400
+
+text-clear-color=ffd20400
+text-ver-color=d9d8d800
+text-wrong-color=ee2e2400
+
+bs-hl-color=ee2e24FF
+#caps-lock-key-hl-color=ffd204FF
+#caps-lcok-key-hl-color=ee2e24FF
+#caps-lock-bs-hl-color=ee2e24FF
+#disable-caps-lock-text
+text-caps-lock-color=000000FF
+</pre></div>
+
+<p>然后在<code>hyprland.conf</code>中调用。</p>
+<div class="highlight"><pre><span></span>exec-once=swayidle -w timeout 1800 &#39;swaylock&#39; 
+</pre></div>
+
+<h3 id="终端kitty">终端：kitty</h3>
+<p>我始终觉得kitty不如gnome-terminal和konsole好用（但是比起alacritty，还是好用很多的）。如果追求既<del>简陋</del>轻量又好看，可以用。</p>
+<div class="highlight"><pre><span></span># pacman -S kitty
+</pre></div>
+
+<p><code>~/.config/kitty/kitty.conf</code></p>
+<div class="highlight"><pre><span></span>font_size 13.0
+font_family Jetbrains Mono
+background_opacity 0.80
+
+# keybinds
+
+kitty_mod ctrl+shift
+
+map kitty_mod+c copy_to_clipboard
+map kitty_mod+v paste_from_clipboard
+
+include theme.conf
+</pre></div>
+
+<p><code>~/.config/kitty/theme.conf</code></p>
+<div class="highlight"><pre><span></span>background            #202020
+foreground            #d0d0d0
+cursor                #d0d0d0
+selection_background  #d0d0d0
+color0                #151515
+color8                #505050
+color1                #ac4142
+color9                #ac4142
+color2                #7e8d50
+color10               #7e8d50
+color3                #e5b566
+color11               #e5b566
+color4                #6c99ba
+color12               #6c99ba
+color5                #9e4e85
+color13               #9e4e85
+color6                #7dd5cf
+color14               #7dd5cf
+color7                #d0d0d0
+color15               #f5f5f5
+selection_foreground #202020
+</pre></div>
+
+<h3 id="截图和录屏工具">截图和录屏工具</h3>
+<p>我尝试过用grim+slurp截图，但是后面感觉这样用实在是太简陋了。我个人更推荐直接用<code>hyprland-interactive-screenshot</code>。</p>
+<div class="highlight"><pre><span></span># yay -S hyprland-interactive-screenshot-git
+</pre></div>
+
+<h2 id="原理wayland桌面的架构">原理：Wayland桌面的架构</h2>
+<p>「之后填坑」</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2023-02-25-enchant-gen.html">Enchant-G...</a></div>
+        <div class="sibling-page-date">2023-02-25</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2023-02-25-enchant-gen.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script>
+        function setCookie(cname,cvalue,exdays,path) {
+            var d = new Date();
+            d.setTime(d.getTime()+(exdays*24*60*60*1000));
+            var expires = "expires="+d.toGMTString();
+            document.cookie = cname+"="+cvalue+"; "+expires+"; "+"path="+path;
+        }
+        function getCookie(cname){
+            var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i<ca.length; i++) {
+                    var c = ca[i].trim();
+                    if (c.indexOf(name)==0) { return c.substring(name.length,c.length); }
+                }
+            return "";
+        }
+
+        var theme_switch = document.getElementById("theme-switch");
+        var doc = document.documentElement;
+        const themeMedia = window.matchMedia("(prefers-color-scheme: light)");
+        var theme = "light";
+        if (themeMedia.matches) {
+            theme = "light";
+        } else {
+            theme = "dark";
+        }
+        if (getCookie("theme") != "") {
+            theme = getCookie("theme");
+        }
+        var update_theme = function(to_theme) {
+            if (theme == "light") {
+                doc.removeAttribute("class");
+                setCookie("theme", "light", 30, "/");
+            } else {
+                doc.setAttribute("class", "dark-theme")
+                setCookie("theme", "dark", 30, "/");
+            }
+        }
+        update_theme(theme);
+        theme_switch.onclick = function() {
+            if (theme == "light") {
+                theme = "dark";
+                update_theme("dark");
+            } else {
+                theme = "light";
+                update_theme("light");
+            }
+        };
+        themeMedia.addListener(e => {
+            if (e.matches) {
+                theme = "light";
+                update_theme("light");
+            } else {
+                theme = "dark";
+                update_theme("dark");
+            }
+        });
+    </script>
+    
+    <script>
+        window.addEventListener('load', (event) => {
+            new Valine({
+                el: '#vcomments',
+                appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+                appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+            });
+        });
+    </script>
+    
+    </body>
+</html>

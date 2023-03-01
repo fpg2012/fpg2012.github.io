@@ -15,10 +15,38 @@
     
     
     
-    <pubDate>Sat, 25 Feb 2023 10:59:31 GMT</pubDate>
-    <lastBuildDate>Sat, 25 Feb 2023 10:59:31 GMT</lastBuildDate>
+    <pubDate>Wed, 01 Mar 2023 04:53:12 GMT</pubDate>
+    <lastBuildDate>Wed, 01 Mar 2023 04:53:12 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>Hyprland的配置</title>
+      <link>https://nth233.top/posts/2023-02-26-Hyprland配置.html</link>
+      
+      <description>本文主要介绍[Hyprland](https://hyprland.org/)的基本配置。虽然Hyprland已经有了一个官方文档，但是和i3wm的文档相比，可读性还是差了很多。单看文档，不给一个配置范例的话，还是很难上手。很可惜的是，Hyprland的默认配置和Sway相比差远了，必须要一番折腾才堪用。因此才有了这篇文章，一方面是分享一下我的配置，另一方面是分享一下踩的坑。本文只涵盖最基本的配置，由于我觉得Hyprland默认的特效已经很炫酷了，因此没有对特效做任何修改，本文也就不会包含任何与特效配置相关的内容。</description>
+      
+      <pubDate>2023-02-26</pubDate>
+      <guid>4103648013468690563</guid>
+      
+        
+          <category>post</category>
+        
+      
+      
+        
+          <category>Linux桌面</category>
+        
+          <category>窗口管理器， Hyprland</category>
+        
+          <category>Wayland</category>
+        
+          <category>archlinux</category>
+        
+      
+    </item>
     
     
     
