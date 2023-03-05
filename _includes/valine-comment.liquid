@@ -1,0 +1,9 @@
+<script>
+window.addEventListener('load', (event) => {
+    new Valine({
+        el: '#vcomments',
+        appId: '{{ site.valine.appid }}',
+        appKey: '{{ site.valine.appkey }}'
+    });
+});
+</script>
