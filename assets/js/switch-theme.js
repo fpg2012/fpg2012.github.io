@@ -1,4 +1,4 @@
-var emojis = ['🌑', '🌗', '☀️'];
+var emojis = ['🌑', '🌗', '🌕'];
 var theme_switch = document.getElementById('theme-switch');
 var doc = document.documentElement;
 const themeMedia = window.matchMedia('(prefers-color-scheme: light)');
@@ -25,10 +25,16 @@ if (theme_setting == 'light') {
 var update_theme = function(to_theme, to_theme_setting) {
   if (to_theme == 'light') {
     doc.removeAttribute('class');
-    localStorage.setItem('theme', to_theme_setting);
   } else {
     doc.setAttribute('class', 'dark-theme')
-    localStorage.setItem('theme', to_theme_setting);
+  }
+  localStorage.setItem("theme", theme_setting);
+  if (to_theme_setting == "light") {
+    theme_switch.innerText = emojis[2];
+  } else if (to_theme_setting == "dark") {
+    theme_switch.innerText = emojis[0];
+  } else {
+    theme_switch.innerText = emojis[1];
   }
 };
 
@@ -64,13 +70,3 @@ theme_switch.onclick = function() {
     }
   }
 };
-
-// themeMedia.addEventListener(e => {
-//   if (e.matches) {
-//     theme = 'light';
-//     update_theme('light');
-//   } else {
-//     theme = 'dark';
-//     update_theme('dark');
-//   }
-// });

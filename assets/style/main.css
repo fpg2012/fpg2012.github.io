@@ -573,16 +573,33 @@ img {
   border-bottom: solid 1px var(--common-border-color);
 }
 
+#theme-switch {
+  margin: 0 1em 0 1em;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  border: solid 1px var(--common-border-color);
+  padding: 0.25ex 0.5em 0.25ex 0.5em;
+  cursor: pointer;
+  background-color: var(--body-bg-color);
+}
+
+#theme-switch:hover {
+  background-color: var(--button-hover-color);
+}
+
 @media (max-width:600px) {
   .archive-item-more {
     display: none;
   }
+
   main {
     margin: 0;
   }
+
   .post-content {
     padding: 0 1.5em 0 1.5em;
   }
+
   .post-front-matter {
     padding: 1em 1.5em 2em 1.5em;
   }
@@ -593,15 +610,19 @@ img {
     margin: 0;
     padding: 0 2ex 2ex 2ex;
   }
+
   .header-menu>a {
     display: none;
   }
+
   .post-content {
     padding: 0 1em 0 1em;
   }
+
   .post-front-matter {
     padding: 1em 1em 2em 1em;
   }
+
   .archives-list {
     display: block;
   }
