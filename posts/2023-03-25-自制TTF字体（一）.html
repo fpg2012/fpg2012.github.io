@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 自制TrueType字体（零）</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="">
+        
+
+        
+        <meta name="keywords" content="font,truetype,字体,TTF">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        <script async src='//cdn.jsdelivr.net/npm/valine@1.4.18/dist/Valine.min.js'></script>
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>自制TrueType字体（零）</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-03-25</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#font</span>
+    
+        <span class="tag">#truetype</span>
+    
+        <span class="tag">#字体</span>
+    
+        <span class="tag">#TTF</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <h2 id="前言">0 前言</h2>
+<p>我一直以来就很想自己制作一个字体，自定义出各种字形，但每次要行动的时候总是卡在第一步：无从下手。计算机上的字体不同于传统印刷的字体，并不是用手画出来就大功告成了，还涉及到相对复杂的一些数字字体相关的原理。前几年偶然发现了FontForge这个软件，界面看着简单，但打开之后依然毫无操作的头绪，又是无从下手。</p>
+<p>时间一天天过去，我觉得现在时机已经成熟，不该再一直拖延了。是时候可以从阅读TrueType的文档开始，脚踏实地地把一切都搞明白，最后一步一步地把字体做出来。</p>
+<p>以上是开坑的原因。</p>
+<p>本章可以视为阅读TrueType文档的笔记</p>
+<h2 id="字体的数字化">1 字体的数字化</h2>
+<p>字体，可以说就是字的形状。将传统雕版或是字模上的所谓字体搬到计算机的屏幕上，要解决的其实就是怎么表示和存储形状的问题。上世纪八十年代，为了能够显示多样的字体，苹果推出了TrueType标准，把Times
+New
+Roman、Helvetica、Courier等字体搬上了Macintosh的屏幕。微软过后也在Windows
+3.1中引入了TrueType。如今大部分字体都有TrueType格式的版本（<code>*.ttf</code>），而最初的那三种字体也早已成为了经典。1994年，微软在TrueType基础上推出了OpenType，如今OpenType也是主流字体格式之一（<code>*.oft</code>）。所以要做计算机字体，应该先了解一下TrueType。</p>
+<p>TrueType，说到底，就是用分段的二次贝塞尔曲线表示字形的<strong>轮廓</strong>，就像是用Photoshop的钢笔工具把字形画出来。三个点（两个端点、一个控制点）可以确定一个二次贝塞尔曲线。如果曲线复杂一些，可以用多条二次贝塞尔曲线进行逼近。有些点（曲率为0的点）其实是可以省略的（隐含了）。贝塞尔曲线的表示的字体能够比较好地适应不同地屏幕分辨率，并且怎么放大都不会有明显地锯齿，质量相比点阵字体高了一个台阶。</p>
+<figure>
+<img src="/assets/img/post/makefont/g1.png"
+alt="用贝塞尔曲线表示的轮廓（似乎不是二次贝塞尔曲线）" />
+<figcaption
+aria-hidden="true">用贝塞尔曲线表示的轮廓（似乎不是二次贝塞尔曲线）</figcaption>
+</figure>
+<p>字体中的轮廓有方向（点编号从小到大，把右手边的区域填充成黑色）、可以重叠、可以组合（比如ü）。</p>
+<p>定义轮廓的点必须在<strong>主网格</strong>上。因为宽度常常与大写字母M相同，主网格通常也叫<strong>em方块</strong>，网格密度依字体而定，一般是二的整数幂次。坐标系也是依字体而定，拉丁字母多数把原点设在左下角，汉字很多把原点设在正下方。字形一般不会超出em方块，但是并不绝对（比如积分符号∫就常常被设计为超出em方块的）。控制点的数量不宜过多或过少。</p>
+<figure>
+<img src="/assets/img/post/makefont/coordinate.png"
+alt="em方块的坐标系" />
+<figcaption aria-hidden="true">em方块的坐标系</figcaption>
+</figure>
+<h2 id="字体引擎">2 字体引擎</h2>
+<p>字体通过字体引擎显示到屏幕上。分为四步：缩放、对格、光栅化。</p>
+<p>第一步，缩放。缩放器根据要渲染设备和大小，划定要渲染的网格。然后，直接将em方块缩放上去，所有的点保留器原有的位置（具体而言，用的是26.6定点小数），此时缩放后的坐标记为(x~,
+y~)。</p>
+<blockquote>
+<p>x<sub>和y</sub>使用26.6定点小数，意即对准的是每个1/64像素的位置。</p>
+</blockquote>
+<p>具体的缩放系数为：<code>scale = pointSize * resolution / (72 points per inch * units_per_em)</code></p>
+<p>比如有个字形长度是550
+FUnit，那么在72dpi的显示屏上，它的长度就是<code>550 * [(18 * 72 )/ (72 * 2048 )] = 4.83</code>。有两个特殊的点值得注意：出发点和落脚点，分别对应起始的笔位置和结束的笔位置，可以表示出宽度。</p>
+<blockquote>
+<p>FUnit代表em方块上的一格。</p>
+</blockquote>
+<p>第二步，对格，即根据需要和偏好，在新网格上移动轮廓上的点。对格不是粗暴地四舍五入，而是根据字体内部包含的指令实现的。通过指令，可以实现对格时的不同偏好，保持字形的一些重要性质/参数，下面两张图应该可以直观显示为什么要对格，以及对格为什么需要指令而不能直接四舍五入。对格之后，点的坐标表示为(x,y)。</p>
+<figure>
+<img src="/assets/img/post/makefont/gridfitting.png"
+alt="“@”的对格与不对格" />
+<figcaption aria-hidden="true">“@”的对格与不对格</figcaption>
+</figure>
+<p>第三步，光栅化。这一步将轮廓转化为像素点阵，即控制哪些像素“开”，哪些像素“关”。简单来说，如果一个像素的中心点在轮廓内部就开，否则不开（<strong><em>规则1</em></strong>）。这里涉及一个重要的问题：如何判断像素点中心到底是在轮廓内还是在轮廓外？TrueType使用环绕数来解决这一问题。如果环绕数非0，那么就在轮廓内，否则在轮廓外。</p>
+<p>环绕数的计算十分容易。首先，置环绕数初始值为0。然后从像素点中心出发，沿着一条射线扫描。每当穿过轮廓的时候进行计数，如果是从轮廓线的左边跨到右边/下边跨到上边，则环绕数+1，否则环绕数-1。因为轮廓肯定是闭合的，所以射线的方向不重要。但为了方便，一般采用向正右或者向正上发射的射线。</p>
+<p>默认模式下，仅按照规则1进行光栅化。但这不一定能满足现实的需要。在ppem（Pixels
+Per
+EM）较低的时候，或是字体经过旋转、伸缩等变换时，容易出现像素丢失的问题（dropout）。比如：</p>
+<p>为了应对像素丢失问题，可以启用两种丢失管理模式，分别引入以下额外的规则。规则3相比规则2，去掉了尖角的情况。</p>
+<ol type="1">
+<li>规则2
+<ol type="1">
+<li>如果一条连接两个像素的横线，经过从左至右同时跨过两条方向不同的轮廓，并且根据规则1两个像素都不开启，那么开启左边的像素。</li>
+<li>如果一条连接两个像素的竖线，经过从下至上同时跨过两条方向不同的轮廓，并且根据规则1两个像素都不开启，那么开启下边的像素。</li>
+</ol></li>
+<li>规则3
+<ol type="1">
+<li>如果一条连接两个像素的横线，经过从左至右同时跨过两条方向不同的轮廓，并且根据规则1两个像素都不开启，而且两条轮廓继续与其他的扫描线相交，那么开启左边的像素。</li>
+<li>如果一条连接两个像素的竖线，经过从下至上同时跨过两条方向不同的轮廓，并且根据规则1两个像素都不开启，而且两条轮廓继续与其他的扫描线相交，那么开启下边的像素。</li>
+</ol></li>
+</ol>
+<figure>
+<img src="/assets/img/post/makefont/pixelmissing.png"
+alt="非尖角（左）和尖角（右）引起的像素点丢失" />
+<figcaption
+aria-hidden="true">非尖角（左）和尖角（右）引起的像素点丢失</figcaption>
+</figure>
+<h2 id="解释器与指令">3 解释器与指令</h2>
+<p>字体文件中的指令不仅仅用于前面提到的对格。指令的序列称为程序。TrueType字体文件中的程序又可以分为三种：字体程序、控制值程序和字形程序。顾名思义，字体程序与整个字体相关，在应用程序首次加载这一字体时执行，并且只执行这一次，主要用于定义函数和指令；控制值程序在每次发生变换、字号改变时执行；字形程序在字形被使用的时候执行。</p>
+<p>指令的名称和操作码不一定一一对应，一类指令的不同变种可能共用同一个指令名，通过设定一些标志，便可确定具体用的是哪条指令。具体请查文档。比方说<code>PUSHB[abc]</code>，方括号中的部分就是标志，真实的指令操作码就是PUSHB的操作码在低位补上标志位。</p>
+<p>解释器的执行环境包括一些全局的状态变量，称为图形状态。这些状态包括自由向量的设置、投影向量的设置、舍入状态的设置等，具体可查文档。图形状态在解释器开始执行时，会重置回默认值，因此字形程序之间无法相互发生影响。控制值程序可以修改图形状态的默认值，也就是说，控制值程序可以影响后续字形程序。</p>
+<p>解释器处理指令的方式类似计算机的CPU。执行时，指令指针〔IP，Instruction
+Pointer〕指向下一条要执行的指令。指令顺序存放，默认采用顺序执行，形成一条指令流，但也可以使用跳转和循环指令执行顺序。</p>
+<p>解释器将数据存储在栈上，与指令分离。每个栈元素32位宽。PUSH类的指令可以往栈上压入字节（8位）或是字（16位），其余指令只能读取栈上元素，或者把元素从栈上弹出（自然是先进后出）。当压入一个字的时候，采用大端序，即高字节在前，低字节在后。如果一次压入的数据量不足32位，解释器会在高位进行符号扩展。</p>
+<p>解释器还有一块内存空间，用于暂存栈上取出的数据，称为存储区。</p>
+<p>除设置图形状态的指令、管理栈的指令、读写存储区的指令、跳转和循环指令、获取解释器状态的指令之外，还有用于算数运算、逻辑运算、比较运算的指令，和CPU的指令集略有些类似。</p>
+<h2 id="点的移动">4 点的移动</h2>
+<p>TrueType引入指令的主要目的是为了对格的时候能够得到较好的效果。说到底，就是为了对格的时候智能地移动轮廓上的点。</p>
+<p>首先我们对轮廓点坐标的变换做一个概述。在TrueType字体文件中，所有轮廓点的坐标的单位都是FUnit，也就意味着都是整数。在缩放到具体设备的像素网格上之后，坐标使用26.6定点小数表示，也就是自动对齐到像素的1/64的整数倍上面去，1:32就表示一个半像素，2:16就表示2又1/4个像素。</p>
+<p>根据点存在的方式，我们可以把指令用到的点分成两类，分属两个区。存储在字体文件中的轮廓点的坐标，处于字形区。指令根据需要，临时生成的点的坐标，属于过渡区（twilight
+zone）。过渡区的点在重新加载字形的时候不会自动初始化，所以在使用前，必须先用指令设置它们。</p>
+<p>指令不显式区分两个区域的点。区域指针（zp）用于指定点所在的区。引用指针（rp）用于指向具体的点。两个区域的点都从0开始编号，因此不指明区域会发生混淆。有一系列指令可以设置zp和rp。还有一些指令切换点是否在轮廓上的状态。</p>
+<p>对于某个具体的点，我们可以移动它。所有的点只能沿着自由向量的方向进行移动。自由向量作为表示方向的向量，其起点在哪并不重要，在逻辑上可以平移到任何位置。自由向量是一个图形状态变量，用一对数字表示。</p>
+<p>点的位置通过投影向量给定。具体而言，将点投影到投影向量上，其投影在投影向量上的坐标就代表了点的位置。移动点时，我们给定一个投影向量上的坐标，将点沿着自由向量移动到对应位置上。</p>
+<figure>
+<img src="/assets/img/post/makefont/movepoint.png"
+alt="P代表投影向量（所在的直线），F代表自由向量（所在的直线）" />
+<figcaption
+aria-hidden="true">P代表投影向量（所在的直线），F代表自由向量（所在的直线）</figcaption>
+</figure>
+<p>投影向量还可以用于计算两点沿投影向量的行程（distance）。行程除长度之外，还具有颜色属性。仅穿过黑色区域的行程为黑色行程，仅穿过白色区域的行程为白色行程。既穿过白色区域也穿过黑色区域的行程需要按照子行程的组合确定颜色。将行程切分成白色和黑色的子行程，然后按照规则进行组合。最后组合出是什么颜色就是什么颜色。规则如下图。（ps.
+我不清楚distance翻译成“距离”会不会更好。）</p>
+<figure>
+<img src="/assets/img/post/makefont/colorofdistance.png"
+alt="行程的颜色" />
+<figcaption aria-hidden="true">行程的颜色</figcaption>
+</figure>
+<p>行程的颜色用于舍入时引擎的补偿。比如根据需要，在像素较大的设备上，引擎可以让黑色行程短一些、白色行程长一些。灰色行程不会进行补偿。</p>
+<p>TrueType解释器的舍入针对的是行程，而非点坐标。舍入模式位于图形状态中，可以按需改变。行程在舍入之后转化为整数或是半整数。不同舍入模式有不同的阈值和相位，具体细节请参考文档。舍入的具体流程：</p>
+<ol type="1">
+<li>添加引擎补偿</li>
+<li>减去相位</li>
+<li>加上阈值</li>
+<li>根据周期进行去尾</li>
+<li>加回相位</li>
+<li>调整：如果正数被舍入到负数，则调整为最靠近0的整数。负数同理。</li>
+</ol>
+<p>接下来终于可以讨论对点的移动了。移动点的指令可以分为5种：给定位移（此时不用到投影向量）、给定目标位置、给定相对行程、对齐（使两点在投影向量上有相同位置）、插值（按其他点的移动进行移动）。指令的具体细节以后再探讨。</p>
+<h2 id="参考资料">参考资料</h2>
+<p>插图来自TrueType文档和OpenType文档。</p>
+<ol type="1">
+<li><a
+href="https://developer.apple.com/fonts/TrueType-Reference-Manual/RM01/Chap1.html">TrueType文档</a></li>
+<li><a
+href="https://learn.microsoft.com/en-us/typography/opentype/spec/overview">OpenType文档</a></li>
+<li><a href="https://en.wikipedia.org/wiki/TrueType">TrueType -
+Wikipedia</a></li>
+<li><a
+href="https://en.wikipedia.org/wiki/Em_(typography)">Em(typography) -
+Wikipedia</a></li>
+<li><a
+href="https://designwithfontforge.com/zh-CN/The_EM_Square.html">Em
+Square</a></li>
+<li><a
+href="https://designwithfontforge.com/zh-CN/The_EM_Square.html">FontForge字体设计</a></li>
+</ol>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2023-02-26-Hyprland配置.html">Hyprland的...</a></div>
+        <div class="sibling-page-date">2023-02-26</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2023-02-26-Hyprland配置.html">〉</a></div>
+    
+</div>
+
+
+<div class="comment-area">
+    <div defer id="vcomments"></div>
+</div>
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script src="//nth233.top/assets/js/switch-theme.js"></script>
+    
+        <script>
+window.addEventListener('load', (event) => {
+    new Valine({
+        el: '#vcomments',
+        appId: 'z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz',
+        appKey: '4R2vpq8Wy392JAroRiaL7MJY'
+    });
+});
+</script>
+    
+    </body>
+</html>
