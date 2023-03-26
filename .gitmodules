@@ -1,0 +1,3 @@
+[submodule "enchant-gen"]
+	path = enchant-gen
+	url = https://github.com/fpg2012/enchant-gen
