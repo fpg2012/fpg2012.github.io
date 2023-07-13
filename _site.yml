@@ -11,5 +11,5 @@ valine:
 
 convert_ext: ["html", "md", "xml"]
 converter_choice:
-  "md": "convert_c"
+  "md": "convert.sh"
 taxonomies: ["category", "tag"]
