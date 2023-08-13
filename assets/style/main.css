@@ -573,6 +573,16 @@ img {
   border-bottom: solid 1px var(--common-border-color);
 }
 
+span.comment-area-power-by {
+  margin-left: 2em;
+  color: gray;
+  font-size: 1rem;
+}
+
+.comment-area-title {
+  
+}
+
 #theme-switch {
   margin: 0 1em 0 1em;
   border-radius: 5px;
