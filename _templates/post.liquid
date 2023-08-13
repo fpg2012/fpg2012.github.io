@@ -57,4 +57,7 @@ layout: page
     {% include "isso" %}
 </div>
 {% endif %}
+{% if site.utterances and page.comment %}
+    {% include "utterances" %}
+{% endif %}
 </div>
