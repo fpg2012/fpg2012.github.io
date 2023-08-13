@@ -51,4 +51,10 @@ layout: page
     <div defer id="vcomments"></div>
 </div>
 {% endif %}
+{% if site.isso and page.comment %}
+<div class="comment-area">
+    <h2 class="comment-area-title">评论 <span class="comment-area-power-by">powered by <a href="https://isso-comments.de">isso</a></span></h2>
+    {% include "isso" %}
+</div>
+{% endif %}
 </div>
