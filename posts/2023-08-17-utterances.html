@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 评论系统迁移至utterances</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="评论系统迁移至utterances">
+        
+
+        
+        <meta name="keywords" content="瞎写,blog">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>评论系统迁移至utterances</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-08-17</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔writing〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#瞎写</span>
+    
+        <span class="tag">#blog</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>先前博客一直在使用valine作为评论系统。一直以来运行“良好”，我始终没察觉到它的问题，毕竟除了我自己没有人会来这里评论。</p>
+<p>但是今年情况发生了变化。我那篇《Hyprland的配置》的文章下出现了本站第一条游客评论，但因为Valine没有邮件提醒的功能，我没有在5月份那条评论出现的第一时间看到它。等到我回复的时候，我想评论主已经不会回头来访问本站了。</p>
+<p>另外valine还存在较为严重的安全性问题，我之前一直没有注意到。</p>
+<p>为了替换掉valine，我先后尝试了几个评论系统：</p>
+<ol type="1">
+<li>remark42</li>
+<li>isso</li>
+<li>utterances</li>
+</ol>
+<p>remark42和isso都是自部署的评论系统。remark42效果不错，但是必须要确保服务器的域名和博客网站的域名相同才能使用GitHub登陆，这一点我无法满足。isso较remark42简单很多，但是可扩展性太差，无法修改邮件模板，导致邮件统统被识别为spam，无法发送，这点我无法容忍。</p>
+<p>故最后还是使用了utterances。utterances使用github的issue作为评论区，省去了一大堆麻烦的配置和部署。utterances的缺点是会申请“act
+on your
+behalf”的权限，无法保证一定不会出现安全性问题。<strong>如果您不信任utterances，可以直接到对应的issue（标题为页面的相对路径，可以参考issues中现有的issue）进行评论，避免授权给utterances</strong>。</p>
+<hr />
+<p>这里要向《Hyprland的配置》一文下的评论游客道歉，我更换了评论系统，原先的评论也就不再显示，我的回复您也看不到了。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2023-07-24-《神秘岛》/index.html">《神秘岛》...</a></div>
+        <div class="sibling-page-date">2023-07-24</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2023-07-24-《神秘岛》/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script src="//nth233.top/assets/js/switch-theme.js"></script>
+    
+    </body>
+</html>
