@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 使用Intel Arc A770进行AI画图</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="">
+        
+
+        
+        <meta name="keywords" content="intel,AI画图,stable diffusion,显卡,Arc A770">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>使用Intel Arc A770进行AI画图</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-09-03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#intel</span>
+    
+        <span class="tag">#AI画图</span>
+    
+        <span class="tag">#stable diffusion</span>
+    
+        <span class="tag">#显卡</span>
+    
+        <span class="tag">#Arc A770</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <blockquote>
+<p>本文假设读者对Linux、PyTorch有一定的了解，对AI绘画的原理有一定了解。</p>
+</blockquote>
+<h2 id="前言">前言</h2>
+<p>网上对<a href="">Intel Arc
+A770</a>的风评不太好，评论基本上都说这张卡“性能不如同等级的N卡“、“驱动不完善”、“未来可期未来买”。但是综合考虑了一下我的需求，我还是决定无视这糟糕的风评，入手这张卡。这卡有几个优点：</p>
+<ol type="1">
+<li><p>16GB显存（同级别的N卡基本上显存都没它大）</p></li>
+<li><p>Linux下驱动支持良好（前提是内核版本6.2+，对比起来，N卡在Linux下用十分痛苦）</p></li>
+<li><p>没有矿</p></li>
+<li><p>价格已经初具性价比了，非公版现在只要2000出头，二手应该会更便宜</p></li>
+<li><p>性能可能确实一般，但是对我而言够用</p></li>
+<li><p>驱动已经逐渐完善了</p></li>
+<li><p>AV1编码（虽然PR不支持，但是kdenlive支持）</p></li>
+</ol>
+<p>随着Intel在去年发布了Intel Extensions For
+Pytorch（IPEX），用A770进行机器学习，也并非不可能。</p>
+<p>故为了充分利用我手上的这张卡，我打算来试试AI绘图、AI音色替换、自己部署ChatGLM之类的玩法。但正如标题，本文只涉及AI绘图。</p>
+<h2 id="配置基本环境">配置基本环境</h2>
+<p>我个人使用的环境如下：</p>
+<div class="highlight"><pre><span></span>                   -`                    nth233@lune 
+                  .o+`                   ----------- 
+                 `ooo/                   OS: Arch Linux x86_64 
+                `+oooo:                  Kernel: 6.4.12-arch1-1 
+               `+oooooo:                 Uptime: 32 mins 
+               -+oooooo+:                Packages: 1503 (pacman), 16 (flatpak) 
+             `/:-:++oooo+:               Shell: zsh 5.9 
+            `/++++/+++++++:              Resolution: 2560x1440 
+           `/++++++++++++++:             DE: GNOME 44.4 
+          `/+++ooooooooooooo/`           WM: Mutter 
+         ./ooosssso++osssssso+`          WM Theme: Adwaita 
+        .oossssso-````/ossssss+`         Theme: Adwaita [GTK2/3] 
+       -osssssso.      :ssssssso.        Icons: Adwaita [GTK2/3] 
+      :osssssss/        osssso+++.       Terminal: kgx 
+     /ossssssss/        +ssssooo/-       CPU: AMD Ryzen 5 5600G with Radeon Graphics (12) @ 3.900GHz 
+   `/ossssso+/:-        -:/+osssso+-     GPU: AMD ATI Radeon Vega Series / Radeon Vega Mobile Series 
+  `+sso+:-`                 `.-/+oso:    GPU: Intel DG2 [Arc A770] 
+ `++:.                           `-/+/   Memory: 3503MiB / 15275MiB 
+ .`                                 `/
+</pre></div>
+
+<p>其中有几个要点：</p>
+<ol type="1">
+<li><p>用Linux或WSL2。Windows我没有尝试过，因此请参照官方文档。</p></li>
+<li><p><strong>确保内核版本 &gt;= 6.2</strong>（目前Arch
+Linux的lts内核还只是6.1）</p></li>
+</ol>
+<p>IPEX只支持Ubuntu 22.04，但是实测用Arch
+Linux应该也没问题。如果求稳，可以用Docker。建议第一次尝试使用Docker，比较省心。</p>
+<blockquote>
+<p>确保内核版本足够高，这点特别重要！</p>
+</blockquote>
+<p>安装intel oneapi相关的工具。</p>
+<div class="highlight"><pre><span></span># pacman -S intel-compute-runtime-bin intel-oneapi-basekit intel_gpu_tools
+</pre></div>
+
+<p><code>intel_gpu_tools</code>提供了<code>intel_gpu_top</code>这类工具，可以比较方便地查看显卡的占用情况。</p>
+<p>似乎安装以上的包就已经足够了。但为了以防万一，确保读者可以复现，我这里列出我安装的所有和intel有关的包。</p>
+<div class="highlight"><pre><span></span>$ pacman -Qs intel
+
+local/intel-compute-runtime-bin 23.22.26516.18-1
+    Intel Graphics Compute Runtime for oneAPI Level Zero and OpenCL Driver (pre-compiled binaries)
+local/intel-gpu-tools 1.27-2
+    Tools for development and testing of the Intel DRM driver
+local/intel-graphics-compiler-bin 1:1.0.14062.11-1
+    Intel Graphics Compiler for OpenCL (pre-compiled binaries)
+local/intel-media-driver 23.3.1-1
+    Intel Media Driver for VAAPI — Broadwell+ iGPUs
+local/intel-oneapi-basekit 2023.2.0.49397-1
+    Intel oneAPI Base Toolkit for Linux
+local/libmfx 23.2.2-2
+    Intel Media SDK dispatcher library
+local/libva-utils 2.19.0-1
+    Intel VA-API Media Applications and Scripts for libva
+local/onetbb 2021.9.0-1
+    High level abstract threading library (oneAPI Threading Building Blocks)
+local/openimagedenoise 1.4.3-1
+    Intel(R) Open Image Denoise library
+local/openpgl 0.5.0-5
+    Intel Open Path Guiding Library
+local/vulkan-intel 1:23.1.6-4
+    Intel&#39;s Vulkan mesa driver
+</pre></div>
+
+<h3 id="使用docker">使用Docker</h3>
+<p>首先，安装Docker，并且启用docker服务。</p>
+<div class="highlight"><pre><span></span># pacman -S docker
+# sudo systemctl start docker
+</pre></div>
+
+<p>拉取Intel官方的docker映像（image）</p>
+<div class="highlight"><pre><span></span># docker pull intel/intel-extension-for-pytorch:xpu-flex-2.0.110-xpu
+</pre></div>
+
+<p>运行映像。</p>
+<div class="highlight"><pre><span></span># docker run --rm -it --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</pre></div>
+
+<p>然后检查一下是否能跑。在docker里运行以下代码，看能否正确输出IPEX的版本、显卡设备的信息。</p>
+<div class="highlight"><pre><span></span>$ python -c &quot;import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f&#39;[{i}]: {torch.xpu.get_device_properties(i)}&#39;) for i in range(torch.xpu.device_count())];&quot;
+</pre></div>
+
+<p>到此为止，环境就配好了。</p>
+<h3 id="不使用docker">不使用Docker</h3>
+<p>确保安装了Python 3.11和对应的<code>python-pip</code>。</p>
+<p><code>cd</code>到一个合适的地方，然后创建Python虚拟环境，随后启用虚拟环境。</p>
+<div class="highlight"><pre><span></span>$ cd ~/workspace/intel_draw
+$ python -m venv venv
+$ source ./venv/bin/activate
+</pre></div>
+
+<p>到下载Python
+3.11对应版本的PyTorch、torchvison和IPEX的whl文件。截至9月3日，是下面这三个。</p>
+<div class="highlight"><pre><span></span>torch-2.0.1a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+torchvision-0.15.2a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+intel_extension_for_pytorch-2.0.110+xpu-cp311-cp311-linux_x86_64.whl
+</pre></div>
+
+<p>然后一一使用<code>pip</code>装到虚拟环境中。</p>
+<div class="highlight"><pre><span></span>$ pip install torch-2.0.1a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+$ pip install torchvision-0.15.2a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+$ pip install intel_extension_for_pytorch-2.0.110+xpu-cp311-cp311-linux_x86_64.whl
+</pre></div>
+
+<p>然后，配置必要的环境变量。Intel提供了一个脚本，我这里是在<code>/opt/intel/oneapi</code>下面，执行这一脚本即可。之后每次使用IPEX前，都要先执行这一脚本。</p>
+<div class="highlight"><pre><span></span>$ source /opt/intel/oneapi/setvars.sh
+</pre></div>
+
+<p>然后运行以下代码，看能否正确输出IPEX的版本、显卡设备的信息。</p>
+<div class="highlight"><pre><span></span>$ python -c &quot;import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f&#39;[{i}]: {torch.xpu.get_device_properties(i)}&#39;) for i in range(torch.xpu.device_count())];&quot;
+</pre></div>
+
+<blockquote>
+<p>如果需要使用Python
+3.10或者更老的版本，可以conda创建虚拟环境，同时环境时指定Python版本。</p>
+<div class="highlight"><pre><span></span>conda create -n intel_draw python==3.10.13
+</pre></div>
+
+<p>启用这个刚刚创建的<code>intel_draw</code>环境，然后再从头开始配置环境。注意Python
+3.10对应的<code>whl</code>文件和3.11不同，注意检查。</p>
+</blockquote>
+<p>到此为止，基本的环境就配好了。</p>
+<h2 id="配置comfyui">配置ComfyUI</h2>
+<p>Stable Diffusion
+WebUI虽然是最流行的WebUI，但它的没有直接支持Intel独显。虽有几个fork支持Intel独显，但是更新不如原项目勤快。所以我还是选择把intel独显支持整合进主分支的ComfyUI。</p>
+<blockquote>
+<p>其实也可以不使用任何的WebUI，直接自己手动调用模型，可能还更简单一些。</p>
+</blockquote>
+<p>把comfyui的仓库克隆到本地。这里是放在<code>~/workspace/ComfyUI</code></p>
+<div class="highlight"><pre><span></span>$ git clone https://github.com/comfyanonymous/ComfyUI
+</pre></div>
+
+<p>然后启用刚才配置好的基本环境。</p>
+<blockquote>
+<p>如果使用的是docker，启动容器的命令要添加几个选项。如下（注意根据自己的实际情况进行改动）：</p>
+<div class="highlight"><pre><span></span># docker run --rm -it -v /home/nth233/workspace/ComfyUI:/opt/sd -p 8188:8188 --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</pre></div>
+
+<p><code>-v</code>是把我们刚刚克隆下来的ComfyUI的代码映射到docker容器中。<code>-p</code>是为了之后能够访问容器中运行的ComfyUI服务端，进行端口映射。</p>
+</blockquote>
+<p>安装ComfyUI所需的基本依赖，在<code>~/workspace/ComfyUI</code>（如果使用docker，按照上面的命令启动，那么是<code>/opt/sd</code>）下，执行：</p>
+<div class="highlight"><pre><span></span>$ pip install -r requirements.txt
+</pre></div>
+
+<p>然后就可以启动ComfyUI了。</p>
+<div class="highlight"><pre><span></span>$ python main.py --listen 0.0.0.0 --use-split-cross-attention
+</pre></div>
+
+<p>然后可在浏览器中打开<code>localhost:8188</code>，即可看到ComfyUI。</p>
+<h2 id="下载模型">下载模型</h2>
+<p>目前比较流行的是Stable Diffusion 1.5，因此我们以此为例。</p>
+<p>从<a
+href="https://huggingface.co/runwayml/stable-diffusion-v1-5">huggingface</a>上下载Stable
+Diffusion
+1.5的checkpoint（如图）。下载完之后，放到<code>ComfyUI/models/checkpoints</code>下。</p>
+<figure>
+<img src="/assets/img/post/sd-ckpt.png"
+alt="Stable Diffusion 1.5 safetensors" />
+<figcaption aria-hidden="true">Stable Diffusion 1.5
+safetensors</figcaption>
+</figure>
+<p>读者还可以根据需要，下载其他模型的checkpoint放进来选用。如果有需要，还可以上civitai上下载各种各样的LoRA模型，放到<code>lora</code>文件夹下面。ControlNet同理</p>
+<p>然后，参考ComfyUI的文档和示例，就可以开始画图了。</p>
+<h2 id="结果">结果</h2>
+<p>结果还行。但是似乎画图速度不算太快。但是不知是什么原因，intel这卡没法长宽太大的图，如果需要生成大图，可以考虑先生成小图，然后其他的模型超分辨率到高清大图。</p>
+<iframe src="//player.bilibili.com/player.html?aid=787658335&amp;bvid=BV1214y1171Z&amp;cid=1246931591&amp;page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width: 100%;aspect-ratio: 1920/1080;">
+</iframe>
+<h2 id="参考">参考</h2>
+<p><a
+href="https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/installations/linux.html">IPEX文档</a></p>
+<p><a href="https://kwaa.dev/stable-diffusion">I 卡也要炼！本地运行
+Stable Diffusion &amp; ComfyUI</a></p>
+<p><a href="https://github.com/comfyanonymous/ComfyUI">ComfyUI</a></p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2023-08-17-utterances.html">评论系统迁移至ut...</a></div>
+        <div class="sibling-page-date">2023-08-17</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2023-08-17-utterances.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script src="//nth233.top/assets/js/switch-theme.js"></script>
+    
+    </body>
+</html>

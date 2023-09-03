@@ -15,10 +15,40 @@
     
     
     
-    <pubDate>Thu, 17 Aug 2023 15:45:27 GMT</pubDate>
-    <lastBuildDate>Thu, 17 Aug 2023 15:45:27 GMT</lastBuildDate>
+    <pubDate>Sun, 03 Sep 2023 05:41:23 GMT</pubDate>
+    <lastBuildDate>Sun, 03 Sep 2023 05:41:23 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>使用Intel Arc A770进行AI画图</title>
+      <link>https://nth233.top/posts/2023-09-03-intel-arc-a770-ai.html</link>
+      
+      <description></description>
+      
+      <pubDate>2023-09-03</pubDate>
+      <guid>15740821111905724112</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>intel</category>
+        
+          <category>AI画图</category>
+        
+          <category>stable diffusion</category>
+        
+          <category>显卡</category>
+        
+          <category>Arc A770</category>
+        
+      
+    </item>
     
     
     
