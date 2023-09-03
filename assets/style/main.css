@@ -597,6 +597,10 @@ span.comment-area-power-by {
   background-color: var(--button-hover-color);
 }
 
+.utterances-frame {
+	position: unset;
+}
+
 @media (max-width:600px) {
   .archive-item-more {
     display: none;
