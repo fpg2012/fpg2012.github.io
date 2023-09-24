@@ -15,10 +15,40 @@
     
     
     
-    <pubDate>Sun, 03 Sep 2023 05:41:24 GMT</pubDate>
-    <lastBuildDate>Sun, 03 Sep 2023 05:41:24 GMT</lastBuildDate>
+    <pubDate>Sun, 24 Sep 2023 09:58:15 GMT</pubDate>
+    <lastBuildDate>Sun, 24 Sep 2023 09:58:15 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>解决Linux下音频持续输出高频噪声的问题</title>
+      <link>https://nth233.top/notes/buzzing.html</link>
+      
+      <description>很可能是在Linux下，声卡默认启用了省电模式，导致其中有电容持续充放电。关闭省电模式即可。</description>
+      
+      <pubDate>2023-9-24</pubDate>
+      <guid>4266605655496548531</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>note</category>
+        
+          <category>破事水</category>
+        
+          <category>linux</category>
+        
+          <category>音频</category>
+        
+          <category>噪声</category>
+        
+      
+    </item>
     
     
     

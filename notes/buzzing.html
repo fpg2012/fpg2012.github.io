@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 解决Linux下音频持续输出高频噪声的问题</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="很可能是在Linux下，声卡默认启用了省电模式，导致其中有电容持续充放电。关闭省电模式即可。">
+        
+
+        
+        <meta name="keywords" content="note,破事水,linux,音频,噪声">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" title="夜幕降临">🌒</button>
+</div>
+
+</header>
+
+        <main>
+            
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>解决Linux下音频持续输出高频噪声的问题</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-9-24</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔note〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#note</span>
+    
+        <span class="tag">#破事水</span>
+    
+        <span class="tag">#linux</span>
+    
+        <span class="tag">#音频</span>
+    
+        <span class="tag">#噪声</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <h2 id="原因">原因</h2>
+<p>很可能是在Linux下，声卡默认启用了省电模式，导致其中有电容持续充放电。关闭省电模式即可。</p>
+<h2 id="处理">处理</h2>
+<p>在开始之前，看看用的是哪个声卡，我这里是snd_hda_intel。如果是snd_usb_audio，则下文可能需要做出相应更改。</p>
+<div class="highlight"><pre><span></span>cat /proc/asound/modules
+</pre></div>
+
+<p>首先，检查是不是省电模式，如果输出0，则不是省电模式，请另找原因。</p>
+<div class="highlight"><pre><span></span>cat /sys/module/snd_hda_intel/parameters/power_save
+</pre></div>
+
+<p>然后，如果只需要临时解决，可以往这个文件里面写0：</p>
+<div class="highlight"><pre><span></span>echo 0 &gt; /sys/module/snd_hda_intel/parameters/power_save
+</pre></div>
+
+<p>如果需要永久解决，可以添加配置文件，命名为<code>audio_disable_powersave.conf</code>：</p>
+<div class="highlight"><pre><span></span>sudo vim /etc/modprobe.d/audio_disable_powersave.conf
+</pre></div>
+
+<p>添加一行配置：</p>
+<div class="highlight"><pre><span></span>options snd_hda_intel power_save=0
+</pre></div>
+
+<p>搞定。</p>
+<h2 id="结果">结果</h2>
+<p>问题缓解了很多，但仔细听还是有极小声的高频噪声（可能我的耳朵比较灵）。</p>
+<p>所以平常不用音响的时候还是得把音响的电源关掉。</p>
+<h2 id="起因以及排查过程">起因以及排查过程</h2>
+<p>大概一两个月前搬进租屋开始，我就感觉电脑的音响一直在持续地发出高频噪音。这种噪音平时难以察觉，但是当四周特别安静的时候，就会格外恼人。然而我一直找不到导致高频噪音的原因。当时我发现Windows下没有这个问题，因此初步判断和Linux有关，但是加上回声降噪之后并没有解决问题。</p>
+<p>最近从租屋搬回家，这一问题居然神秘地消失了。直到今天，我感觉显示器的音频输出驱动能力不够强，把音频线接到了主机上，噪声又出现了。所以我判定噪声和主板的声卡有关，一搜……果然是。</p>
+<h2 id="参考解决方法来源">参考/解决方法来源</h2>
+<p><a href="https://itsfoss.com/buzzing-noise-speaker-linux">How I Fixed
+Buzzing Noise Coming from Speakers in Linux</a></p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/notes/wayvnc.html">使用无头的wayv...</a></div>
+        <div class="sibling-page-date">2022-12-5</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/wayvnc.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+
+        </main>
+        <footer>
+<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">↥</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    <script src="//nth233.top/assets/js/switch-theme.js"></script>
+    
+    </body>
+</html>
