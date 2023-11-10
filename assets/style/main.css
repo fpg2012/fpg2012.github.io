@@ -285,7 +285,7 @@ img {
 }
 
 .post-area {
-  max-width: 50em;
+  max-width: max(50em, 40%);
   background: var(--content-bg-color);
   border: solid 1px var(--common-border-color);
   margin: 0 auto 0 auto;
@@ -338,7 +338,7 @@ img {
 }
 
 .archive-list {
-  max-width: 50em;
+  max-width: max(50em, 40%);
   border-radius: 0.3125rem;
   margin: 0 auto 0 auto;
   min-height: 75vh;
