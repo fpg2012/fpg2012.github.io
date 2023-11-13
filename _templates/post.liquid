@@ -2,6 +2,10 @@
 layout: page
 ---
 
+<div class='post-menu'>
+    <div class='menu-title'>{{ page.title }}</div>
+    <hr>
+</div> 
 <div class="post-area">
 <div class="post-front-matter">
     {% if page.title %}
@@ -61,3 +65,4 @@ layout: page
     {% include "utterances" %}
 {% endif %}
 </div>
+<script src={{ '/assets/js/generate-toc.js' | prepend: site.url }}></script>
