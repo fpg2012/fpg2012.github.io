@@ -40,9 +40,15 @@ html {
   --archive-content-color: var(--common-secondary-color);
   --figure-caption-color: var(--common-secondary-color);
   --pre-bg-color: var(--body-bg-color);
+  --menu-link-color: var(--footer-color);
 
   color: var(--common-font-color);
   background-color: var(--body-bg-color);
+  
+
+  height: 100vh;
+  overflow: scroll;
+  scroll-padding-top: 10ex;
 }
 
 html.dark-theme {
@@ -206,6 +212,7 @@ main {
   margin: 1em 1em 1em 1em;
   font-size: 1rem;
   line-break: normal;
+  scroll-padding: 5ex;
 }
 
 .post-front-matter {
@@ -515,6 +522,7 @@ img {
   background-color: var(--footer-bg-color);
   border-radius: 5px;
   cursor: pointer;
+  font-weight: bold;
 }
 
 .comment-area {
@@ -601,6 +609,78 @@ span.comment-area-power-by {
 	position: unset;
 }
 
+.post-menu {
+	float: right;
+	border: var(--common-border-color) 1px solid;
+	position: sticky;
+	top: 5ex;
+	right: calc(((100% - max(50em, 40%))/2) - max(12%, 14em) - 4em);
+	width: max(12%, 14em);
+	margin: 0 1em 1em 1em;
+	padding: 2em 1em 2em 1em;
+	background: var(--header-bg-color);
+  max-height: calc(100vh - 20ex);
+  overflow-y: scroll;
+}
+
+.post-menu::-webkit-scrollbar {
+  display: none;
+}
+
+.post-menu > .menu-h1 {
+    margin-left: 0em;
+}
+
+.post-menu > .menu-h2 {
+    margin-left: 0.5em;
+}
+
+.post-menu > .menu-h3 {
+    margin-left: 1em;
+}
+
+.post-menu > .menu-h4 {
+    margin-left: 1.5em;
+}
+
+.menu-item-link:hover {
+  font-weight: bold;
+}
+
+.menu-item-link {
+  color: var(--menu-link-color);
+}
+
+.menu-item-link:active {
+  color: var(--menu-link-color);
+}
+
+.menu-item-link:visited {
+  color: var(--menu-link-color);
+}
+
+.menu-item::before {
+  content: '◦ ';
+}
+
+.menu-no-item {
+  text-align: center;
+  color: var(--menu-link-color);
+  padding: 1em 0 0 0;
+}
+
+.menu-title {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+
+@media (max-width:1300px) {
+  .post-menu {
+    display: none;
+  }
+}
+
 @media (max-width:600px) {
   .archive-item-more {
     display: none;
@@ -616,6 +696,10 @@ span.comment-area-power-by {
 
   .post-front-matter {
     padding: 1em 1.5em 2em 1.5em;
+  }
+
+  .post-menu {
+    display: none;
   }
 }
 
@@ -639,5 +723,9 @@ span.comment-area-power-by {
 
   .archives-list {
     display: block;
+  }
+
+  .post-menu {
+    display: none;
   }
 }
