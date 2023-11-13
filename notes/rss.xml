@@ -15,10 +15,36 @@
     
     
     
-    <pubDate>Mon, 13 Nov 2023 04:25:46 GMT</pubDate>
-    <lastBuildDate>Mon, 13 Nov 2023 04:25:46 GMT</lastBuildDate>
+    <pubDate>Mon, 13 Nov 2023 09:34:32 GMT</pubDate>
+    <lastBuildDate>Mon, 13 Nov 2023 09:34:32 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>KMP实现和笔记</title>
+      <link>https://nth233.top/notes/2023-11-13-kmp.html</link>
+      
+      <description>KMP实现和笔记</description>
+      
+      <pubDate>2023-11-13</pubDate>
+      <guid>9348905964784705716</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>algorithm</category>
+        
+          <category>kmp</category>
+        
+          <category>算法</category>
+        
+      
+    </item>
     
     
     
