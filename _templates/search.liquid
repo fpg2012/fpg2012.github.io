@@ -1,0 +1,30 @@
+<site>
+    {% for id in paginator.current_batch %}
+    {% if id_to_page[id].nolist %}
+    {% else %}
+    <page>
+        <title>
+        {% if id_to_page[id].title %}
+        {{ id_to_page[id].title }}
+        {% else %}
+        No title
+        {% endif %}
+        </title>
+        <url>{{ id_to_page[id].url | prepend: "//"}}</url>
+        <search-text>
+        {% if id_to_page[id].tag %}
+        {% for tag in id_to_page[id].tag %}
+            {{ tag | escape }}
+        {% endfor %}
+        {% endif %}
+        {% if id_to_page[id].description %}
+        {{ id_to_page[id].description | escape }}
+        {% endif %}
+        {% if id_to_page[id].search_text %}
+        {{ id_to_page[id].search_text | escape }}
+        {% endif %}
+        </search-text>
+    </page>
+    {% endif %}
+    {% endfor %}
+</site>

@@ -1,0 +1,9 @@
+---
+to_ext: "xml"
+layout: search
+paginate: all_pages
+paginate_batch: 10000
+title: "search-text"
+nolist: true
+date: "1970-1-2"
+---

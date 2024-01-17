@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title></title>
+  <style>
+  @font-face {
+  font-family: octicons-link;
+  src: url(data:font/woff;charset=utf-8;base64,d09GRgABAAAAAAZwABAAAAAACFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEU0lHAAAGaAAAAAgAAAAIAAAAAUdTVUIAAAZcAAAACgAAAAoAAQAAT1MvMgAAAyQAAABJAAAAYFYEU3RjbWFwAAADcAAAAEUAAACAAJThvmN2dCAAAATkAAAABAAAAAQAAAAAZnBnbQAAA7gAAACyAAABCUM+8IhnYXNwAAAGTAAAABAAAAAQABoAI2dseWYAAAFsAAABPAAAAZwcEq9taGVhZAAAAsgAAAA0AAAANgh4a91oaGVhAAADCAAAABoAAAAkCA8DRGhtdHgAAAL8AAAADAAAAAwGAACfbG9jYQAAAsAAAAAIAAAACABiATBtYXhwAAACqAAAABgAAAAgAA8ASm5hbWUAAAToAAABQgAAAlXu73sOcG9zdAAABiwAAAAeAAAAME3QpOBwcmVwAAAEbAAAAHYAAAB/aFGpk3jaTY6xa8JAGMW/O62BDi0tJLYQincXEypYIiGJjSgHniQ6umTsUEyLm5BV6NDBP8Tpts6F0v+k/0an2i+itHDw3v2+9+DBKTzsJNnWJNTgHEy4BgG3EMI9DCEDOGEXzDADU5hBKMIgNPZqoD3SilVaXZCER3/I7AtxEJLtzzuZfI+VVkprxTlXShWKb3TBecG11rwoNlmmn1P2WYcJczl32etSpKnziC7lQyWe1smVPy/Lt7Kc+0vWY/gAgIIEqAN9we0pwKXreiMasxvabDQMM4riO+qxM2ogwDGOZTXxwxDiycQIcoYFBLj5K3EIaSctAq2kTYiw+ymhce7vwM9jSqO8JyVd5RH9gyTt2+J/yUmYlIR0s04n6+7Vm1ozezUeLEaUjhaDSuXHwVRgvLJn1tQ7xiuVv/ocTRF42mNgZGBgYGbwZOBiAAFGJBIMAAizAFoAAABiAGIAznjaY2BkYGAA4in8zwXi+W2+MjCzMIDApSwvXzC97Z4Ig8N/BxYGZgcgl52BCSQKAA3jCV8CAABfAAAAAAQAAEB42mNgZGBg4f3vACQZQABIMjKgAmYAKEgBXgAAeNpjYGY6wTiBgZWBg2kmUxoDA4MPhGZMYzBi1AHygVLYQUCaawqDA4PChxhmh/8ODDEsvAwHgMKMIDnGL0x7gJQCAwMAJd4MFwAAAHjaY2BgYGaA4DAGRgYQkAHyGMF8NgYrIM3JIAGVYYDT+AEjAwuDFpBmA9KMDEwMCh9i/v8H8sH0/4dQc1iAmAkALaUKLgAAAHjaTY9LDsIgEIbtgqHUPpDi3gPoBVyRTmTddOmqTXThEXqrob2gQ1FjwpDvfwCBdmdXC5AVKFu3e5MfNFJ29KTQT48Ob9/lqYwOGZxeUelN2U2R6+cArgtCJpauW7UQBqnFkUsjAY/kOU1cP+DAgvxwn1chZDwUbd6CFimGXwzwF6tPbFIcjEl+vvmM/byA48e6tWrKArm4ZJlCbdsrxksL1AwWn/yBSJKpYbq8AXaaTb8AAHja28jAwOC00ZrBeQNDQOWO//sdBBgYGRiYWYAEELEwMTE4uzo5Zzo5b2BxdnFOcALxNjA6b2ByTswC8jYwg0VlNuoCTWAMqNzMzsoK1rEhNqByEyerg5PMJlYuVueETKcd/89uBpnpvIEVomeHLoMsAAe1Id4AAAAAAAB42oWQT07CQBTGv0JBhagk7HQzKxca2sJCE1hDt4QF+9JOS0nbaaYDCQfwCJ7Au3AHj+LO13FMmm6cl7785vven0kBjHCBhfpYuNa5Ph1c0e2Xu3jEvWG7UdPDLZ4N92nOm+EBXuAbHmIMSRMs+4aUEd4Nd3CHD8NdvOLTsA2GL8M9PODbcL+hD7C1xoaHeLJSEao0FEW14ckxC+TU8TxvsY6X0eLPmRhry2WVioLpkrbp84LLQPGI7c6sOiUzpWIWS5GzlSgUzzLBSikOPFTOXqly7rqx0Z1Q5BAIoZBSFihQYQOOBEdkCOgXTOHA07HAGjGWiIjaPZNW13/+lm6S9FT7rLHFJ6fQbkATOG1j2OFMucKJJsxIVfQORl+9Jyda6Sl1dUYhSCm1dyClfoeDve4qMYdLEbfqHf3O/AdDumsjAAB42mNgYoAAZQYjBmyAGYQZmdhL8zLdDEydARfoAqIAAAABAAMABwAKABMAB///AA8AAQAAAAAAAAAAAAAAAAABAAAAAA==) format('woff');
+}
+
+.markdown-body .octicon {
+  display: inline-block;
+  fill: currentColor;
+  vertical-align: text-bottom;
+}
+
+.markdown-body .anchor {
+  float: left;
+  line-height: 1;
+  margin-left: -20px;
+  padding-right: 4px;
+}
+
+.markdown-body .anchor:focus {
+  outline: none;
+}
+
+.markdown-body h1 .octicon-link,
+.markdown-body h2 .octicon-link,
+.markdown-body h3 .octicon-link,
+.markdown-body h4 .octicon-link,
+.markdown-body h5 .octicon-link,
+.markdown-body h6 .octicon-link {
+  color: #1b1f23;
+  vertical-align: middle;
+  visibility: hidden;
+}
+
+.markdown-body h1:hover .anchor,
+.markdown-body h2:hover .anchor,
+.markdown-body h3:hover .anchor,
+.markdown-body h4:hover .anchor,
+.markdown-body h5:hover .anchor,
+.markdown-body h6:hover .anchor {
+  text-decoration: none;
+}
+
+.markdown-body h1:hover .anchor .octicon-link,
+.markdown-body h2:hover .anchor .octicon-link,
+.markdown-body h3:hover .anchor .octicon-link,
+.markdown-body h4:hover .anchor .octicon-link,
+.markdown-body h5:hover .anchor .octicon-link,
+.markdown-body h6:hover .anchor .octicon-link {
+  visibility: visible;
+}
+
+.markdown-body {
+  -ms-text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+  color: #24292e;
+  line-height: 1.5;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol;
+  font-size: 16px;
+  line-height: 1.5;
+  word-wrap: break-word;
+}
+
+.markdown-body .pl-c {
+  color: #6a737d;
+}
+
+.markdown-body .pl-c1,
+.markdown-body .pl-s .pl-v {
+  color: #005cc5;
+}
+
+.markdown-body .pl-e,
+.markdown-body .pl-en {
+  color: #6f42c1;
+}
+
+.markdown-body .pl-s .pl-s1,
+.markdown-body .pl-smi {
+  color: #24292e;
+}
+
+.markdown-body .pl-ent {
+  color: #22863a;
+}
+
+.markdown-body .pl-k {
+  color: #d73a49;
+}
+
+.markdown-body .pl-pds,
+.markdown-body .pl-s,
+.markdown-body .pl-s .pl-pse .pl-s1,
+.markdown-body .pl-sr,
+.markdown-body .pl-sr .pl-cce,
+.markdown-body .pl-sr .pl-sra,
+.markdown-body .pl-sr .pl-sre {
+  color: #032f62;
+}
+
+.markdown-body .pl-smw,
+.markdown-body .pl-v {
+  color: #e36209;
+}
+
+.markdown-body .pl-bu {
+  color: #b31d28;
+}
+
+.markdown-body .pl-ii {
+  background-color: #b31d28;
+  color: #fafbfc;
+}
+
+.markdown-body .pl-c2 {
+  background-color: #d73a49;
+  color: #fafbfc;
+}
+
+.markdown-body .pl-c2:before {
+  content: "^M";
+}
+
+.markdown-body .pl-sr .pl-cce {
+  color: #22863a;
+  font-weight: 700;
+}
+
+.markdown-body .pl-ml {
+  color: #735c0f;
+}
+
+.markdown-body .pl-mh,
+.markdown-body .pl-mh .pl-en,
+.markdown-body .pl-ms {
+  color: #005cc5;
+  font-weight: 700;
+}
+
+.markdown-body .pl-mi {
+  color: #24292e;
+  font-style: italic;
+}
+
+.markdown-body .pl-mb {
+  color: #24292e;
+  font-weight: 700;
+}
+
+.markdown-body .pl-md {
+  background-color: #ffeef0;
+  color: #b31d28;
+}
+
+.markdown-body .pl-mi1 {
+  background-color: #f0fff4;
+  color: #22863a;
+}
+
+.markdown-body .pl-mc {
+  background-color: #ffebda;
+  color: #e36209;
+}
+
+.markdown-body .pl-mi2 {
+  background-color: #005cc5;
+  color: #f6f8fa;
+}
+
+.markdown-body .pl-mdr {
+  color: #6f42c1;
+  font-weight: 700;
+}
+
+.markdown-body .pl-ba {
+  color: #586069;
+}
+
+.markdown-body .pl-sg {
+  color: #959da5;
+}
+
+.markdown-body .pl-corl {
+  color: #032f62;
+  text-decoration: underline;
+}
+
+.markdown-body details {
+  display: block;
+}
+
+.markdown-body summary {
+  display: list-item;
+}
+
+.markdown-body a {
+  background-color: transparent;
+}
+
+.markdown-body a:active,
+.markdown-body a:hover {
+  outline-width: 0;
+}
+
+.markdown-body strong {
+  font-weight: inherit;
+  font-weight: bolder;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+  margin: .67em 0;
+}
+
+.markdown-body img {
+  border-style: none;
+}
+
+.markdown-body code,
+.markdown-body kbd,
+.markdown-body pre {
+  font-family: monospace,monospace;
+  font-size: 1em;
+}
+
+.markdown-body hr {
+  box-sizing: content-box;
+  height: 0;
+  overflow: visible;
+}
+
+.markdown-body input {
+  font: inherit;
+  margin: 0;
+}
+
+.markdown-body input {
+  overflow: visible;
+}
+
+.markdown-body [type=checkbox] {
+  box-sizing: border-box;
+  padding: 0;
+}
+
+.markdown-body * {
+  box-sizing: border-box;
+}
+
+.markdown-body input {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.markdown-body a {
+  color: #0366d6;
+  text-decoration: none;
+}
+
+.markdown-body a:hover {
+  text-decoration: underline;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+}
+
+.markdown-body hr {
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid #dfe2e5;
+  height: 0;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.markdown-body hr:before {
+  content: "";
+  display: table;
+}
+
+.markdown-body hr:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.markdown-body td,
+.markdown-body th {
+  padding: 0;
+}
+
+.markdown-body details summary {
+  cursor: pointer;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body h1 {
+  font-size: 32px;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  font-weight: 600;
+}
+
+.markdown-body h2 {
+  font-size: 24px;
+}
+
+.markdown-body h3 {
+  font-size: 20px;
+}
+
+.markdown-body h3,
+.markdown-body h4 {
+  font-weight: 600;
+}
+
+.markdown-body h4 {
+  font-size: 16px;
+}
+
+.markdown-body h5 {
+  font-size: 14px;
+}
+
+.markdown-body h5,
+.markdown-body h6 {
+  font-weight: 600;
+}
+
+.markdown-body h6 {
+  font-size: 12px;
+}
+
+.markdown-body p {
+  margin-bottom: 10px;
+  margin-top: 0;
+}
+
+.markdown-body blockquote {
+  margin: 0;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  margin-bottom: 0;
+  margin-top: 0;
+  padding-left: 0;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ol {
+  list-style-type: lower-roman;
+}
+
+.markdown-body ol ol ol,
+.markdown-body ol ul ol,
+.markdown-body ul ol ol,
+.markdown-body ul ul ol {
+  list-style-type: lower-alpha;
+}
+
+.markdown-body dd {
+  margin-left: 0;
+}
+
+.markdown-body code,
+.markdown-body pre {
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+}
+
+.markdown-body pre {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body input::-webkit-inner-spin-button,
+.markdown-body input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
+}
+
+.markdown-body .border {
+  border: 1px solid #e1e4e8!important;
+}
+
+.markdown-body .border-0 {
+  border: 0!important;
+}
+
+.markdown-body .border-bottom {
+  border-bottom: 1px solid #e1e4e8!important;
+}
+
+.markdown-body .rounded-1 {
+  border-radius: 3px!important;
+}
+
+.markdown-body .bg-white {
+  background-color: #fff!important;
+}
+
+.markdown-body .bg-gray-light {
+  background-color: #fafbfc!important;
+}
+
+.markdown-body .text-gray-light {
+  color: #6a737d!important;
+}
+
+.markdown-body .mb-0 {
+  margin-bottom: 0!important;
+}
+
+.markdown-body .my-2 {
+  margin-bottom: 8px!important;
+  margin-top: 8px!important;
+}
+
+.markdown-body .pl-0 {
+  padding-left: 0!important;
+}
+
+.markdown-body .py-0 {
+  padding-bottom: 0!important;
+  padding-top: 0!important;
+}
+
+.markdown-body .pl-1 {
+  padding-left: 4px!important;
+}
+
+.markdown-body .pl-2 {
+  padding-left: 8px!important;
+}
+
+.markdown-body .py-2 {
+  padding-bottom: 8px!important;
+  padding-top: 8px!important;
+}
+
+.markdown-body .pl-3,
+.markdown-body .px-3 {
+  padding-left: 16px!important;
+}
+
+.markdown-body .px-3 {
+  padding-right: 16px!important;
+}
+
+.markdown-body .pl-4 {
+  padding-left: 24px!important;
+}
+
+.markdown-body .pl-5 {
+  padding-left: 32px!important;
+}
+
+.markdown-body .pl-6 {
+  padding-left: 40px!important;
+}
+
+.markdown-body .f6 {
+  font-size: 12px!important;
+}
+
+.markdown-body .lh-condensed {
+  line-height: 1.25!important;
+}
+
+.markdown-body .text-bold {
+  font-weight: 600!important;
+}
+
+.markdown-body:before {
+  content: "";
+  display: table;
+}
+
+.markdown-body:after {
+  clear: both;
+  content: "";
+  display: table;
+}
+
+.markdown-body>:first-child {
+  margin-top: 0!important;
+}
+
+.markdown-body>:last-child {
+  margin-bottom: 0!important;
+}
+
+.markdown-body a:not([href]) {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-body blockquote,
+.markdown-body dl,
+.markdown-body ol,
+.markdown-body p,
+.markdown-body pre,
+.markdown-body table,
+.markdown-body ul {
+  margin-bottom: 16px;
+  margin-top: 0;
+}
+
+.markdown-body hr {
+  background-color: #e1e4e8;
+  border: 0;
+  height: .25em;
+  margin: 24px 0;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  border-left: .25em solid #dfe2e5;
+  color: #6a737d;
+  padding: 0 1em;
+}
+
+.markdown-body blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown-body blockquote>:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body kbd {
+  background-color: #fafbfc;
+  border: 1px solid #c6cbd1;
+  border-bottom-color: #959da5;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #959da5;
+  color: #444d56;
+  display: inline-block;
+  font-size: 11px;
+  line-height: 10px;
+  padding: 3px 5px;
+  vertical-align: middle;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  margin-bottom: 16px;
+  margin-top: 24px;
+}
+
+.markdown-body h1 {
+  font-size: 2em;
+}
+
+.markdown-body h1,
+.markdown-body h2 {
+  border-bottom: 1px solid #eaecef;
+  padding-bottom: .3em;
+}
+
+.markdown-body h2 {
+  font-size: 1.5em;
+}
+
+.markdown-body h3 {
+  font-size: 1.25em;
+}
+
+.markdown-body h4 {
+  font-size: 1em;
+}
+
+.markdown-body h5 {
+  font-size: .875em;
+}
+
+.markdown-body h6 {
+  color: #6a737d;
+  font-size: .85em;
+}
+
+.markdown-body ol,
+.markdown-body ul {
+  padding-left: 2em;
+}
+
+.markdown-body ol ol,
+.markdown-body ol ul,
+.markdown-body ul ol,
+.markdown-body ul ul {
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.markdown-body li {
+  word-wrap: break-all;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
+}
+
+.markdown-body li+li {
+  margin-top: .25em;
+}
+
+.markdown-body dl {
+  padding: 0;
+}
+
+.markdown-body dl dt {
+  font-size: 1em;
+  font-style: italic;
+  font-weight: 600;
+  margin-top: 16px;
+  padding: 0;
+}
+
+.markdown-body dl dd {
+  margin-bottom: 16px;
+  padding: 0 16px;
+}
+
+.markdown-body table {
+  display: block;
+  overflow: auto;
+  width: 100%;
+}
+
+.markdown-body table th {
+  font-weight: 600;
+}
+
+.markdown-body table td,
+.markdown-body table th {
+  border: 1px solid #dfe2e5;
+  padding: 6px 13px;
+}
+
+.markdown-body table tr {
+  background-color: #fff;
+  border-top: 1px solid #c6cbd1;
+}
+
+.markdown-body table tr:nth-child(2n) {
+  background-color: #f6f8fa;
+}
+
+.markdown-body img {
+  background-color: #fff;
+  box-sizing: content-box;
+  max-width: 100%;
+}
+
+.markdown-body img[align=right] {
+  padding-left: 20px;
+}
+
+.markdown-body img[align=left] {
+  padding-right: 20px;
+}
+
+.markdown-body code {
+  background-color: rgba(27,31,35,.05);
+  border-radius: 3px;
+  font-size: 85%;
+  margin: 0;
+  padding: .2em .4em;
+}
+
+.markdown-body pre {
+  word-wrap: normal;
+}
+
+.markdown-body pre>code {
+  background: transparent;
+  border: 0;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  word-break: normal;
+}
+
+.markdown-body .highlight {
+  margin-bottom: 16px;
+}
+
+.markdown-body .highlight pre {
+  margin-bottom: 0;
+  word-break: normal;
+}
+
+.markdown-body .highlight pre,
+.markdown-body pre {
+  background-color: #f6f8fa;
+  border-radius: 3px;
+  font-size: 85%;
+  line-height: 1.45;
+  overflow: auto;
+  padding: 16px;
+}
+
+.markdown-body pre code {
+  background-color: transparent;
+  border: 0;
+  display: inline;
+  line-height: inherit;
+  margin: 0;
+  max-width: auto;
+  overflow: visible;
+  padding: 0;
+  word-wrap: normal;
+}
+
+.markdown-body .commit-tease-sha {
+  color: #444d56;
+  display: inline-block;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 90%;
+}
+
+.markdown-body .blob-wrapper {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.markdown-body .blob-wrapper-embedded {
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.markdown-body .blob-num {
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  color: rgba(27,31,35,.3);
+  cursor: pointer;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+  line-height: 20px;
+  min-width: 50px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: right;
+  user-select: none;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.markdown-body .blob-num:hover {
+  color: rgba(27,31,35,.6);
+}
+
+.markdown-body .blob-num:before {
+  content: attr(data-line-number);
+}
+
+.markdown-body .blob-code {
+  line-height: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
+  position: relative;
+  vertical-align: top;
+}
+
+.markdown-body .blob-code-inner {
+  color: #24292e;
+  font-family: SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  font-size: 12px;
+  overflow: visible;
+  white-space: pre;
+  word-wrap: normal;
+}
+
+.markdown-body .pl-token.active,
+.markdown-body .pl-token:hover {
+  background: #ffea7f;
+  cursor: pointer;
+}
+
+.markdown-body kbd {
+  background-color: #fafbfc;
+  border: 1px solid #d1d5da;
+  border-bottom-color: #c6cbd1;
+  border-radius: 3px;
+  box-shadow: inset 0 -1px 0 #c6cbd1;
+  color: #444d56;
+  display: inline-block;
+  font: 11px SFMono-Regular,Consolas,Liberation Mono,Menlo,Courier,monospace;
+  line-height: 10px;
+  padding: 3px 5px;
+  vertical-align: middle;
+}
+
+.markdown-body :checked+.radio-label {
+  border-color: #0366d6;
+  position: relative;
+  z-index: 1;
+}
+
+.markdown-body .tab-size[data-tab-size="1"] {
+  -moz-tab-size: 1;
+  tab-size: 1;
+}
+
+.markdown-body .tab-size[data-tab-size="2"] {
+  -moz-tab-size: 2;
+  tab-size: 2;
+}
+
+.markdown-body .tab-size[data-tab-size="3"] {
+  -moz-tab-size: 3;
+  tab-size: 3;
+}
+
+.markdown-body .tab-size[data-tab-size="4"] {
+  -moz-tab-size: 4;
+  tab-size: 4;
+}
+
+.markdown-body .tab-size[data-tab-size="5"] {
+  -moz-tab-size: 5;
+  tab-size: 5;
+}
+
+.markdown-body .tab-size[data-tab-size="6"] {
+  -moz-tab-size: 6;
+  tab-size: 6;
+}
+
+.markdown-body .tab-size[data-tab-size="7"] {
+  -moz-tab-size: 7;
+  tab-size: 7;
+}
+
+.markdown-body .tab-size[data-tab-size="8"] {
+  -moz-tab-size: 8;
+  tab-size: 8;
+}
+
+.markdown-body .tab-size[data-tab-size="9"] {
+  -moz-tab-size: 9;
+  tab-size: 9;
+}
+
+.markdown-body .tab-size[data-tab-size="10"] {
+  -moz-tab-size: 10;
+  tab-size: 10;
+}
+
+.markdown-body .tab-size[data-tab-size="11"] {
+  -moz-tab-size: 11;
+  tab-size: 11;
+}
+
+.markdown-body .tab-size[data-tab-size="12"] {
+  -moz-tab-size: 12;
+  tab-size: 12;
+}
+
+.markdown-body .task-list-item {
+  list-style-type: none;
+}
+
+.markdown-body .task-list-item+.task-list-item {
+  margin-top: 3px;
+}
+
+.markdown-body .task-list-item input {
+  margin: 0 .2em .25em -1.6em;
+  vertical-align: middle;
+}
+
+.markdown-body hr {
+  border-bottom-color: #eee;
+}
+
+.markdown-body .pl-0 {
+  padding-left: 0!important;
+}
+
+.markdown-body .pl-1 {
+  padding-left: 4px!important;
+}
+
+.markdown-body .pl-2 {
+  padding-left: 8px!important;
+}
+
+.markdown-body .pl-3 {
+  padding-left: 16px!important;
+}
+
+.markdown-body .pl-4 {
+  padding-left: 24px!important;
+}
+
+.markdown-body .pl-5 {
+  padding-left: 32px!important;
+}
+
+.markdown-body .pl-6 {
+  padding-left: 40px!important;
+}
+
+.markdown-body .pl-7 {
+  padding-left: 48px!important;
+}
+
+.markdown-body .pl-8 {
+  padding-left: 64px!important;
+}
+
+.markdown-body .pl-9 {
+  padding-left: 80px!important;
+}
+
+.markdown-body .pl-10 {
+  padding-left: 96px!important;
+}
+
+.markdown-body .pl-11 {
+  padding-left: 112px!important;
+}
+
+.markdown-body .pl-12 {
+  padding-left: 128px!important;
+}
+
+/*# sourceURL=webpack://./node_modules/github-markdown-css/github-markdown.css */
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL25vZGVfbW9kdWxlcy9naXRodWItbWFya2Rvd24tY3NzL2dpdGh1Yi1tYXJrZG93bi5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7RUFDRSwwQkFBMEI7RUFDMUIsMkRBQXF0RTtBQUN2dEU7O0FBRUE7RUFDRSxxQkFBcUI7RUFDckIsa0JBQWtCO0VBQ2xCLDJCQUEyQjtBQUM3Qjs7QUFFQTtFQUNFLFdBQVc7RUFDWCxjQUFjO0VBQ2Qsa0JBQWtCO0VBQ2xCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLGFBQWE7QUFDZjs7QUFFQTs7Ozs7O0VBTUUsY0FBYztFQUNkLHNCQUFzQjtFQUN0QixrQkFBa0I7QUFDcEI7O0FBRUE7Ozs7OztFQU1FLHFCQUFxQjtBQUN2Qjs7QUFFQTs7Ozs7O0VBTUUsbUJBQW1CO0FBQ3JCOztBQUVBO0VBQ0UsMEJBQTBCO0VBQzFCLDhCQUE4QjtFQUM5QixjQUFjO0VBQ2QsZ0JBQWdCO0VBQ2hCLGtJQUFrSTtFQUNsSSxlQUFlO0VBQ2YsZ0JBQWdCO0VBQ2hCLHFCQUFxQjtBQUN2Qjs7QUFFQTtFQUNFLGNBQWM7QUFDaEI7O0FBRUE7O0VBRUUsY0FBYztBQUNoQjs7QUFFQTs7RUFFRSxjQUFjO0FBQ2hCOztBQUVBOztFQUVFLGNBQWM7QUFDaEI7O0FBRUE7RUFDRSxjQUFjO0FBQ2hCOztBQUVBO0VBQ0UsY0FBYztBQUNoQjs7QUFFQTs7Ozs7OztFQU9FLGNBQWM7QUFDaEI7O0FBRUE7O0VBRUUsY0FBYztBQUNoQjs7QUFFQTtFQUNFLGNBQWM7QUFDaEI7O0FBRUE7RUFDRSx5QkFBeUI7RUFDekIsY0FBYztBQUNoQjs7QUFFQTtFQUNFLHlCQUF5QjtFQUN6QixjQUFjO0FBQ2hCOztBQUVBO0VBQ0UsYUFBYTtBQUNmOztBQUVBO0VBQ0UsY0FBYztFQUNkLGdCQUFnQjtBQUNsQjs7QUFFQTtFQUNFLGNBQWM7QUFDaEI7O0FBRUE7OztFQUdFLGNBQWM7RUFDZCxnQkFBZ0I7QUFDbEI7O0FBRUE7RUFD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 */
+  </style>
+  <style>
+  /**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+	color: black;
+	background: none;
+	text-shadow: 0 1px white;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	font-size: 1em;
+	text-align: left;
+	white-space: pre;
+	word-spacing: normal;
+	word-break: normal;
+	word-wrap: normal;
+	line-height: 1.5;
+
+	-moz-tab-size: 4;
+	-o-tab-size: 4;
+	tab-size: 4;
+
+	-webkit-hyphens: none;
+	-moz-hyphens: none;
+	-ms-hyphens: none;
+	hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+	text-shadow: none;
+	background: #b3d4fc;
+}
+
+@media print {
+	code[class*="language-"],
+	pre[class*="language-"] {
+		text-shadow: none;
+	}
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+	padding: 1em;
+	margin: .5em 0;
+	overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+	background: #f5f2f0;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+	padding: .1em;
+	border-radius: .3em;
+	white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+	color: slategray;
+}
+
+.token.punctuation {
+	color: #999;
+}
+
+.token.namespace {
+	opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+	color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+	color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+	color: #9a6e3a;
+	/* This background color was intended by the author of this theme. */
+	background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+	color: #07a;
+}
+
+.token.function,
+.token.class-name {
+	color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+	color: #e90;
+}
+
+.token.important,
+.token.bold {
+	font-weight: bold;
+}
+.token.italic {
+	font-style: italic;
+}
+
+.token.entity {
+	cursor: help;
+}
+
+/*# sourceURL=webpack://./node_modules/prismjs/themes/prism.css */
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL25vZGVfbW9kdWxlcy9wcmlzbWpzL3RoZW1lcy9wcmlzbS5jc3MiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7Ozs7RUFJRTs7QUFFRjs7Q0FFQyxZQUFZO0NBQ1osZ0JBQWdCO0NBQ2hCLHdCQUF3QjtDQUN4QixzRUFBc0U7Q0FDdEUsY0FBYztDQUNkLGdCQUFnQjtDQUNoQixnQkFBZ0I7Q0FDaEIsb0JBQW9CO0NBQ3BCLGtCQUFrQjtDQUNsQixpQkFBaUI7Q0FDakIsZ0JBQWdCOztDQUVoQixnQkFBZ0I7Q0FDaEIsY0FBYztDQUNkLFdBQVc7O0NBRVgscUJBQXFCO0NBQ3JCLGtCQUFrQjtDQUNsQixpQkFBaUI7Q0FDakIsYUFBYTtBQUNkOztBQUVBOztDQUVDLGlCQUFpQjtDQUNqQixtQkFBbUI7QUFDcEI7O0FBRUE7O0NBRUMsaUJBQWlCO0NBQ2pCLG1CQUFtQjtBQUNwQjs7QUFFQTtDQUNDOztFQUVDLGlCQUFpQjtDQUNsQjtBQUNEOztBQUVBLGdCQUFnQjtBQUNoQjtDQUNDLFlBQVk7Q0FDWixjQUFjO0NBQ2QsY0FBYztBQUNmOztBQUVBOztDQUVDLG1CQUFtQjtBQUNwQjs7QUFFQSxnQkFBZ0I7QUFDaEI7Q0FDQyxhQUFhO0NBQ2IsbUJBQW1CO0NBQ25CLG1CQUFtQjtBQUNwQjs7QUFFQTs7OztDQUlDLGdCQUFnQjtBQUNqQjs7QUFFQTtDQUNDLFdBQVc7QUFDWjs7QUFFQTtDQUNDLFdBQVc7QUFDWjs7QUFFQTs7Ozs7OztDQU9DLFdBQVc7QUFDWjs7QUFFQTs7Ozs7O0NBTUMsV0FBVztBQUNaOztBQUVBOzs7OztDQUtDLGNBQWM7Q0FDZCxvRUFBb0U7Q0FDcEUsaUNBQWlDO0FBQ2xDOztBQUVBOzs7Q0FHQyxXQUFXO0FBQ1o7O0FBRUE7O0NBRUMsY0FBYztBQUNmOztBQUVBOzs7Q0FHQyxXQUFXO0FBQ1o7O0FBRUE7O0NBRUMsaUJBQWlCO0FBQ2xCO0FBQ0E7Q0FDQyxrQkFBa0I7QUFDbkI7O0FBRUE7Q0FDQyxZQUFZO0FBQ2IiLCJzb3VyY2VSb290IjoiIn0= */
+  </style>
+  <style>
+  
+  </style>
+  <style>
+    .markdown-body {
+      font-family: -apple-system,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
+      box-sizing: border-box;
+      min-width: 200px;
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 45px;
+    }
+
+    @media not print {
+      .markdown-body {
+        padding: 45px;
+      }
+
+      @media (max-width: 767px) {
+        .markdown-body {
+          padding: 15px;
+        }
+      }
+    }
+
+    .hf-container {
+      color: #24292e;
+      line-height: 1.3;
+    }
+
+    .markdown-body .highlight pre,
+    .markdown-body pre {
+      white-space: pre-wrap;
+    }
+    .markdown-body table {
+      display: table;
+    }
+    .markdown-body img[data-align="center"] {
+      display: block;
+      margin: 0 auto;
+    }
+    .markdown-body img[data-align="right"] {
+      display: block;
+      margin: 0 0 0 auto;
+    }
+    .markdown-body li.task-list-item {
+      list-style-type: none;
+    }
+    .markdown-body li > [type=checkbox] {
+      margin: 0 0 0 -1.3em;
+    }
+    .markdown-body input[type="checkbox"] ~ p {
+      margin-top: 0;
+      display: inline-block;
+    }
+    .markdown-body ol ol,
+    .markdown-body ul ol {
+      list-style-type: decimal;
+    }
+    .markdown-body ol ol ol,
+    .markdown-body ol ul ol,
+    .markdown-body ul ol ol,
+    .markdown-body ul ul ol {
+      list-style-type: decimal;
+    }
+  </style>
+  <style>.markdown-body a.footnote-ref {
+  text-decoration: none;
+}
+
+.footnotes {
+  font-size: .85em;
+  opacity: .8;
+}
+
+.footnotes li[role="doc-endnote"] {
+  position: relative;
+}
+
+.footnotes .footnote-back {
+  position: absolute;
+  font-family: initial;
+  top: .2em;
+  right: 1em;
+  text-decoration: none;
+}
+
+.inline-math.invalid,
+.multiple-math.invalid {
+  color: rgb(255, 105, 105);
+}
+
+.toc-container {
+  width: 100%;
+}
+
+.toc-container .toc-title {
+  font-weight: 700;
+  font-size: 1.2em;
+  margin-bottom: 0;
+}
+
+.toc-container li,
+.toc-container ul,
+.toc-container ul li {
+  list-style: none !important;
+}
+
+.toc-container > ul {
+  padding-left: 0;
+}
+
+.toc-container ul li span {
+  display : flex;
+}
+
+.toc-container ul li span a {
+  color: inherit;
+  text-decoration: none;
+}
+.toc-container ul li span a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+.toc-container ul li span span.dots {
+  flex: 1;
+  height: 0.65em;
+  margin: 0 10px;
+  border-bottom: 2px dotted black;
+}
+
+/*# sourceURL=webpack://./src/muya/lib/assets/styles/exportStyle.css */
+/*# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL3NyYy9tdXlhL2xpYi9hc3NldHMvc3R5bGVzL2V4cG9ydFN0eWxlLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFLHFCQUFxQjtBQUN2Qjs7QUFFQTtFQUNFLGdCQUFnQjtFQUNoQixXQUFXO0FBQ2I7O0FBRUE7RUFDRSxrQkFBa0I7QUFDcEI7O0FBRUE7RUFDRSxrQkFBa0I7RUFDbEIsb0JBQW9CO0VBQ3BCLFNBQVM7RUFDVCxVQUFVO0VBQ1YscUJBQXFCO0FBQ3ZCOztBQUVBOztFQUVFLHlCQUF5QjtBQUMzQjs7QUFFQTtFQUNFLFdBQVc7QUFDYjs7QUFFQTtFQUNFLGdCQUFnQjtFQUNoQixnQkFBZ0I7RUFDaEIsZ0JBQWdCO0FBQ2xCOztBQUVBOzs7RUFHRSwyQkFBMkI7QUFDN0I7O0FBRUE7RUFDRSxlQUFlO0FBQ2pCOztBQUVBO0VBQ0UsY0FBYztBQUNoQjs7QUFFQTtFQUNFLGNBQWM7RUFDZCxxQkFBcUI7QUFDdkI7QUFDQTtFQUNFLGNBQWM7RUFDZCxxQkFBcUI7QUFDdkI7O0FBRUE7RUFDRSxPQUFPO0VBQ1AsY0FBYztFQUNkLGNBQWM7RUFDZCwrQkFBK0I7QUFDakMiLCJzb3VyY2VSb290IjoiIn0= */</style>
+  <style>.markdown-body{}pre.front-matter{display:none!important;}</style>
+</head>
+<body>
+  <article class="markdown-body"><h1 class="atx" id="政治表格">政治表格</h1>
+<h2 class="atx" id="毛泽东思想">毛泽东思想</h2>
+<table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>标志</th>
+<th>时期</th>
+<th>文章</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>初步形成</strong>/开始形成</td>
+<td>道路理论的提出</td>
+<td>土革早期（井冈山）</td>
+<td>《中国的红色政权为什么能够存在？》《井冈山的斗争》<strong>《星星之火，可以燎原》</strong>《反对本本主义》</td>
+</tr>
+<tr>
+<td><strong>趋于成熟</strong></td>
+<td></td>
+<td>遵义会议至抗战时期（延安）</td>
+<td>《论持久战》《共产党人发刊词》《中国革命和中国共产党》《新民主主义论》</td>
+</tr>
+<tr>
+<td><strong>达到成熟</strong></td>
+<td>新民主主义理论的系统阐明</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>成为全党共识</td>
+<td>延安整风</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>成为<strong>指导思想</strong></td>
+<td>七大</td>
+<td></td>
+<td>《论联合政府》</td>
+</tr>
+<tr>
+<td>继续发展</td>
+<td></td>
+<td>解放战争与建国后</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="毛泽东的文章">毛泽东的文章</h2>
+<table>
+<thead>
+<tr>
+<th>时期</th>
+<th>年份</th>
+<th>标题</th>
+<th>要义</th>
+<th>意义</th>
+<th>相关会议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>大革命时期</td>
+<td></td>
+<td>《国民革命与农民运动》</td>
+<td>“农民问题乃<em>国民革命</em>的中心问题”</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1925</td>
+<td>《中国社会各阶级的分析》</td>
+<td>“<em>中国革命的首要问题</em>是分清敌友”</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>土地革命早期</td>
+<td>1928</td>
+<td>《中国的红色政权为什么能够存在？》</td>
+<td>“<strong>工农武装割据</strong>”</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1928</td>
+<td>《井冈山的斗争》</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1930</td>
+<td>《星星之火，可以燎原》</td>
+<td>把工作中心转移到农村开展游击战争（回答“红旗到底能够打多久”）</td>
+<td><strong>革命新道路的思想初步形成。</strong> 道路理论的初步形成标志着毛泽东思想的初步形成。</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1930</td>
+<td>《反对本本主义》</td>
+<td>“没有调查，没有发言权”，“中国革命斗争的胜利要靠中国同志了解中国情况”</td>
+<td>坚持了辩证唯物主义的<strong>思想路线</strong>（<strong>初步阐明</strong>）</td>
+<td></td>
+</tr>
+<tr>
+<td>土革后期</td>
+<td>1935</td>
+<td>《论反对日本帝国主义的策略》</td>
+<td>阐明抗日民族统一战线的政策，批判关门主义</td>
+<td>系统解决了党的<strong>政治路线</strong>上的问题</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1936</td>
+<td>《中国革命战争的战略问题》</td>
+<td></td>
+<td>系统解决军事战略问题</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1937</td>
+<td>《矛盾论》</td>
+<td></td>
+<td><strong>科学阐明</strong>党的马克思主义<strong>思想路线</strong>，总结历史经验，批判党内主观主义尤其是教条主义错误</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>《实践论》</td>
+<td></td>
+<td>同上</td>
+<td></td>
+</tr>
+<tr>
+<td>全面抗战时期</td>
+<td>1938</td>
+<td>《论持久战》</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>《战争与战略问题》</td>
+<td></td>
+<td>确立新民主主义革命道路</td>
+<td>六届六中全会</td>
+</tr>
+<tr>
+<td></td>
+<td>1939</td>
+<td>《中国革命与中国共产党》</td>
+<td>第一次提出新ism革命的概念和总路线</td>
+<td><strong>系统阐明新民主主义理论系统阐明，标志毛思想成熟</strong></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1940</td>
+<td>《新民主主义论》</td>
+<td>阐述了新民ism政府的政治、经济和文化</td>
+<td>同上</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1939</td>
+<td>《〈共产党人〉发刊词》</td>
+<td>概括新ism革命总经验 <strong>（三大法宝）统一战线、武装斗争、党的建设</strong></td>
+<td>同上</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>《论新阶段》</td>
+<td></td>
+<td>马中化</td>
+<td>六届六中全会</td>
+</tr>
+<tr>
+<td></td>
+<td>1942延安整风</td>
+<td>《改造我们的学习》</td>
+<td>反对主观主义，学风</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1942延安整风</td>
+<td>《整顿党的作风》</td>
+<td>反对宗派主义，党风</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1942延安整风</td>
+<td>《反对党八股》</td>
+<td>反对党八股，文风</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1945</td>
+<td>《论联合政府》</td>
+<td>把新ism政治、经济、文化同党的纲领联系，进行具体阐述</td>
+<td></td>
+<td>七大</td>
+</tr>
+<tr>
+<td>解放战争</td>
+<td>1948</td>
+<td>《在晋绥干部会议上的讲话》</td>
+<td>第一次完整表述了新ism革命总路线的内容</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>1949</td>
+<td>《论人民民主专政》</td>
+<td>必须利用有利资本主义因素，团结民族资产阶级</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>建国后</td>
+<td>1956</td>
+<td>《论十大关系》</td>
+<td>原则（独自自主地探索适合中国情况的社社会主义建设道路），基本方针（调动国内外一切积极因素为社会主义服务）</td>
+<td><strong>开始</strong>第二次结合的标志，<strong>开始</strong>探索自己的社会主义建设道路</td>
+<td>八大</td>
+</tr>
+<tr>
+<td></td>
+<td>1957</td>
+<td>《关于正确处理人民内部矛盾问题》</td>
+<td>政治思想：团结-批评-团结；<br>物质利益分配：统筹兼顾、适当安排；<br>科学文化：百花齐放、百家争鸣；<br>民主党派：长期共存、互相监督；<br>有别于苏联的工业化</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="会议">会议</h2>
+<table>
+<thead>
+<tr>
+<th>会议</th>
+<th>要义</th>
+<th>意义</th>
+<th>时间/时期</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一大</td>
+<td>建党</td>
+<td></td>
+<td>1921上海/嘉兴</td>
+</tr>
+<tr>
+<td>二大</td>
+<td>反帝反封建革命纲领，群众路线</td>
+<td></td>
+<td>1922上海</td>
+</tr>
+<tr>
+<td>三大</td>
+<td>全体共产党员以个人名义加入国民党</td>
+<td>第一次国共合作</td>
+<td>1923广州</td>
+</tr>
+<tr>
+<td>国民党一大</td>
+<td>新三民主义</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>1927.7中旬中共中央临时政治局常委会决定</td>
+<td>一、决定武装反抗国民党。二、决定独立领导农民进行土地革命。三、决定召开一次中央紧急会议，总结大革命失败的经验教训，纠正陈独秀右倾投降主义的错误（即八七会议）</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>八七会议</td>
+<td>彻底清算陈独秀右倾机会主义错误；<strong>确定武装反抗国民党反动统治的总方针</strong>，毛“须知政权是由枪杆子中取得的”；提出土地革命是资产阶级民主革命的中心问题；</td>
+<td>在中国革命处于严重危机情况下，制定出了继续革命斗争的正确方针，挽救了党和革命。<strong>中国革命开始了大革命失败到土地革命战争兴起的转折</strong>。</td>
+<td>1927汉口</td>
+</tr>
+<tr>
+<td>三湾改编</td>
+<td>支部建在连上</td>
+<td>新型人民军队的开端</td>
+<td></td>
+</tr>
+<tr>
+<td>古田会议</td>
+<td>思想建党，政治建军，军队执行革命政治任务，必须绝对服从党的领导，新型人民军队</td>
+<td><strong>新型人民军队的定形</strong></td>
+<td>1929古田</td>
+</tr>
+<tr>
+<td>遵义会议</td>
+<td></td>
+<td>解决了具有决定意义的军事问题和组织问题（_未解决政治问题和思想问题_）；确立毛；生死攸关转折点；标志中国政治上开始走向成熟（与共产国际分）</td>
+<td>1934遵义</td>
+</tr>
+<tr>
+<td>瓦窑堡会议</td>
+<td><strong>抗日民族统一战线</strong>。批评长期存在的“左”倾冒险主义、关门主义的错误倾向；为抗日战争到来作了思想上和理论上准备。“发展进步势力，争取中间势力，孤立顽固势力”</td>
+<td><strong>抗日民族统一战线</strong></td>
+<td>1935陕北瓦窑堡</td>
+</tr>
+<tr>
+<td>洛川会议</td>
+<td>实行全面的全民族抗战路线；抗日救国十大纲领</td>
+<td></td>
+<td>1937</td>
+</tr>
+<tr>
+<td>六届六中全会</td>
+<td><strong>提出马克思主义中国化的命题</strong>，开始第一次结合，<strong>《论新阶段》</strong>；确立新民主主义<strong>革命道路</strong>《战争与战略问题》</td>
+<td>开始第一次结合</td>
+<td>1938</td>
+</tr>
+<tr>
+<td>七大</td>
+<td>确立毛ism，三大作风（密切联系群众、理论联系实际、批评与自我批评），政治路线（放手发动群众，壮大人民力量，在我党领导下，打败日本侵略者，建立新民主主义的中国）。《论联合政府》</td>
+<td>马克思主义中国化第一次飞跃。政治上政治上思想上走向了成熟。</td>
+<td>1945延安</td>
+</tr>
+<tr>
+<td>七届二中全会</td>
+<td>迅速取夺全国胜利的方针；工作重心从乡村转移到城市；农业国转变为工业国、新民主主义社会转变为社会主义社会的总任务和主要途径；两个务必</td>
+<td></td>
+<td>1949西柏坡</td>
+</tr>
+<tr>
+<td>八大</td>
+<td>正确分析国情、主要矛盾、主要任务。反保守反冒进，陈云“三个主体、三个补充”</td>
+<td></td>
+<td>1956</td>
+</tr>
+<tr>
+<td>十一届三中全会</td>
+<td>冲破长期“左”的错误，否定两个凡是</td>
+<td>重新确立马克思主义的思想路线、组织路线、政治路线；开始拨乱反正；改开与社会主义现代化新时期起点</td>
+<td></td>
+</tr>
+<tr>
+<td>十一届六中全会</td>
+<td>历史决议，毛泽东思想活的灵魂（实事求是、群众路线、独立自主）</td>
+<td>首次使用“社会主义初级阶段”概念；完成了拨乱反正</td>
+<td></td>
+</tr>
+<tr>
+<td>十二大</td>
+<td>“走自己的道路，建设有中国特色的社会主义”</td>
+<td>拨乱反正基本完成</td>
+<td></td>
+</tr>
+<tr>
+<td>十三大前夕</td>
+<td></td>
+<td>将社会主义初级阶段作为国情</td>
+<td></td>
+</tr>
+<tr>
+<td>十三大</td>
+<td>系统概括社会主义初级阶段理论；系统阐述中特理论；</td>
+<td>邓论轮廓形成</td>
+<td></td>
+</tr>
+<tr>
+<td>十四大</td>
+<td></td>
+<td>确定了社会主义市场经济体制的改革目标</td>
+<td></td>
+</tr>
+<tr>
+<td>十五大</td>
+<td>邓论确立为指导思想；确立了公有制为主体……的基本经济制度</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>十八大</td>
+<td></td>
+<td>进入新时代</td>
+<td></td>
+</tr>
+<tr>
+<td>十八届三中全会</td>
+<td>全面深化改革</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>十九大</td>
+<td>确定为指导思想写入党纲；社会主要矛盾新提法</td>
+<td>马克思主义中国化新的飞跃</td>
+<td></td>
+</tr>
+<tr>
+<td>十九届六中全会</td>
+<td>新的历史决议</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>二十大</td>
+<td>以中国式现代化推进中华民族伟大复兴</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="马恩列著作">马恩列著作</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>著作</th>
+<th>作者</th>
+<th>要义</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>▲</td>
+<td>《德意志意识形态》</td>
+<td>马克思</td>
+<td></td>
+<td>创立唯物史观</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《资本论》</td>
+<td>马克思</td>
+<td>马政经</td>
+<td>“工人阶级的圣经”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《共产党宣言》</td>
+<td>马、恩</td>
+<td></td>
+<td>科社诞生、马ism诞生、第一个无…党纲</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《反杜林论》</td>
+<td>恩格斯</td>
+<td>全面阐述马克思主义体系</td>
+<td>“百科全书”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《德法年鉴》</td>
+<td>马、恩</td>
+<td></td>
+<td>“两个转变”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《神圣家族》</td>
+<td>马、恩</td>
+<td>批青年黑格尔派</td>
+<td>首次合著</td>
+</tr>
+<tr>
+<td></td>
+<td>《1844年经济学哲学手稿》</td>
+<td>马克思</td>
+<td>异化劳动</td>
+<td></td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《关于费尔巴哈的提纲》</td>
+<td>马克思</td>
+<td>科学的实践观</td>
+<td>历史唯物主义起源</td>
+</tr>
+<tr>
+<td></td>
+<td>《法兰西内战》</td>
+<td>马克思</td>
+<td>巴黎公社</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《政治经济学批判》</td>
+<td>马克思</td>
+<td>“两个决不会”</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《哥达纲领批判》</td>
+<td>马克思</td>
+<td>理论上清算拉萨尔主义。共产主义社会两个阶段</td>
+<td>马克思主义同机会主义进行不调和斗争的典范</td>
+</tr>
+<tr>
+<td></td>
+<td>《家庭、私有制和国家的起源》</td>
+<td>恩格斯</td>
+<td>马恩国家学说</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《自然辩证法》</td>
+<td>恩格斯</td>
+<td></td>
+<td>首次阐明自然观、科学观</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《路…费尔巴哈和德国古典哲学的终结》</td>
+<td>恩格斯</td>
+<td></td>
+<td>首次明确阐述哲学基本问题</td>
+</tr>
+<tr>
+<td></td>
+<td>《帝国主义是资本主义最高形态》</td>
+<td>列宁</td>
+<td>“革命的前夜”</td>
+<td></td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《论欧洲联邦口号》</td>
+<td>列宁</td>
+<td>一国胜利论</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《无产阶级革命的军事纲领》</td>
+<td>列宁</td>
+<td>进一步发展一国胜利论</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《国家与革命》</td>
+<td>列宁</td>
+<td>列宁的国家学说</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《唯物主义和经验批判主义》</td>
+<td>列宁</td>
+<td>批马赫主义（反修）</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《哲学笔记》</td>
+<td>列宁</td>
+<td>列宁进一步发展辩证法</td>
+<td></td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>著作</th>
+<th>作者</th>
+<th>要义</th>
+<th>意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>▲</td>
+<td>《德意志意识形态》</td>
+<td>马克思</td>
+<td></td>
+<td>创立唯物史观</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《资本论》</td>
+<td>马克思</td>
+<td>马政经</td>
+<td>“工人阶级的圣经”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《共产党宣言》</td>
+<td>马、恩</td>
+<td></td>
+<td>科社诞生、马ism诞生、第一个无…党纲</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《反杜林论》</td>
+<td>恩格斯</td>
+<td>全面阐述马克思主义体系</td>
+<td>“百科全书”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《德法年鉴》</td>
+<td>马、恩</td>
+<td></td>
+<td>“两个转变”</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《神圣家族》</td>
+<td>马、恩</td>
+<td>批青年黑格尔派</td>
+<td>首次合著</td>
+</tr>
+<tr>
+<td></td>
+<td>《1844年经济学哲学手稿》</td>
+<td>马克思</td>
+<td>异化劳动</td>
+<td></td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《关于费尔巴哈的提纲》</td>
+<td>马克思</td>
+<td>科学的实践观</td>
+<td>历史唯物主义起源</td>
+</tr>
+<tr>
+<td></td>
+<td>《法兰西内战》</td>
+<td>马克思</td>
+<td>巴黎公社</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《政治经济学批判》</td>
+<td>马克思</td>
+<td>“两个决不会”</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《哥达纲领批判》</td>
+<td>马克思</td>
+<td>理论上清算拉萨尔主义。共产主义社会两个阶段</td>
+<td>马克思主义同机会主义进行不调和斗争的典范</td>
+</tr>
+<tr>
+<td></td>
+<td>《家庭、私有制和国家的起源》</td>
+<td>恩格斯</td>
+<td>马恩国家学说</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《自然辩证法》</td>
+<td>恩格斯</td>
+<td></td>
+<td>首次阐明自然观、科学观</td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《路…费尔巴哈和德国古典哲学的终结》</td>
+<td>恩格斯</td>
+<td></td>
+<td>首次明确阐述哲学基本问题</td>
+</tr>
+<tr>
+<td></td>
+<td>《帝国主义是资本主义最高形态》</td>
+<td>列宁</td>
+<td>“革命的前夜”</td>
+<td></td>
+</tr>
+<tr>
+<td>▲</td>
+<td>《论欧洲联邦口号》</td>
+<td>列宁</td>
+<td>一国胜利论</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《无产阶级革命的军事纲领》</td>
+<td>列宁</td>
+<td>进一步发展一国胜利论</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《国家与革命》</td>
+<td>列宁</td>
+<td>列宁的国家学说</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《唯物主义和经验批判主义》</td>
+<td>列宁</td>
+<td>批马赫主义（反修）</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>《哲学笔记》</td>
+<td>列宁</td>
+<td>列宁进一步发展辩证法</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="马中化">马中化</h2>
+<ol>
+<li>六届六中全会：第一次提出马中化的命题</li>
+<li>中共七大：第一次飞跃，成果毛泽东思想</li>
+<li>全面建设社会主义开端：毛提出第二次结合的任务</li>
+<li>《论十大关系》：开始了第二次结合，开始探索自己的社会主义建设道路</li>
+<li>改革开放后：第二次飞跃</li>
+<li>十八大以来：第三次飞跃</li>
+</ol>
+<h2 class="atx" id="革命道路">革命道路</h2>
+<ol>
+<li>初步形成：《……红……能够存在？》《井冈山的斗争》《星……》，工农武装割据</li>
+<li>最终确立：六届六中全会《论新阶段》</li>
+</ol>
+<h2 class="atx" id="党的思想路线">党的思想路线</h2>
+<p>一切从实际出发（前提和基础），理论联系实际（方法和途径），实事求是（实质和核心），在实践中检验和发展真理（验证条件和目的）</p>
+<ol>
+<li>《反对本本主义》：初步阐明</li>
+<li>《矛盾论》《实践论》：科学阐明</li>
+<li>整风运动：确立，成为全党共识</li>
+<li>真理标准大讨论：为重新确立做了思想理论准备</li>
+<li>十一届三中全会：重新确立</li>
+</ol>
+<h2 class="atx" id="三次结合">三次结合</h2>
+<ol>
+<li>第一次结合：正确的中国革命道路<ol>
+<li>命题提出：六届六中全会《论新阶段》</li>
+<li>实现飞跃：中共七大</li>
+</ol>
+</li>
+<li>第二次结合：正确的（符合中国情况的）社会主义建设道路<ol>
+<li>命题提出：《论十大关系》</li>
+<li>实现飞跃：改革开放</li>
+</ol>
+</li>
+<li>新的结合</li>
+</ol>
+<h2 class="atx" id="两次国共合作">两次国共合作</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>第一次</th>
+<th>第二次</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>政权军队的合作</td>
+<td>无</td>
+<td>有</td>
+</tr>
+<tr>
+<td>阶级构成</td>
+<td>工农小资民资</td>
+<td>复杂，有大地主、大资产阶级</td>
+</tr>
+<tr>
+<td>共同纲领</td>
+<td>新三民主义</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="革命问题">革命问题</h2>
+<ol>
+<li>中国革命的首要问题：分清敌友（毛《中国社会各阶级的分析》）</li>
+<li>中国革命的基本问题：农民问题</li>
+<li>中国革命的中心问题：无产阶级领导权</li>
+<li>新民主主义革命的核心问题：无产阶级领导权</li>
+<li>国民革命运动的中心问题：农民问题（毛《国民革命与农民运动》）</li>
+<li>中国资产阶级民主革命的中心问题：土地革命（八七会议）</li>
+</ol>
+<h2 class="atx" id="宪法">宪法</h2>
+<ol>
+<li>《钦定宪法大纲》：近代中国首部宪法</li>
+<li>《中华民国临时约法》：临时参议院，“中华民国主权属于国民全体”</li>
+<li>《中华苏维埃宪法大纲》：工农兵代表大会制度</li>
+<li>《共同纲领》：临时宪法</li>
+</ol>
+<h2 class="atx" id="土地政策">土地政策</h2>
+<blockquote>
+<p>是否耕者有其田？是否否定封建土地剥削？对待富农的态度</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>时期</th>
+<th>政策文件</th>
+<th>政策要义</th>
+<th>耕者有其田</th>
+<th>否定封建土地剥削</th>
+<th>对待富农</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>太平天国</td>
+<td>《天朝田亩制度》</td>
+<td>“凡天下田，天下人同耕”</td>
+<td>有</td>
+<td>有</td>
+<td></td>
+</tr>
+<tr>
+<td>孙中山</td>
+<td>三民主义-民生主义</td>
+<td>“平均地权”</td>
+<td>无</td>
+<td>不彻底</td>
+<td></td>
+</tr>
+<tr>
+<td>国民革命</td>
+<td>新三民主义-民生主义</td>
+<td>“平均地权，节制资本”</td>
+<td>有</td>
+<td>有</td>
+<td></td>
+</tr>
+<tr>
+<td>土地革命</td>
+<td>《井冈山土地法》到《兴国土地法》</td>
+<td><small>消灭封建地主的土地私有制，实行农民土地私有制</small></td>
+<td>有（“按人口平分土地”）</td>
+<td>有</td>
+<td>限制富农</td>
+</tr>
+<tr>
+<td>抗战</td>
+<td></td>
+<td>减租减息，发展生产</td>
+<td>无</td>
+<td>削弱、未废除</td>
+<td>允许富农收租</td>
+</tr>
+<tr>
+<td>解放战争</td>
+<td>《关于清算、减租及土地问题的指示》（1946五四指示）</td>
+<td></td>
+<td>有</td>
+<td>有</td>
+<td>一般不变动富农土地，征收多余土地</td>
+</tr>
+<tr>
+<td>建国后</td>
+<td>《中华人民共和国土地改革法》</td>
+<td>实行农民土地所有制</td>
+<td>有</td>
+<td>废除</td>
+<td>改为保护富农经济</td>
+</tr>
+<tr>
+<td>土改完成到三大改造</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td>消灭富农剥削</td>
+</tr>
+</tbody></table>
+<h2 class="atx" id="抗战事件">抗战事件</h2>
+<p>平型关大捷：首胜，粉碎不可战胜的神话
+忻口会战：国共合作配合最好的一次会战
+淞沪会战
+徐州会战：台儿庄大捷，抗战正面战场最大的一次胜利
+广州武汉失守，进入相持阶段</p>
+<h2 class="atx" id="总路线">总路线</h2>
+<ol>
+<li>1949之前：无产阶级领导的、人民大众的、反对帝国主义、封建主义和官僚资本主义的革命</li>
+<li>1949-1956： 一化三改</li>
+<li>今天：一个中心，两个基本点</li>
+</ol>
+<h2 class="atx" id="思想解放运动">思想解放运动</h2>
+<ol>
+<li>五四</li>
+<li>延安整风</li>
+<li>真理标准大讨论</li>
+</ol>
+</article>
+</body>
+</html>
