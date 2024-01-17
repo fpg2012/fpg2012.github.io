@@ -37,15 +37,23 @@
 </div>
 
 <div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
     <a href="//nth233.top/notes/">Notes</a>
     <a href="//nth233.top/about/">About</a>
     <a href="//nth233.top/feed.xml">RSS</a>
     <!--<a href="//nth233.top/friends.html">Friends</a>-->
-    <div id="theme-switch" title="夜幕降临">🌒</button>
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
 </div>
-
 </header>
-
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
         <main>
             
 <div class='post-menu'>
@@ -109,14 +117,14 @@ been.</p>
 <script src=//nth233.top/assets/js/generate-toc.js></script>
 
         </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
         <footer>
-<span>© nth233 2023 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
         <div id="fullscreen-img-container" class="hidden">
         </div>
         <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
 	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
-    <script src="//nth233.top/assets/js/switch-theme.js"></script>
     
     </body>
 </html>
