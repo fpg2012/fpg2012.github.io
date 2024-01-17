@@ -213,6 +213,7 @@ main {
   font-size: 1rem;
   line-break: normal;
   scroll-padding: 5ex;
+  transition: all 0.25s ease-in-out;
 }
 
 .post-front-matter {
@@ -591,7 +592,7 @@ span.comment-area-power-by {
   
 }
 
-#theme-switch {
+.header-button {
   margin: 0 1em 0 1em;
   border-radius: 5px;
   font-size: 1.2rem;
@@ -601,7 +602,7 @@ span.comment-area-power-by {
   background-color: var(--body-bg-color);
 }
 
-#theme-switch:hover {
+.header-button:hover {
   background-color: var(--button-hover-color);
 }
 
@@ -674,6 +675,89 @@ span.comment-area-power-by {
   margin-bottom: 1em;
 }
 
+#search-button {
+  width: 3ex;
+  height: 3ex;
+  margin: 0 0.5em 0 0.5em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.search-box {
+  height: 2em;
+  width: calc(100% - 2em - 4px);
+  /* margin: 0.5rem 2rem 0.5rem 2rem; */
+  padding: 0.25em 1em 0.25em 1em;
+  border: 2px solid var(--common-border-color);
+  /* border-radius: 5px; */
+  font-size: 1.15rem;
+  outline: none;
+  transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+  background-color: var(--body-bg-color);
+  color: var(--common-font-color);
+}
+
+.search-box:focus {
+  border-color: var(--common-secondary-color);
+}
+
+.search-area.hide{
+  display: none;
+  filter: opacity(0);
+}
+
+.search-area {
+  z-index: 100;
+  width: 100%;
+  max-height: 70vh;
+  margin: 0;
+  border-left: 2px var(--common-border-color) solid;
+  border-right: 2px var(--common-border-color) solid;
+  border-bottom: 2px var(--common-border-color) solid;
+  position: fixed;
+  transition: all 0.25s cubic-bezier(0.075, 0.82, 0.165, 1);
+  overflow-y: scroll;
+  overflow-x: auto;
+  color: var(--common-font-color);
+  filter: opacity(100);
+  box-shadow: 0px 1px 2px gray;
+  background-color: var(--body-bg-color);
+}
+
+.search-result-item, .search-result-item:visited {
+	display: block;
+	background: var(--content-bg-color);
+	padding: 1em;
+	border-bottom: 1px var(--common-border-color) solid;
+	text-decoration: none;
+	background-color: var(--body-bg-color);
+	transition: all 0.25s ease-in-out;
+  color: var(--common-font-color);
+}
+
+.search-result-item:hover, .search-result-item:hover:visited {
+	text-decoration: none;
+  background-color: var(--header-bg-color);
+  color: var(--common-font-color);
+}
+
+.search-result-title {
+	font-size: 1.13rem;
+	margin: 0 0 0.5em 0;
+}
+
+.search-result-highlight {
+	margin: 0 0.1em 0 0.1em;
+	text-decoration: underline;
+  padding: 0 0.1em 0 0.1em;
+  font-weight: bold;
+}
+
+.blur {
+  filter: blur(2px);
+}
 
 @media (max-width:1300px) {
   .post-menu {
@@ -710,6 +794,10 @@ span.comment-area-power-by {
   }
 
   .header-menu>a {
+    display: none;
+  }
+
+  .header-menu>.search-control {
     display: none;
   }
 
