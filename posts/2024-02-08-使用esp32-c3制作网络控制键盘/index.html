@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 使用esp32-c3制作网络控制键盘</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="蓝牙键盘鼠标有很多优点，不需要线，也不需要占用一个USB接口，有些键盘还可以多模匹配，切换设备只需要按一个键。但有一个缺点是蓝牙键盘避不开的：必须在操作系统启动之后才能使用。这就带来一个棘手的问题：在GRUB以及BIOS中，没有办法使用蓝牙键盘鼠标。于是在我换蓝牙键盘之后，还是不得不常备一个有线键盘或者2.4GHz的无线键盘——直接把蓝牙键盘的种种好处都抵消掉了。如果手边恰好没有有线键盘/2.4GHz无线键盘，那我就无法在开机选操作系统。因此我做了这个东西进行补救：基于esp32-c3的网络控制键盘（下文直接称为esp32键盘）。">
+        
+
+        
+        <meta name="keywords" content="esp32,键盘,电子,arduino">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='post-menu'>
+    <div class='menu-title'>使用esp32-c3制作网络控制键盘</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>使用esp32-c3制作网络控制键盘</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-02-08</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#esp32</span>
+    
+        <span class="tag">#键盘</span>
+    
+        <span class="tag">#电子</span>
+    
+        <span class="tag">#arduino</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>蓝牙键盘鼠标有很多优点，不需要线，也不需要占用一个USB接口，有些键盘还可以多模匹配，切换设备只需要按一个键。但有一个缺点是蓝牙键盘避不开的：必须在操作系统启动之后才能使用。</p>
+<p>这就带来一个棘手的问题：在GRUB以及BIOS中，没有办法使用蓝牙键盘鼠标。于是在我换蓝牙键盘之后，还是不得不常备一个有线键盘或者2.4GHz的无线键盘——直接把蓝牙键盘的种种好处都抵消掉了。如果手边恰好没有有线键盘/2.4GHz无线键盘，那我就无法在开机选操作系统。</p>
+<p>因此我做了这个东西进行补救：基于esp32-c3的网络控制键盘（下文直接称为esp32键盘）。</p>
+<h2 id="工作方式">工作方式</h2>
+<figure>
+<img src="./structure.png" alt="工作方式示意图" />
+<figcaption aria-hidden="true">工作方式示意图</figcaption>
+</figure>
+<p>大概就是esp32-c3经由ch9329串口转USB
+HID模块，连接到主机上，在主机看来，esp32-c3就是个USB键鼠。esp32-c3同时也连接到本地的WiFi，并且运行一个HTTP服务端。访问它会返回一个网页，网页中有若干按钮，按下网页上的按钮时会给esp32-c3发请求。esp32-c3解析请求后，通过ch9329模拟键盘按下那个键。</p>
+<p>有了这个esp32键盘之后，我就可以通过手机模拟一个USB键盘的操作，从而在GRUB界面里面选操作系统，无需常备一块有线键盘。</p>
+<h2 id="材料">材料</h2>
+<ol type="1">
+<li>esp32-c3-devkitm-1（某宝随便买的）</li>
+<li>ch9329模块（某宝随便买的）</li>
+<li>ssd1306 128x64的显示屏（很久以前某宝买的）（可选）</li>
+<li>杜邦线若干</li>
+</ol>
+<h2 id="用到的库">用到的库</h2>
+<ol type="1">
+<li>参照乐鑫官网配好Arduino IDE（也就是安装esp32开发板）</li>
+<li>在Arduino IDE安装u8g2库，用来操作显示屏（可选）</li>
+<li>在Arduino IDE安装CH9219_Keyboard库</li>
+</ol>
+<h2 id="导线连接">导线连接</h2>
+<p>如图所示</p>
+<figure>
+<img src="./connection.png" alt="导线连接" />
+<figcaption aria-hidden="true">导线连接</figcaption>
+</figure>
+<h2 id="代码">代码</h2>
+<div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;WiFi.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;WiFiClient.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;WebServer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;uri/UriBraces.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Arduino.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;U8g2lib.h&gt;</span>
+
+<span class="cp">#ifdef U8X8_HAVE_HW_SPI</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;SPI.h&gt;</span>
+<span class="cp">#endif</span>
+<span class="cp">#ifdef U8X8_HAVE_HW_I2C</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Wire.h&gt;</span>
+<span class="cp">#endif</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;CH9329_Keyboard.h&quot;</span>
+
+<span class="cp">#define WIFI_SSID &quot;你的WiFi名(SSID)&quot;</span>
+<span class="cp">#define WIFI_PASSWORD &quot;你的WiFi密码&quot;</span>
+<span class="c1">// Defining the WiFi channel speeds up the connection:</span>
+<span class="cp">#define WIFI_CHANNEL 6</span>
+
+<span class="n">U8G2_SSD1306_128X64_NONAME_F_HW_I2C</span><span class="w"> </span><span class="nf">u8g2</span><span class="p">(</span><span class="n">U8G2_R0</span><span class="p">,</span><span class="w"> </span><span class="cm">/* reset=*/</span><span class="w"> </span><span class="n">U8X8_PIN_NONE</span><span class="p">,</span><span class="w"> </span><span class="cm">/* clock=*/</span><span class="w"> </span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="cm">/* data=*/</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+
+<span class="n">WebServer</span><span class="w"> </span><span class="nf">server</span><span class="p">(</span><span class="mi">80</span><span class="p">);</span>
+<span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">press_up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">press_down</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">press_right</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">press_left</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">press_enter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span>
+<span class="cp">#define QUEUE_SIZE 7</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">press_history_queue</span><span class="p">[</span><span class="n">QUEUE_SIZE</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">};</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">p_front</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">p_rear</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">queue_len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">queue_str</span><span class="p">[</span><span class="n">QUEUE_SIZE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">3</span><span class="p">];</span>
+<span class="kt">char</span><span class="w"> </span><span class="n">queue_str_map</span><span class="p">[]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="sc">&#39;0&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;U&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;D&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;L&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;R&#39;</span><span class="p">,</span><span class="w"> </span><span class="sc">&#39;E&#39;</span><span class="p">};</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">position_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">position_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">counter_default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4096</span><span class="p">;</span>
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_default</span><span class="p">;</span>
+
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">counter_close_display_default</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32768</span><span class="p">;</span>
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">counter_close_display</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_close_display_default</span><span class="p">;</span>
+
+<span class="kt">uint64_t</span><span class="w"> </span><span class="n">cycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">real_cycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">pop_queue</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">queue_len</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">p_front</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">p_front</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">QUEUE_SIZE</span><span class="p">;</span>
+<span class="w">  </span><span class="n">queue_len</span><span class="w"> </span><span class="o">--</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">push_queue</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">item</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">queue_len</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">QUEUE_SIZE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">pop_queue</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">press_history_queue</span><span class="p">[</span><span class="n">p_rear</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">item</span><span class="p">;</span>
+<span class="w">  </span><span class="n">p_rear</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">p_rear</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">QUEUE_SIZE</span><span class="p">;</span>
+<span class="w">  </span><span class="n">queue_len</span><span class="w"> </span><span class="o">++</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">update_queue_str</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">queue_len</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">queue_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">queue_str_map</span><span class="p">[</span><span class="n">press_history_queue</span><span class="p">[(</span><span class="n">p_front</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">QUEUE_SIZE</span><span class="p">]];</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">queue_str</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">update_position</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">position_x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">position_x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+<span class="w">  </span><span class="n">position_y</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">position_y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="mi">30</span><span class="p">);</span>
+<span class="w">  </span><span class="n">updateDisplay</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">updateDisplay</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">clearBuffer</span><span class="p">();</span><span class="w">                   </span><span class="c1">// clear the internal memory</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">u8g2_font_t0_15b_tn</span><span class="p">);</span><span class="w">    </span><span class="c1">// choose a suitable font</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">drawStr</span><span class="p">(</span><span class="n">position_x</span><span class="p">,</span><span class="n">position_y</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">WiFi</span><span class="p">.</span><span class="n">localIP</span><span class="p">().</span><span class="n">toString</span><span class="p">().</span><span class="n">c_str</span><span class="p">());</span><span class="w">    </span><span class="c1">// write something to the internal memory</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="n">String</span><span class="w"> </span><span class="n">cycles_str</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="s">&quot;LOOP/1024=&quot;</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">String</span><span class="p">(</span><span class="n">cycles</span><span class="p">);</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">u8g2_font_chikita_tr</span><span class="p">);</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">drawStr</span><span class="p">(</span><span class="n">position_x</span><span class="p">,</span><span class="w"> </span><span class="n">position_y</span><span class="o">+</span><span class="mi">17</span><span class="p">,</span><span class="w"> </span><span class="n">cycles_str</span><span class="p">.</span><span class="n">c_str</span><span class="p">());</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">u8g2_font_tenstamps_mf</span><span class="p">);</span><span class="w"> </span><span class="c1">// choose a suitable font</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">drawStr</span><span class="p">(</span><span class="n">position_x</span><span class="p">,</span><span class="n">position_y</span><span class="o">+</span><span class="mi">34</span><span class="p">,</span><span class="w"> </span><span class="n">queue_str</span><span class="p">);</span><span class="w">    </span><span class="c1">// write something to the internal memory</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">sendBuffer</span><span class="p">();</span><span class="w">                    </span><span class="c1">// transfer internal memory to the display</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">closeDisplay</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">clearBuffer</span><span class="p">();</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">sendBuffer</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">sendHtml</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">String</span><span class="w"> </span><span class="n">response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="sa">R</span><span class="s">&quot;</span><span class="dl">(</span>
+<span class="s">    &lt;!DOCTYPE html&gt;&lt;html&gt;</span>
+<span class="s">      &lt;head&gt;</span>
+<span class="s">        &lt;title&gt;ESP32 Web Server Demo&lt;/title&gt;</span>
+<span class="s">        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;</span>
+<span class="s">        &lt;style&gt;</span>
+<span class="s">          html { font-family: sans-serif; text-align: center; width: 100vw; }</span>
+<span class="s">          body { display: inline-flex; flex-direction: column; }</span>
+<span class="s">          h1 { margin-bottom: 1.2em; } </span>
+<span class="s">          h2 { margin: 0; }</span>
+<span class="s">          div { display: flex; flex-wrap: wrap; }</span>
+<span class="s">          .btn { background-color: #5B5; border: none; color: #fff; padding: 0.5em 1em;</span>
+<span class="s">                 font-size: 2em; text-decoration: none; margin: 0.5em; }</span>
+<span class="s">          .btn.OFF { background-color: #333; }</span>
+<span class="s">          }</span>
+<span class="s">        &lt;/style&gt;</span>
+<span class="s">      &lt;/head&gt;</span>
+<span class="s">            </span>
+<span class="s">      &lt;body&gt;</span>
+<span class="s">        &lt;h1&gt;ESP32 Web Server&lt;/h1&gt;</span>
+
+<span class="s">        &lt;div class=&quot;button-area&quot;&gt;</span>
+<span class="s">          &lt;span id=&quot;up&quot; class=&quot;btn&quot;&gt;up&lt;/span&gt;</span>
+<span class="s">          &lt;span id=&quot;down&quot; class=&quot;btn&quot;&gt;down&lt;/span&gt;</span>
+<span class="s">          &lt;span id=&quot;left&quot; class=&quot;btn&quot;&gt;left&lt;/span&gt;</span>
+<span class="s">          &lt;span id=&quot;right&quot; class=&quot;btn&quot;&gt;right&lt;/span&gt;</span>
+<span class="s">          &lt;span id=&quot;enter&quot; class=&quot;btn&quot;&gt;ENTER&lt;/span&gt;</span>
+<span class="s">        &lt;/div&gt;</span>
+<span class="s">        &lt;script&gt;</span>
+<span class="s">          var up = document.getElementById(&quot;up&quot;);</span>
+<span class="s">          var down = document.getElementById(&quot;down&quot;);</span>
+<span class="s">          var right = document.getElementById(&quot;right&quot;);</span>
+<span class="s">          var left = document.getElementById(&quot;left&quot;);</span>
+<span class="s">          var enter = document.getElementById(&quot;enter&quot;);</span>
+
+<span class="s">          up.onclick = async function() {</span>
+<span class="s">            await fetch(&quot;/press/1&quot;);</span>
+<span class="s">          }</span>
+<span class="s">          down.onclick = async function() {</span>
+<span class="s">            await fetch(&quot;/press/2&quot;);</span>
+<span class="s">          }</span>
+<span class="s">          right.onclick = async function() {</span>
+<span class="s">            await fetch(&quot;/press/3&quot;);</span>
+<span class="s">          }</span>
+<span class="s">          left.onclick = async function() {</span>
+<span class="s">            await fetch(&quot;/press/4&quot;);</span>
+<span class="s">          }</span>
+<span class="s">          enter.onclick = async function() {</span>
+<span class="s">            await fetch(&quot;/press/5&quot;);</span>
+<span class="s">          }</span>
+<span class="s">        &lt;/script&gt;</span>
+<span class="s">      &lt;/body&gt;</span>
+<span class="s">    &lt;/html&gt;</span>
+<span class="s">  </span><span class="dl">)</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="n">server</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;text/html&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">response</span><span class="p">);</span>
+<span class="w">  </span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">setup</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">115200</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Serial1</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mi">9600</span><span class="p">,</span><span class="w"> </span><span class="n">SERIAL_8N1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">Serial1</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">WiFi</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="n">WIFI_SSID</span><span class="p">,</span><span class="w"> </span><span class="n">WIFI_PASSWORD</span><span class="p">,</span><span class="w"> </span><span class="n">WIFI_CHANNEL</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Connecting to WiFi &quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="n">WIFI_SSID</span><span class="p">);</span>
+<span class="w">  </span><span class="c1">// Wait for connection</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">status</span><span class="p">()</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">WL_CONNECTED</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">delay</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot; Connected!&quot;</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;IP address: &quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">WiFi</span><span class="p">.</span><span class="n">localIP</span><span class="p">());</span>
+
+<span class="w">  </span><span class="n">server</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">sendHtml</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">server</span><span class="p">.</span><span class="n">on</span><span class="p">(</span><span class="n">UriBraces</span><span class="p">(</span><span class="s">&quot;/press/{}&quot;</span><span class="p">),</span><span class="w"> </span><span class="p">[]()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">press_button</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">server</span><span class="p">.</span><span class="n">pathArg</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Press #&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">press_button</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">press_button</span><span class="p">.</span><span class="n">toInt</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">1</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">// up</span>
+<span class="w">        </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">press</span><span class="p">(</span><span class="n">KEY_UP_ARROW</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">2</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">// down</span>
+<span class="w">        </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">press</span><span class="p">(</span><span class="n">KEY_DOWN_ARROW</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">3</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">// right</span>
+<span class="w">        </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">press</span><span class="p">(</span><span class="n">KEY_RIGHT_ARROW</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">4</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">// left</span>
+<span class="w">        </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">press</span><span class="p">(</span><span class="n">KEY_LEFT_ARROW</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">      </span><span class="k">case</span><span class="w"> </span><span class="mi">5</span><span class="p">:</span>
+<span class="w">        </span><span class="c1">// enter</span>
+<span class="w">        </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">press</span><span class="p">(</span><span class="n">KEY_RETURN</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">push_queue</span><span class="p">(</span><span class="n">press_button</span><span class="p">.</span><span class="n">toInt</span><span class="p">());</span>
+<span class="w">    </span><span class="n">update_queue_str</span><span class="p">();</span>
+<span class="w">    </span><span class="n">updateDisplay</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="n">queue_str</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">server</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+<span class="w">    </span><span class="n">CH9329_Keyboard</span><span class="p">.</span><span class="n">releaseAll</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">counter_close_display</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">32768</span><span class="p">;</span>
+<span class="w">  </span><span class="p">});</span>
+
+<span class="w">  </span><span class="n">server</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+<span class="w">  </span><span class="n">u8g2</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+<span class="w">  </span><span class="n">Serial</span><span class="p">.</span><span class="n">println</span><span class="p">(</span><span class="s">&quot;HTTP server started&quot;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">updateDisplay</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">loop</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">server</span><span class="p">.</span><span class="n">handleClient</span><span class="p">();</span>
+<span class="w">  </span><span class="n">delay</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="w">  </span><span class="n">real_cycles</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">real_cycles</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">1024</span><span class="p">;</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">real_cycles</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1023</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cycles</span><span class="o">++</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">counter</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">counter</span><span class="o">--</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">counter_default</span><span class="p">;</span>
+<span class="w">    </span><span class="n">update_position</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">counter_close_display</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">counter_close_display</span><span class="o">--</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">closeDisplay</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<blockquote>
+<p>注：显示屏只是为了方便看IP地址。如果你不需要显示屏，就把u8g2相关的东西全部删掉</p>
+</blockquote>
+<blockquote>
+<p>注2：记得把WiFi名（SSID）和密码换成自己的</p>
+</blockquote>
+<h2 id="结果">结果</h2>
+<div
+style="display: grid; gap: 10px; grid-template-columns: 1.16fr 1fr; grid-template-rows: 1fr 1fr;">
+<img src="./pic1.jpg" style="grid-column: 1; grid-row: 1"><img src="./pic2.jpg" style="grid-column: 1; grid-row: 2"><img src="./pic3.jpg" style="grid-column: 2; grid-row: 1 / 3">
+</div>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+href="https://wokwi.com/projects/320964045035274834">wokwi上的esp32HTTP服务器示例</a></li>
+<li><a href="https://github.com/olikraus/u8g2/wiki">u8g2</a></li>
+<li><a href="https://github.com/shigobu/CH9329_Keyboard">CH9329_Keyboard
+(by shigobu)</a></li>
+<li><a
+href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html">esp32-c3-devkitm-1文档</a></li>
+</ul>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2023-09-03-intel-arc-a770-ai.html">使用Intel A...</a></div>
+        <div class="sibling-page-date">2023-09-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2023-09-03-intel-arc-a770-ai.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
