@@ -15,10 +15,40 @@
     
     
     
-    <pubDate>Thu, 08 Feb 2024 15:11:25 GMT</pubDate>
-    <lastBuildDate>Thu, 08 Feb 2024 15:11:25 GMT</lastBuildDate>
+    <pubDate>Thu, 14 Mar 2024 06:18:36 GMT</pubDate>
+    <lastBuildDate>Thu, 14 Mar 2024 06:18:36 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>OpenGL加载glTF模型</title>
+      <link>https://nth233.top/posts/2024-03-14-OpenGL加载和绘制glTF模型/index.html</link>
+      
+      <description>最近一时兴起，决定复习一下OpenGL。打算用一周的时间“速通”一下OpenGL（指画三角形、实现MVP变换、实现PCSS软阴影到到加载glTF模型）。之前过一遍Vulkan Tutorial的时候，一直想把sketchfab上面的模型加载进来，可惜当时搞不明白GLTF的格式，网上现成的资料也不是太多。这次一周快速复习OpenGL对我来说还是有点挑战。好在我确实一周内搞出来了。</description>
+      
+      <pubDate>2024-03-14</pubDate>
+      <guid>1769376928827601523</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>OpenGL</category>
+        
+          <category>glTF</category>
+        
+          <category>CG</category>
+        
+          <category>计算机图形学</category>
+        
+          <category>3d</category>
+        
+      
+    </item>
     
     
     

@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - OpenGL加载glTF模型</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="最近一时兴起，决定复习一下OpenGL。打算用一周的时间“速通”一下OpenGL（指画三角形、实现MVP变换、实现PCSS软阴影到到加载glTF模型）。之前过一遍Vulkan Tutorial的时候，一直想把sketchfab上面的模型加载进来，可惜当时搞不明白GLTF的格式，网上现成的资料也不是太多。这次一周快速复习OpenGL对我来说还是有点挑战。好在我确实一周内搞出来了。">
+        
+
+        
+        <meta name="keywords" content="OpenGL,glTF,CG,计算机图形学,3d">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='post-menu'>
+    <div class='menu-title'>OpenGL加载glTF模型</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>OpenGL加载glTF模型</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-03-14</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#OpenGL</span>
+    
+        <span class="tag">#glTF</span>
+    
+        <span class="tag">#CG</span>
+    
+        <span class="tag">#计算机图形学</span>
+    
+        <span class="tag">#3d</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>最近一时兴起，决定复习一下OpenGL。打算用一周的时间“速通”一下OpenGL（指画三角形、实现MVP变换、实现PCSS软阴影到到加载glTF模型）。之前过一遍Vulkan
+Tutorial的时候，一直想把sketchfab上面的模型加载进来，可惜当时搞不明白glTF的格式，网上现成的资料也不是太多。</p>
+<p>这次一周快速复习OpenGL对我来说还是有点挑战。好在我确实一周内搞出来的，中间卡关了几次都是因为某些智障错误。</p>
+<p>本文主要关注加载基本的glTF模型，不会涉及阴影。最终效果如下。</p>
+<figure>
+<img src="attachment/ae4920e639fad546be98cfdc9e775ddf.png"
+alt="最终效果" />
+<figcaption aria-hidden="true">最终效果</figcaption>
+</figure>
+<h2 id="前置知识">前置知识</h2>
+<h3 id="opengl基础知识">OpenGL基础知识</h3>
+<p>如果已经熟悉OpenGL，请直接跳到GLTF文件格式一节。一下内容建议结合LearnOpenGL阅读。</p>
+<h4 id="概述">概述</h4>
+<p>加载3D模型，归根到底就是在绘制一系列三角形。给定每一个三角形顶点的位置、顶点对应的纹理坐标、顶点对应的法向量，剩下的就交给OpenGL和GPU的渲染管线。管线的一端是我们传进去的顶点信息，另一端出来的就是绘制的结果。</p>
+<figure>
+<img src="attachment/f1804831514d1e4e78e75bf8af84f9ef.png"
+alt="OpenGL的渲染管线" />
+<figcaption aria-hidden="true">OpenGL的渲染管线</figcaption>
+</figure>
+<p><a
+href="https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview">OpenGL的渲染管线</a>环节有很多（图来自<a
+href="https://www.khronos.org/opengl/wiki/Rendering_Pipeline_Overview">Khronos的wiki</a>）。不过简单起见，我们认为输入顶点的数据经过简单处理，会传递给顶点着色器❲Vertex
+Shader❳。顶点着色器的输出在光栅化后，又传给片元着色器❲Fragment
+Shader❳，最后经过模板测试、深度测试和混合，写入帧缓冲❲Framebuffer❳。渲染的结果会通过交换链❲Swapchain❳被交换到屏幕上显示出来。</p>
+<p>在渲染管线开始前，我们需要把数据从内存传递到GPU。这部分需要在显存创建缓冲区，并往里面填上数据。还需要对数据的格式（长度、类型、步长等等）进行解释。</p>
+<p>在顶点着色器的阶段，GPU会对每个顶点调用一次顶点着色器的程序。经过差值和光栅化之后，在片元着色器的阶段，GPU会对每一个片元❲Fragment❳（可以理解为像素）调用一次片元着色器。这两个着色器都需要我们自己编写。着色程序涉及的一些统一的参数（比如变换矩阵、光源位置等等）需要通过<code>uniform</code>变量来传递。</p>
+<p>所有东西都准备好后，调用一次画图函数（<code>glDrawElements</code>等）就能将所需的三角形绘制出来。我们经常用一个draw
+call绘制大量的三角形，以提高效率。</p>
+<p>当然，这一切开始之前，还要创建一个窗口，并且初始化OpenGL上下文，这部分由GLFW代劳。</p>
+<h4 id="缓冲">缓冲</h4>
+<p>这里有必要展开说一下缓冲。缓冲可以大致分成两种，一种存储顶点的数据，也就是前面提到的位置、纹理坐标、法向量等等，称为顶点缓冲❲Vertex
+Buffer❳。另一种则是存顶点的索引，称为索引缓冲❲Index
+Buffer❳。引入顶点索引目的主要是为了省空间。考虑到复杂的模型可能有不少顶点同时被用于多个三角形，如果画图的时候每画一个三角形，就要给出顶点的全部数据，这些重复顶点的数据就会在涉及的每个三角形里重复一次，十分浪费空间。使用顶点索引后，绘制三角形不再需要三个顶点的全部数据，而只需要给出三个顶点的索引，GPU根据这些索引去顶点数据里面查相应顶点的数据，这样就能节约很多空间。</p>
+<p>每次调用画图函数，OpenGL都需要知道当前的顶点缓冲，以及顶点缓冲内数据的存储格式。OpenGL把这些信息打包起来，和顶点数组对象❲Vertex
+Array
+Object，简称VAO❳关联起来。每次画图时，我们只要绑定创建好的VAO（如果要使用索引，还要绑定索引缓冲对象），调用draw
+call即可。</p>
+<p>那么如何把顶点缓冲的结构和VAO关联起来呢？我们只需要在创建对应的VAO之后，绑定对应属性（比如顶点位置）所在的顶点缓冲，然后调用<code>glVertexAttribPointer</code>，告知类型、长度、步长、偏移等信息（图来自<a
+href="https://learnopengl.com/Getting-started/Hello-Triangle">LearnOpenGL</a>）。</p>
+<figure>
+<img src="attachment/de1bf760da111d0b95a7410c9097e36b.png"
+alt="vao &amp; vbo &amp; ebo" />
+<figcaption aria-hidden="true">vao &amp; vbo &amp; ebo</figcaption>
+</figure>
+<h3 id="gltf文件格式">glTF文件格式</h3>
+<blockquote>
+<p>glTF™ is a royalty-free specification for the efficient transmission
+and loading of 3D scenes and models by engines and applications. glTF
+minimizes the size of 3D assets, and the runtime processing needed to
+unpack and use them.</p>
+</blockquote>
+<p>本节建议参考<a
+href="https://registry.khronos.org/glTF/specs/2.0/glTF-2.0.html">glTF
+spec</a>。</p>
+<h4 id="基本概念">基本概念</h4>
+<p>glTF是Khronos提出的一种3D内容格式，可以支持3D模型、3D动画，不过本文不会涉及和动画有关的内容，也不会涉及PBR材质。SketchFab上的模型都提供<code>.glb</code>或<code>.gltf</code>格式下载。</p>
+<p>glTF格式是基于JSON的，下面是一个简单的示例，请仔细浏览一遍。</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;scene&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;scenes&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Scene&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;nodes&quot;</span><span class="p">:[</span>
+<span class="w">                </span><span class="mi">0</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;nodes&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;mesh&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Cube&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;rotation&quot;</span><span class="p">:[</span>
+<span class="w">                </span><span class="mf">-0.5065690875053406</span><span class="p">,</span>
+<span class="w">                </span><span class="mf">-0.4970885217189789</span><span class="p">,</span>
+<span class="w">                </span><span class="mf">0.49341458082199097</span><span class="p">,</span>
+<span class="w">                </span><span class="mf">0.5028250217437744</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;materials&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;doubleSided&quot;</span><span class="p">:</span><span class="kc">true</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Material.001&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;pbrMetallicRoughness&quot;</span><span class="p">:{</span>
+<span class="w">                </span><span class="nt">&quot;baseColorTexture&quot;</span><span class="p">:{</span>
+<span class="w">                    </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="nt">&quot;metallicFactor&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                </span><span class="nt">&quot;roughnessFactor&quot;</span><span class="p">:</span><span class="mf">0.5</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;meshes&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Cube&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;primitives&quot;</span><span class="p">:[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;attributes&quot;</span><span class="p">:{</span>
+<span class="w">                        </span><span class="nt">&quot;POSITION&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;NORMAL&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;TEXCOORD_0&quot;</span><span class="p">:</span><span class="mi">2</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;indices&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;material&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;textures&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;sampler&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;source&quot;</span><span class="p">:</span><span class="mi">0</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;images&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;mimeType&quot;</span><span class="p">:</span><span class="s2">&quot;image/jpeg&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;avatar&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;avatar.jpg&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;accessors&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;bufferView&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;componentType&quot;</span><span class="p">:</span><span class="mi">5126</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;max&quot;</span><span class="p">:[</span>
+<span class="w">                </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">                </span><span class="mi">1</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;min&quot;</span><span class="p">:[</span>
+<span class="w">                </span><span class="mi">-1</span><span class="p">,</span>
+<span class="w">                </span><span class="mi">-1</span><span class="p">,</span>
+<span class="w">                </span><span class="mi">-1</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;VEC3&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;bufferView&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;componentType&quot;</span><span class="p">:</span><span class="mi">5126</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;VEC3&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;bufferView&quot;</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;componentType&quot;</span><span class="p">:</span><span class="mi">5126</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;VEC2&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;bufferView&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;componentType&quot;</span><span class="p">:</span><span class="mi">5123</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;count&quot;</span><span class="p">:</span><span class="mi">36</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="s2">&quot;SCALAR&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;bufferViews&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;buffer&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteLength&quot;</span><span class="p">:</span><span class="mi">288</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteOffset&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="mi">34962</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;buffer&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteLength&quot;</span><span class="p">:</span><span class="mi">288</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteOffset&quot;</span><span class="p">:</span><span class="mi">288</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="mi">34962</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;buffer&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteLength&quot;</span><span class="p">:</span><span class="mi">192</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteOffset&quot;</span><span class="p">:</span><span class="mi">576</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="mi">34962</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;buffer&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteLength&quot;</span><span class="p">:</span><span class="mi">72</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;byteOffset&quot;</span><span class="p">:</span><span class="mi">768</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;target&quot;</span><span class="p">:</span><span class="mi">34963</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;samplers&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;magFilter&quot;</span><span class="p">:</span><span class="mi">9729</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;minFilter&quot;</span><span class="p">:</span><span class="mi">9987</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">],</span>
+<span class="w">    </span><span class="nt">&quot;buffers&quot;</span><span class="p">:[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;byteLength&quot;</span><span class="p">:</span><span class="mi">840</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;simple_cube.bin&quot;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<blockquote>
+<p>其实这是我用blender随便画的一个正方体</p>
+<figure>
+<img src="attachment/4e254885fdff71f701e29a9074979e9e.png"
+alt="正方体" />
+<figcaption aria-hidden="true">正方体</figcaption>
+</figure>
+</blockquote>
+<p>虽然内容有点多，但简单浏览之后我们会发现其实glTF就是把几个JSON数组放到了一个JSON对象里面去，主要包括：</p>
+<ol type="1">
+<li>Scene 场景</li>
+<li>Node 结点</li>
+<li>Texture 纹理</li>
+<li>Material 材质</li>
+<li>Mesh 网格</li>
+<li>Primitive （不知道怎么翻译，姑且叫做“元件”）</li>
+<li>Accessor （不知道怎么翻译，姑且叫做“访问器”）</li>
+<li>Sampler 采样器</li>
+<li>Buffer 缓冲</li>
+<li>BufferView （不知道怎么翻译，姑且叫做“缓冲视图”）</li>
+<li>Image 图像</li>
+</ol>
+<p>它们之间的层级关系如图（图来自<a
+href="https://github.khronos.org/glTF-Tutorials/gltfTutorial/gltfTutorial_002_BasicGltfStructure.html">gltf
+tutorial</a>）。</p>
+<figure>
+<img src="attachment/ccdb395db95a516e3d9c20da25a8336b.png"
+alt="层级关系" />
+<figcaption aria-hidden="true">层级关系</figcaption>
+</figure>
+<p>一个glTF文件包括一个或多个Scene，其中必定有一个是默认场景，用<code>scene</code>指定。每个场景就是一棵Node构成的树，因此肯定有一个根结点。有些Node含有Mesh，每个Mesh可能有一个或多个Primitive，Primitive其实就是一堆三角形+材质。每个Node有自己对应的变换矩阵，也就是MVP变换里面的model，这一矩阵说明了本Node在父结点的坐标系中怎么摆放。这一变换定义在<code>matrix</code>中（16x16的行主序的矩阵），或者也可以用TRS的方式给出，即分别说明移动translation、旋转rotation和缩放scale。translate是个三维向量（XYZ），rotation是个四元数（WXYZ），scale是个三维向量。</p>
+<blockquote>
+<p>glTF的坐标系采用右手系，向上为Y。OpenGL则是左手系，因此如果</p>
+</blockquote>
+<p>三角形的顶点数据存放在Buffer当中，同一个Buffer可以用不同的方式的方式看待，也就是BufferView（类似Vulkan的BufferView）。Accessor定义了我们怎样访问BufferView（涉及offset、stride、数据类型等等，和定义VAO时要考虑的很像）。Buffer中的数据可以直接在文件中用base64编码给出，也可以给定一个URI（可以理解为文件的路径）引用一个<code>.bin</code>文件。</p>
+<p>顶点数据一般就是POSITION位置、NORMAL法向量、TEXCOORD纹理坐标，这三者对应的Accessor都会在Primitive当中指明。Primitive还要给出顶点索引对应的Accessor（对应我们调用draw
+call时要绑定的索引缓冲）。</p>
+<p>每个Primitive一般有自己的Material。每个材质有可能有对应的Texture。Texture又引用对应的Sampler和Image。Sampler说明放大/缩小的时候采用的插值方式、纹理坐标超过<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">[</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-1, 1]</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">[</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">]</span></span></span></span>如何处理。Image则就是贴图，一般也是用URI应用外部的图片文件。（图同样来自gltf
+tutorial）</p>
+<figure>
+<img src="attachment/98de29222ffc2d721b909e96abca529b.png"
+alt="URI引用外部文件" />
+<figcaption aria-hidden="true">URI引用外部文件</figcaption>
+</figure>
+<p>Scene、Node、Mesh、Material、Texture、Image都可以有自己的<code>name</code>。</p>
+<p>显然，glTF比obj这类“单纯”的格式复杂很多（甚至可以说没有可比性），如果对其基本概念没有了解，调库的时候很可能会看不懂API，很难把它画到OpenGL里面。</p>
+<h2 id="opengl的简单封装">OpenGL的简单封装</h2>
+<p>为了最后代码能够相对干净简洁，先对OpenGL做点简单的封装。本节的存在纯粹是为了简化下一节的代码。详见
+<a
+href="https://github.com/fpg2012/QuickOpenGL">fpg2012/QuickOpenGL</a></p>
+<h4 id="application">Application</h4>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">QuickGLApplication</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">QuickGLApplication</span><span class="p">();</span><span class="w"> </span><span class="c1">// 初始化glfw</span>
+<span class="w">    </span><span class="o">~</span><span class="n">QuickGLApplication</span><span class="p">();</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">main_loop</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gltf_scene</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;no gltf scene&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">            </span><span class="n">exit</span><span class="p">(</span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// 初始化camera, gltf_scene等等</span>
+
+<span class="w">        </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">glfwWindowShouldClose</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="c1">// 1. 更新 t</span>
+<span class="w">            </span><span class="c1">// 2. 更新变换矩阵</span>
+<span class="w">            </span><span class="c1">// 3. 渲染到shadow map</span>
+<span class="w">            </span><span class="c1">// 4. 真正的渲染</span>
+
+<span class="w">            </span><span class="n">glfwSwapBuffers</span><span class="p">(</span><span class="n">window</span><span class="p">);</span>
+<span class="w">            </span><span class="n">glfwPollEvents</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 处理一些列glfw传来的事件</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">framebuffer_size_callback</span><span class="p">(</span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">scroll_callback</span><span class="p">(</span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">xoffset</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">yoffset</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">key_callback</span><span class="p">(</span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">scancode</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mods</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">cursor_position_callback</span><span class="p">(</span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">xpos</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ypos</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">mouse_button_callback</span><span class="p">(</span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">button</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">action</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mods</span><span class="p">);</span>
+
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="n">GLFWwindow</span><span class="o">*</span><span class="w"> </span><span class="n">window</span><span class="p">;</span>
+<span class="w">    </span><span class="n">Camera</span><span class="w"> </span><span class="n">camera</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">viewport_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1080</span><span class="p">,</span><span class="w"> </span><span class="n">viewport_height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">720</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">shadow_width</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2048</span><span class="p">,</span><span class="w"> </span><span class="n">shadow_height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2048</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFScene</span><span class="o">&gt;</span><span class="w"> </span><span class="n">gltf_scene</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">};</span>
+</pre></div>
+
+<h4 id="shader和shaderprogram">Shader和ShaderProgram</h4>
+<p>读取着色器文件的内容然后编译。析构的时候顺便把shader释放掉。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Shader</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">source</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">//char *source = nullptr;</span>
+<span class="w">    </span><span class="n">GLint</span><span class="w"> </span><span class="n">success</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">info_log</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">Shader</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">GLenum</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">ifstream</span><span class="w"> </span><span class="nf">ifs</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">ate</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ifs</span><span class="p">.</span><span class="n">is_open</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;failed to open file&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">len</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ifs</span><span class="p">.</span><span class="n">tellg</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ifs</span><span class="p">.</span><span class="n">seekg</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">ios</span><span class="o">::</span><span class="n">beg</span><span class="p">);</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="n">ss</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ss</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ifs</span><span class="p">.</span><span class="n">rdbuf</span><span class="p">();</span>
+<span class="w">        </span><span class="n">source</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ss</span><span class="p">.</span><span class="n">str</span><span class="p">();</span>
+<span class="w">        </span><span class="n">ifs</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">source_c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">source</span><span class="p">.</span><span class="n">c_str</span><span class="p">();</span>
+<span class="w">        </span><span class="n">init</span><span class="p">(</span><span class="n">source_c</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="o">~</span><span class="n">Shader</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">GL_TRUE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">glDeleteShader</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">init</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="n">GLenum</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glCreateShader</span><span class="p">(</span><span class="n">type</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">glShaderSource</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">source</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glCompileShader</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">glGetShaderiv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">GL_COMPILE_STATUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">success</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">GL_TRUE</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">glGetShaderInfoLog</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">info_log</span><span class="p">);</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;failed to compile shader: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">info_log</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>链接Vertex Shader和Fragment
+Shader。需要使用的时候直接调用<code>use</code>函数。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">ShaderProgram</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GLint</span><span class="w"> </span><span class="n">success</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">ShaderProgram</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Shader</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vert</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Shader</span><span class="o">&amp;</span><span class="w"> </span><span class="n">frag</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">handle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glCreateProgram</span><span class="p">();</span>
+<span class="w">        </span><span class="n">glAttachShader</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">vert</span><span class="p">.</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glAttachShader</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">frag</span><span class="p">.</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glLinkProgram</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glGetProgramiv</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="n">GL_LINK_STATUS</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">success</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="kt">char</span><span class="w"> </span><span class="n">info_log</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<span class="w">            </span><span class="n">glGetProgramInfoLog</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">info_log</span><span class="p">);</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">info_log</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">use</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">glUseProgram</span><span class="p">(</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>这部分LearnOpenGL有个更完备的封装，可以直接参考那个。</p>
+<h4 id="texture和material">Texture和Material</h4>
+<p>可以使用stb_image把图像内容加载到内存。不过这里假设已经加载好了，直接把字节数组传进来。</p>
+<div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Texture</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 省略几个别的构造函数</span>
+
+<span class="w">    </span><span class="n">Texture</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bytes</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">wrap_s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_CLAMP_TO_EDGE</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">wrap_t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_CLAMP_TO_EDGE</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">min_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_LINEAR</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">mag_filter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_LINEAR</span><span class="p">,</span>
+<span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">component_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_UNSIGNED_BYTE</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_RGBA</span>
+<span class="w">    </span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">glGenTextures</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span><span class="w"> </span><span class="n">handle</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glTexImage2D</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">format</span><span class="p">,</span><span class="w"> </span><span class="n">component_type</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">use</span><span class="p">(</span><span class="n">GLenum</span><span class="w"> </span><span class="n">texture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GL_TEXTURE0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">glActiveTexture</span><span class="p">(</span><span class="n">texture</span><span class="p">);</span>
+<span class="w">        </span><span class="n">glBindTexture</span><span class="p">(</span><span class="n">GL_TEXTURE_2D</span><span class="p">,</span><span class="w"> </span><span class="n">handle</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>Material则由ShaderProgram和Texture组合而成。在使用材质的时候，使用着色器程序，绑定材质，设置需要的uniform变量。这里我实现了两种材质，纯色和Blinn-Phong。</p>
+<p>shader的编写和本文无关，在此不表，可以直接去github看。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Material</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 对应glTF当中的alphaMode</span>
+<span class="w">    </span><span class="c1">// 为了得到相对正确的结果，应该以不同的方式对待半透明物体和不透明物体</span>
+<span class="w">    </span><span class="c1">// 下文RenderQueue一节会说明</span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="nc">AlphaMode</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OPAQUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 不透明</span>
+<span class="w">        </span><span class="n">MASK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="c1">// 我没实现</span>
+<span class="w">        </span><span class="n">BLEND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="c1">// 半透明</span>
+<span class="w">    </span><span class="p">};</span>
+<span class="w">    </span><span class="n">Material</span><span class="p">(</span><span class="n">AlphaMode</span><span class="w"> </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OPAQUE</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">alpha_mode</span><span class="p">(</span><span class="n">alpha_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">AlphaMode</span><span class="w"> </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OPAQUE</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 纯色</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">SimpleColorMaterial</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Material</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">SimpleColorMaterial</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="w"> </span><span class="n">color</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shader_program</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_shader</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">shader_program</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">();</span>
+
+<span class="w">        </span><span class="n">GLuint</span><span class="w"> </span><span class="n">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glGetUniformLocation</span><span class="p">(</span><span class="n">shader_program</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;model&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">load_shader</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="w"> </span><span class="n">color</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 同一种Material只需要一个ShaderProgram，因此用static变量</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// 带纹理贴图的Blinn-Phong材质</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">PhongMaterial</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Material</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">k_ambient</span><span class="p">,</span><span class="w"> </span><span class="n">k_diffuse</span><span class="p">,</span><span class="w"> </span><span class="n">k_specular</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">phong_exponent</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shader_program</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">texture</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shadow_map</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PointLight</span><span class="o">&gt;</span><span class="w"> </span><span class="n">light</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 同一种Material只需要一个ShaderProgram，因此用static变量</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">default_shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">PhongMaterial</span><span class="p">(</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shader_program</span><span class="p">,</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">texture</span><span class="p">,</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PointLight</span><span class="o">&gt;</span><span class="w"> </span><span class="n">light</span><span class="p">,</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shadow_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span>
+<span class="w">        </span><span class="n">AlphaMode</span><span class="w"> </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Material</span><span class="o">::</span><span class="n">OPAQUE</span><span class="p">,</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">phong_exponent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">32.0f</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">k_ambient</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">.2f</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">k_diffuse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">k_specular</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5f</span><span class="p">)</span>
+<span class="w">    </span><span class="o">:</span><span class="w"> </span><span class="n">shader_program</span><span class="p">(</span><span class="n">shader_program</span><span class="p">),</span><span class="w"> </span><span class="n">texture</span><span class="p">(</span><span class="n">texture</span><span class="p">),</span><span class="w"> </span><span class="n">light</span><span class="p">(</span><span class="n">light</span><span class="p">),</span><span class="w"> </span><span class="n">shadow_map</span><span class="p">(</span><span class="n">shadow_map</span><span class="p">),</span>
+<span class="w">        </span><span class="n">phong_exponent</span><span class="p">(</span><span class="n">phong_exponent</span><span class="p">),</span><span class="w"> </span><span class="n">k_ambient</span><span class="p">(</span><span class="n">k_ambient</span><span class="p">),</span><span class="w"> </span><span class="n">k_diffuse</span><span class="p">(</span><span class="n">k_diffuse</span><span class="p">),</span><span class="w"> </span><span class="n">k_specular</span><span class="p">(</span><span class="n">k_specular</span><span class="p">),</span>
+<span class="w">        </span><span class="n">Material</span><span class="p">(</span><span class="n">alpha_mode</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shader_program</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">default_shader_program</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">shader_program</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">load_shader</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cam</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">texture</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">(</span><span class="n">GL_TEXTURE0</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">shadow_map</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">shadow_map</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">(</span><span class="n">GL_TEXTURE1</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">shader_program</span><span class="o">-&gt;</span><span class="n">use</span><span class="p">();</span>
+
+<span class="w">        </span><span class="c1">// 设置uniform变量</span>
+<span class="w">        </span><span class="n">GLuint</span><span class="w"> </span><span class="n">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glGetUniformLocation</span><span class="p">(</span><span class="n">shader_program</span><span class="o">-&gt;</span><span class="n">handle</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;model&quot;</span><span class="p">);</span>
+<span class="w">        </span><span class="c1">// ...</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">load_shader</span><span class="p">();</span>
+<span class="p">};</span>
+</pre></div>
+
+<h4 id="camera">Camera</h4>
+<p>相机类，方便管理<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi></mrow><annotation encoding="application/x-tex">P</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span></span></span></span>和<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi></mrow><annotation encoding="application/x-tex">V</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.22222em;">V</span></span></span></span>两个矩阵。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Camera</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">fovy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">radians</span><span class="p">(</span><span class="mf">45.0f</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">aspect</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="n">VIEWPORT_WIDTH</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">VIEWPORT_HEIGHT</span><span class="p">;</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="p">(</span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="w"> </span><span class="n">up</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="p">(</span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">.0f</span><span class="p">);</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="w"> </span><span class="n">look_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="p">(</span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">.0f</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">zNear</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">zFar</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0f</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="nf">project</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">perspective</span><span class="p">(</span><span class="n">fovy</span><span class="p">,</span><span class="w"> </span><span class="n">aspect</span><span class="p">,</span><span class="w"> </span><span class="n">zNear</span><span class="p">,</span><span class="w"> </span><span class="n">zFar</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="nf">view</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">lookAt</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="n">look_at</span><span class="p">,</span><span class="w"> </span><span class="n">up</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+
+<h2 id="使用tinygltf加载场景">使用tinygltf加载场景</h2>
+<p>这里选用<a
+href="https://github.com/syoyo/tinygltf">tinygltf</a>来加载glTF模型，因为这个库看起来最简单。</p>
+<p>tinygltf文档很烂，幸好此库基本就只是把JSON解析成它定义的结构体，功能简单、代码不长，直接看源代码效率也不算太低。这个项目里还有一些示例，具有少许参考价值。</p>
+<p>为了代码好看一些，我们还是再做进一步的封装。</p>
+<h4 id="gltfbufferview">GLTFBufferView</h4>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">GLTFBufferView</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">handle</span><span class="p">;</span>
+<span class="w">    </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">BufferView</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bufv</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">GLTFBufferView</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">BufferView</span><span class="o">&amp;</span><span class="w"> </span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">bind</span><span class="p">();</span><span class="w"> </span><span class="c1">// 绑定缓冲的时候，调这个函数</span>
+<span class="p">};</span>
+</pre></div>
+
+<p><code>tinygltf::BufferView</code>中已经包含了建立一个缓冲所需的全部信息，看起来朴实无华。</p>
+<div class="highlight"><pre><span></span><span class="n">GLTFBufferView</span><span class="o">::</span><span class="n">GLTFBufferView</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">BufferView</span><span class="o">&amp;</span><span class="w"> </span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Buffer</span><span class="o">&amp;</span><span class="w"> </span><span class="n">buffer</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">bufv</span><span class="p">(</span><span class="n">view</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">glGenBuffers</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">handle</span><span class="p">);</span>
+<span class="w">    </span><span class="n">glBindBuffer</span><span class="p">(</span><span class="n">view</span><span class="p">.</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">handle</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 把数据传到显存</span>
+<span class="w">    </span><span class="c1">// 注意内存中数据开始的指针需要加上bufferview的offset</span>
+<span class="w">    </span><span class="n">glBufferData</span><span class="p">(</span><span class="n">view</span><span class="p">.</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">view</span><span class="p">.</span><span class="n">byteLength</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">data</span><span class="p">()</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">view</span><span class="p">.</span><span class="n">byteOffset</span><span class="p">,</span><span class="w"> </span><span class="n">GL_STATIC_DRAW</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">GLTFBufferView</span><span class="o">::</span><span class="n">bind</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">glBindBuffer</span><span class="p">(</span><span class="n">bufv</span><span class="p">.</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">handle</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4 id="gltfmesh和gltfprimitive">GLTFMesh和GLTFPrimitive</h4>
+<p>Mesh类可以看成Primitive类的一个集合。渲染时只要调用Mesh的<code>draw</code>便可把它下面的所有Primitive全部画出来。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">GLTFMesh</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFPrimitive</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">primitives</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">GLTFMesh</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Model</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">GLTFScene</span><span class="o">*</span><span class="w"> </span><span class="n">scene</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 其实就是把所有Primitive的draw都调用一遍</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">GLTFPrimitive</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">default_material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span><span class="w"> </span><span class="c1">// 画三角形的模式，一般是GL_TRIANGLES</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFBufferView</span><span class="o">&gt;</span><span class="w"> </span><span class="n">index_bufv</span><span class="p">,</span><span class="w"> </span><span class="n">pos_bufv</span><span class="p">,</span><span class="w"> </span><span class="n">normal_bufv</span><span class="p">,</span><span class="w"> </span><span class="n">texcoord_bufv</span><span class="p">;</span>
+<span class="w">    </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Accessor</span><span class="o">*</span><span class="w"> </span><span class="n">index_acc</span><span class="p">;</span>
+<span class="w">    </span><span class="n">GLuint</span><span class="w"> </span><span class="n">vao</span><span class="p">;</span><span class="w"> </span><span class="c1">// Vertex Array Object</span>
+
+<span class="w">    </span><span class="c1">// 构造函数参数列表相对有点复杂，见下面的实现</span>
+<span class="w">    </span><span class="n">GLTFPrimitive</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Model</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Primitive</span><span class="o">&amp;</span><span class="w"> </span><span class="n">primitive</span><span class="p">,</span><span class="w"> </span><span class="n">GLTFScene</span><span class="o">*</span><span class="w"> </span><span class="n">scene</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>Primitive的构造函数相对长一些。</p>
+<div class="highlight"><pre><span></span><span class="n">GLTFPrimitive</span><span class="o">::</span><span class="n">GLTFPrimitive</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Model</span><span class="o">&amp;</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Primitive</span><span class="o">&amp;</span><span class="w"> </span><span class="n">primitive</span><span class="p">,</span><span class="w"> </span><span class="n">GLTFScene</span><span class="o">*</span><span class="w"> </span><span class="n">scene</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 创建VAO</span>
+<span class="w">    </span><span class="n">glGenVertexArrays</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">vao</span><span class="p">);</span>
+<span class="w">    </span><span class="n">glBindVertexArray</span><span class="p">(</span><span class="n">vao</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 获取几个必要的Accessor和mode</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pos_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">accessors</span><span class="p">[</span><span class="n">primitive</span><span class="p">.</span><span class="n">attributes</span><span class="p">[</span><span class="s">&quot;POSITION&quot;</span><span class="p">]];</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">normal_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">accessors</span><span class="p">[</span><span class="n">primitive</span><span class="p">.</span><span class="n">attributes</span><span class="p">[</span><span class="s">&quot;NORMAL&quot;</span><span class="p">]];</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">texcoord_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">accessors</span><span class="p">[</span><span class="n">primitive</span><span class="p">.</span><span class="n">attributes</span><span class="p">[</span><span class="s">&quot;TEXCOORD_0&quot;</span><span class="p">]];</span>
+<span class="w">    </span><span class="n">index_acc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">model</span><span class="p">.</span><span class="n">accessors</span><span class="p">[</span><span class="n">primitive</span><span class="p">.</span><span class="n">indices</span><span class="p">];</span>
+<span class="w">    </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">primitive</span><span class="p">.</span><span class="n">mode</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 通过Accessor查BufferView</span>
+<span class="w">    </span><span class="c1">// 这就是为啥要把scene给传进来</span>
+<span class="w">    </span><span class="c1">// GLTFScene的定义见下文</span>
+<span class="w">    </span><span class="n">index_bufv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scene</span><span class="o">-&gt;</span><span class="n">bufferViews</span><span class="p">[</span><span class="n">index_acc</span><span class="o">-&gt;</span><span class="n">bufferView</span><span class="p">];</span>
+<span class="w">    </span><span class="n">pos_bufv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scene</span><span class="o">-&gt;</span><span class="n">bufferViews</span><span class="p">[</span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">bufferView</span><span class="p">];</span>
+<span class="w">    </span><span class="n">normal_bufv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scene</span><span class="o">-&gt;</span><span class="n">bufferViews</span><span class="p">[</span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">bufferView</span><span class="p">];</span>
+<span class="w">    </span><span class="n">texcoord_bufv</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scene</span><span class="o">-&gt;</span><span class="n">bufferViews</span><span class="p">[</span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">bufferView</span><span class="p">];</span>
+
+<span class="w">    </span><span class="n">index_bufv</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+
+<span class="w">    </span><span class="c1">// 设置顶点位置的访问方式</span>
+<span class="w">    </span><span class="n">pos_bufv</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+<span class="w">    </span><span class="n">glVertexAttribPointer</span><span class="p">(</span>
+<span class="w">        </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="c1">// 在shader里面location是0</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">GetNumComponentsInType</span><span class="p">(</span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">),</span><span class="w">  </span><span class="c1">// 一般是3，因为顶点坐标类型是vec3</span>
+<span class="w">        </span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">componentType</span><span class="p">,</span><span class="w"> </span><span class="c1">// 一般是GL_FLOAT</span>
+<span class="w">        </span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">normalized</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">GL_TRUE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">GL_FALSE</span><span class="p">,</span>
+<span class="w">        </span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">ByteStride</span><span class="p">(</span><span class="n">pos_bufv</span><span class="o">-&gt;</span><span class="n">bufv</span><span class="p">),</span><span class="w"> </span><span class="c1">// 调用ByteStride函数，省得自己算stride</span>
+<span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">pos_acc</span><span class="o">-&gt;</span><span class="n">byteOffset</span><span class="p">)</span><span class="w"> </span><span class="c1">// 记得加上Accessor的offset</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">glEnableVertexAttribArray</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 设置法向量的访问方式</span>
+<span class="w">    </span><span class="n">normal_bufv</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+<span class="w">    </span><span class="n">glVertexAttribPointer</span><span class="p">(</span>
+<span class="w">        </span><span class="mi">2</span><span class="p">,</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">GetNumComponentsInType</span><span class="p">(</span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">),</span>
+<span class="w">        </span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">componentType</span><span class="p">,</span>
+<span class="w">        </span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">normalized</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">GL_TRUE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">GL_FALSE</span><span class="p">,</span>
+<span class="w">        </span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">ByteStride</span><span class="p">(</span><span class="n">normal_bufv</span><span class="o">-&gt;</span><span class="n">bufv</span><span class="p">),</span>
+<span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">normal_acc</span><span class="o">-&gt;</span><span class="n">byteOffset</span><span class="p">)</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">glEnableVertexAttribArray</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// 设置纹理坐标的访问方式</span>
+<span class="w">    </span><span class="n">texcoord_bufv</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+<span class="w">    </span><span class="n">glVertexAttribPointer</span><span class="p">(</span>
+<span class="w">        </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">GetNumComponentsInType</span><span class="p">(</span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">type</span><span class="p">),</span><span class="w"> </span><span class="c1">// 一般是2，因为纹理坐标类型一般是vec2</span>
+<span class="w">        </span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">componentType</span><span class="p">,</span>
+<span class="w">        </span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">normalized</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">GL_TRUE</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">GL_FALSE</span><span class="p">,</span>
+<span class="w">        </span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">ByteStride</span><span class="p">(</span><span class="n">texcoord_bufv</span><span class="o">-&gt;</span><span class="n">bufv</span><span class="p">),</span>
+<span class="w">        </span><span class="p">(</span><span class="kt">void</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="mi">0</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">texcoord_acc</span><span class="o">-&gt;</span><span class="n">byteOffset</span><span class="p">)</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="w">    </span><span class="n">glEnableVertexAttribArray</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// gltf中制定的材质成为默认材质</span>
+<span class="w">    </span><span class="n">default_material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scene</span><span class="o">-&gt;</span><span class="n">materials</span><span class="p">[</span><span class="n">primitive</span><span class="p">.</span><span class="n">material</span><span class="p">];</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>然后是朴实无华的draw call。</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">GLTFPrimitive::draw</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 不给定材质，就用默认材质</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">material</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">default_material</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="n">material</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">    </span><span class="n">material</span><span class="o">-&gt;</span><span class="n">apply</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">cam</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">glBindVertexArray</span><span class="p">(</span><span class="n">vao</span><span class="p">);</span>
+<span class="w">    </span><span class="n">index_bufv</span><span class="o">-&gt;</span><span class="n">bind</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 绘图模式（GL_TRIANGLES)，顶点索引的个数，类型（某种无符号整数），在索引缓冲中的偏移量</span>
+<span class="w">    </span><span class="n">glDrawElements</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="n">index_acc</span><span class="o">-&gt;</span><span class="n">count</span><span class="p">,</span><span class="w"> </span><span class="n">index_acc</span><span class="o">-&gt;</span><span class="n">componentType</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">void</span><span class="o">*</span><span class="p">)</span><span class="n">index_acc</span><span class="o">-&gt;</span><span class="n">byteOffset</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4 id="gltfscene">GLTFScene</h4>
+<p>最后，我们把glTF场景封装到我们定义的<code>GLTFScene</code>类里面。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">GLTFScene</span><span class="w"> </span><span class="p">{</span>
+
+<span class="w">    </span><span class="c1">// 加载模型</span>
+<span class="w">    </span><span class="n">GLTFScene</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 基本的初始化</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shader_program</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PointLight</span><span class="o">&gt;</span><span class="w"> </span><span class="n">light</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shadow_map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 渲染</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">render</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 渲染单个结点</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw_node</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Node</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 更新这个模型在世界坐标中的放置方式（也就是model矩阵）</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_matrix</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">mat</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// tinygltf的结构体</span>
+<span class="w">    </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Model</span><span class="w"> </span><span class="n">model</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">err</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">warn</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 对应gltf的贴图列表</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">textures</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 对应gltf的材质列表</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">materials</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 对应gltf的bufferview列表</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFBufferView</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">bufferViews</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 对应gltf的网格列表</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="w"> </span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFMesh</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">meshes</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// model矩阵</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="p">(</span><span class="mf">1.0</span><span class="p">);</span>
+<span class="p">};</span>
+</pre></div>
+
+<p>加载模型和tinygltf给的示例差不多。</p>
+<div class="highlight"><pre><span></span><span class="n">GLTFScene</span><span class="o">::</span><span class="n">GLTFScene</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">TinyGLTF</span><span class="w"> </span><span class="n">loader</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// 如果在其他地方使用了stb_image库，并且翻转了纵向坐标，记得取消翻转</span>
+<span class="w">    </span><span class="n">stbi_set_flip_vertically_on_load</span><span class="p">(</span><span class="nb">false</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">ends_with</span><span class="p">(</span><span class="s">&quot;.gltf&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loader</span><span class="p">.</span><span class="n">LoadASCIIFromFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">warn</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">filename</span><span class="p">.</span><span class="n">ends_with</span><span class="p">(</span><span class="s">&quot;.glb&quot;</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">loader</span><span class="p">.</span><span class="n">LoadBinaryFromFile</span><span class="p">(</span><span class="o">&amp;</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">err</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">warn</span><span class="p">,</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">warn</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">warn</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">err</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">result</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;failed to load model &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">filename</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 这里可以抛异常</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>初始化是为了建立<code>textures</code>、<code>materials</code>、<code>bufferViews</code>、<code>meshes</code>四个<code>vector</code>。</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">GLTFScene::init</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ShaderProgram</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shader_program</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PointLight</span><span class="o">&gt;</span><span class="w"> </span><span class="n">light</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shadow_map</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 本文只处理默认场景</span>
+<span class="w">    </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Scene</span><span class="w"> </span><span class="n">scene</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">scenes</span><span class="p">[</span><span class="n">model</span><span class="p">.</span><span class="n">defaultScene</span><span class="p">];</span>
+<span class="w">    </span><span class="c1">// 载入纹理</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Texture</span><span class="o">&amp;</span><span class="w"> </span><span class="n">texture</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">textures</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;loading texture: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">texture</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">images</span><span class="p">[</span><span class="n">texture</span><span class="p">.</span><span class="n">source</span><span class="p">];</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Sampler</span><span class="o">&amp;</span><span class="w"> </span><span class="n">sampler</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">samplers</span><span class="p">[</span><span class="n">texture</span><span class="p">.</span><span class="n">sampler</span><span class="p">];</span>
+
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;image: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">width</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">height</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">image</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// Texture类已经在前文定义过了</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">my_texture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Texture</span><span class="o">&gt;</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">height</span><span class="p">,</span><span class="w"> </span><span class="n">sampler</span><span class="p">.</span><span class="n">wrapS</span><span class="p">,</span><span class="w"> </span><span class="n">sampler</span><span class="p">.</span><span class="n">wrapT</span><span class="p">,</span><span class="w"> </span><span class="n">sampler</span><span class="p">.</span><span class="n">minFilter</span><span class="p">,</span><span class="w"> </span><span class="n">sampler</span><span class="p">.</span><span class="n">magFilter</span><span class="p">,</span><span class="w"> </span><span class="n">image</span><span class="p">.</span><span class="n">pixel_type</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">textures</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">my_texture</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 载入材质</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Material</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mat</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">materials</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// 获取材质引用的纹理的索引</span>
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">texture_index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">pbrMetallicRoughness</span><span class="p">.</span><span class="n">baseColorTexture</span><span class="p">.</span><span class="n">index</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 设置正确的alphaMode，默认都当作不透明</span>
+<span class="w">        </span><span class="n">Material</span><span class="o">::</span><span class="n">AlphaMode</span><span class="w"> </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Material</span><span class="o">::</span><span class="n">OPAQUE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">alphaMode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;BLEND&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// 半透明</span>
+<span class="w">            </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Material</span><span class="o">::</span><span class="n">BLEND</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;alpha mode not support: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">alphaMode</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;alpha mode: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">alphaMode</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">alpha_mode</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// 获取刚才创建好的Texture</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">texture</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">textures</span><span class="p">[</span><span class="n">texture_index</span><span class="p">];</span>
+
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;load material: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// Material类已经在前文定义过了</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">my_material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">PhongMaterial</span><span class="o">&gt;</span><span class="p">(</span><span class="n">shader_program</span><span class="p">,</span><span class="w"> </span><span class="n">texture</span><span class="p">,</span><span class="w"> </span><span class="n">light</span><span class="p">,</span><span class="w"> </span><span class="n">shadow_map</span><span class="p">,</span><span class="w"> </span><span class="n">alpha_mode</span><span class="p">);</span>
+<span class="w">        </span><span class="n">materials</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">my_material</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 加载BufferView，这里每个BufferView我都单独建立了一个OpenGL的缓冲，应该还有更好的办法</span>
+<span class="w">    </span><span class="c1">// BufferView类的定义见上文</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">BufferView</span><span class="o">&amp;</span><span class="w"> </span><span class="n">view</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">bufferViews</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">GLTFBufferView</span><span class="o">&gt;</span><span class="p">(</span><span class="n">view</span><span class="p">,</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">buffers</span><span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">buffer</span><span class="p">]);</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;load bufferview: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">buffers</span><span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">buffer</span><span class="p">].</span><span class="n">data</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, uri: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">buffers</span><span class="p">[</span><span class="n">view</span><span class="p">.</span><span class="n">buffer</span><span class="p">].</span><span class="n">uri</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, offset: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">view</span><span class="p">.</span><span class="n">byteOffset</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bufferViews</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 加载Mesh，上文刚刚定义</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">meshes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">my_mesh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">GLTFMesh</span><span class="o">&gt;</span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="k">this</span><span class="p">);</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;load mesh: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">.</span><span class="n">name</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="n">meshes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">my_mesh</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h4 id="renderqueue">RenderQueue</h4>
+<p>对于有半透明物体的场景，比较正确的方式是：</p>
+<ol type="1">
+<li>允许深度缓冲写入，绘制不透明物体</li>
+<li>禁止深度缓冲写入，从远到近绘制半透明物体</li>
+</ol>
+<blockquote>
+<p>其实这样渲染出来的结果还是有可能不正确，alpha混合的顺序可能还是错的，但是一般也够看了。</p>
+</blockquote>
+<p>为了实现从远到近绘制半透明物体，我们需要实现一个渲染队列，分别渲染不透明和半透明的物体。渲染半透明物体前还要按照对应Node的深度（Node自身坐标系的原点，对应的世界坐标的点的深度）降序排序，依次渲染。<code>RenderQueue</code>是个单例。每个Primitive的渲染都要封装到一个<code>RenderRequest</code>里面。</p>
+<div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">GLTFRenderRequest</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 都是调用Primitive的draw所需的参数</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">*</span><span class="w"> </span><span class="n">cam</span><span class="p">;</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">transform</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">GLTFPrimitive</span><span class="o">&gt;</span><span class="w"> </span><span class="n">primitive</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">.0f</span><span class="p">;</span><span class="w"> </span><span class="c1">// 深度</span>
+
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">GLTFRenderRequest</span><span class="o">&amp;</span><span class="w"> </span><span class="n">req</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">req</span><span class="p">.</span><span class="n">z</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">GLTFRenderQueue</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="n">GLTFRenderQueue</span><span class="o">*</span><span class="w"> </span><span class="n">getInstance</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">render</span><span class="p">();</span><span class="w"> </span><span class="c1">// 渲染！</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">push</span><span class="p">(</span><span class="n">GLTFRenderRequest</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">request</span><span class="p">);</span><span class="w"> </span><span class="c1">// 入队</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="k">explicit</span><span class="w"> </span><span class="n">GLTFRenderQueue</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">GLTFRenderQueue</span><span class="w"> </span><span class="o">*</span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">GLTFRenderRequest</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opaque_queue</span><span class="p">;</span><span class="w"> </span><span class="c1">// 不透明物体</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">deque</span><span class="o">&lt;</span><span class="n">GLTFRenderRequest</span><span class="o">&gt;</span><span class="w"> </span><span class="n">blend_queue</span><span class="p">;</span><span class="w"> </span><span class="c1">// 半透明物体</span>
+<span class="p">};</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="n">GLTFRenderQueue</span><span class="o">*</span><span class="w"> </span><span class="nf">GLTFRenderQueue::getInstance</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">instance</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">instance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">GLTFRenderQueue</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">instance</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">GLTFRenderQueue::push</span><span class="p">(</span><span class="n">GLTFRenderRequest</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">request</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 把不透明和透明分开</span>
+<span class="w">    </span><span class="k">switch</span><span class="w"> </span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">material</span><span class="o">-&gt;</span><span class="n">alpha_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="no">Material</span><span class="o">::</span><span class="no">BLEND</span><span class="p">:</span>
+<span class="w">        </span><span class="n">blend_queue</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="w">        </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="k">default</span><span class="o">:</span>
+<span class="w">        </span><span class="n">opaque_queue</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">request</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">GLTFRenderQueue::render</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// 1. 启用深度写入</span>
+<span class="w">    </span><span class="n">glDepthMask</span><span class="p">(</span><span class="n">GL_TRUE</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 2. 渲染不透明物体</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">opaque_queue</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">GLTFRenderRequest</span><span class="o">&amp;</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">opaque_queue</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+<span class="w">        </span><span class="n">request</span><span class="p">.</span><span class="n">primitive</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="o">*</span><span class="n">request</span><span class="p">.</span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">material</span><span class="p">);</span>
+<span class="w">        </span><span class="n">opaque_queue</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">opaque_queue</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 3. 禁用深度写入</span>
+<span class="w">    </span><span class="n">glDepthMask</span><span class="p">(</span><span class="n">GL_FALSE</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// 4. 按照深度由远到近排序</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">blend_queue</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">blend_queue</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+<span class="w">    </span><span class="c1">// 5. 由远到近渲染</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">blend_queue</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">GLTFRenderRequest</span><span class="o">&amp;</span><span class="w"> </span><span class="n">request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">blend_queue</span><span class="p">.</span><span class="n">front</span><span class="p">();</span>
+<span class="w">        </span><span class="n">request</span><span class="p">.</span><span class="n">primitive</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="o">*</span><span class="n">request</span><span class="p">.</span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">request</span><span class="p">.</span><span class="n">material</span><span class="p">);</span>
+<span class="w">        </span><span class="n">blend_queue</span><span class="p">.</span><span class="n">pop_front</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">blend_queue</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// 6. 最后别忘了把深度写入再打开</span>
+<span class="w">    </span><span class="n">glDepthMask</span><span class="p">(</span><span class="n">GL_TRUE</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>现在，我们可以把<code>GLTFMesh</code>的深度改成下面的样子，调用它的draw函数其实只是把RenderRequest送进队列里，并非真的进行绘制。</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">GLTFMesh::draw</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">render_queue</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GLTFRenderQueue</span><span class="o">::</span><span class="n">getInstance</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">primitives</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// pr-&gt;draw(cam, transform, material);</span>
+
+<span class="w">        </span><span class="c1">// 这里不能不乘project矩阵，否则深度都是负的，且越负越远</span>
+<span class="w">        </span><span class="n">glm</span><span class="o">::</span><span class="n">vec4</span><span class="w"> </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cam</span><span class="p">.</span><span class="n">project</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">cam</span><span class="p">.</span><span class="n">view</span><span class="p">()</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">transform</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec4</span><span class="p">(</span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pos</span><span class="p">.</span><span class="n">z</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">pos</span><span class="p">.</span><span class="n">w</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">material</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pr</span><span class="o">-&gt;</span><span class="n">default_material</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="c1">// 把RenderRequest入队</span>
+<span class="w">        </span><span class="n">render_queue</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="n">GLTFRenderRequest</span><span class="p">{</span>
+<span class="w">            </span><span class="p">.</span><span class="n">cam</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">cam</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">transform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">material</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">material</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">primitive</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pr</span><span class="p">,</span>
+<span class="w">            </span><span class="p">.</span><span class="n">z</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">z</span><span class="p">,</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>最后，我们补上刚才没实现的<code>GLTFScene</code>的<code>render</code>函数和<code>draw_node</code>函数</p>
+<div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">GLTFScene::draw_node</span><span class="p">(</span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Node</span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Camera</span><span class="o">&amp;</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="o">&amp;</span><span class="w"> </span><span class="n">transform</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Material</span><span class="o">&gt;</span><span class="w"> </span><span class="n">material</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">matrix</span><span class="p">(</span><span class="mf">1.0f</span><span class="p">);</span>
+
+<span class="w">    </span><span class="c1">// gltf标准规定，node要么有matrix，要么有TRS</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">matrix</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">16</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">make_mat4</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">matrix</span><span class="p">.</span><span class="n">data</span><span class="p">());</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">scale</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">scale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">scale</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">scale</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">            </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scale</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">matrix</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">rotation</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">glm</span><span class="o">::</span><span class="n">quat</span><span class="w"> </span><span class="n">qua</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">rotation</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">            </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">rotate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4_cast</span><span class="p">(</span><span class="n">qua</span><span class="p">);</span>
+<span class="w">            </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rotate</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">matrix</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">translation</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">translate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">translate</span><span class="p">(</span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span><span class="w"> </span><span class="n">glm</span><span class="o">::</span><span class="n">vec3</span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">translation</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">translation</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">translation</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">            </span><span class="n">matrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">translate</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">matrix</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// 注意乘法顺序</span>
+<span class="w">    </span><span class="c1">// matrix把本node变换到父node的坐标系</span>
+<span class="w">    </span><span class="c1">// transform把父node变换到世界坐标系</span>
+<span class="w">    </span><span class="c1">// 二者相乘，即为把本node变换到世界坐标系</span>
+<span class="w">    </span><span class="n">glm</span><span class="o">::</span><span class="n">mat4</span><span class="w"> </span><span class="n">real_transform</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">transform</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">matrix</span><span class="p">;</span>
+
+<span class="w">    </span><span class="c1">// 有些Node可能不含mesh</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">node</span><span class="p">.</span><span class="n">mesh</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">-1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">mesh_ref</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">meshes</span><span class="p">[</span><span class="n">node</span><span class="p">.</span><span class="n">mesh</span><span class="p">];</span>
+<span class="w">        </span><span class="c1">// 调用mesh的draw</span>
+<span class="w">        </span><span class="n">mesh_ref</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">(</span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">real_transform</span><span class="p">,</span><span class="w"> </span><span class="n">material</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// 绘制所有子node</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">child</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">node</span><span class="p">.</span><span class="n">children</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">tinygltf</span><span class="o">::</span><span class="n">Node</span><span class="o">&amp;</span><span class="w"> </span><span class="n">next_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">model</span><span class="p">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">child</span><span class="p">];</span>
+<span class="w">        </span><span class="n">draw_node</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span><span class="w"> </span><span class="n">cam</span><span class="p">,</span><span class="w"> </span><span class="n">real_transform</span><span class="p">,</span><span class="w"> </span><span class="n">material</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>至此，我们只需在<code>Application</code>初始化时载入模型，在其主循环<code>main_loop</code>当中的适当位置调用<code>GLTFScene</code>的<code>render</code>即可。</p>
+<p>如果还是一头雾水，完整代码详见<a
+href="https://github.com/fpg2012/QuickOpenGL">fpg2012/QuickOpenGL</a></p>
+<h2 id="效果">效果</h2>
+<p>模型来自SketchFab，作者peachyroyalty，遵循CC BY-NC 4.0。</p>
+<div class="sketchfab-embed-wrapper">
+<iframe style="width:100%;aspect-ratio:1.0;" title="Forest House" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/52429e4ef7bf4deda1309364a2cda86f/embed">
+</iframe>
+<p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+<a href="https://sketchfab.com/3d-models/forest-house-52429e4ef7bf4deda1309364a2cda86f?utm_medium=embed&utm_campaign=share-popup&utm_content=52429e4ef7bf4deda1309364a2cda86f" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">
+Forest House </a> by
+<a href="https://sketchfab.com/peachyroyalty?utm_medium=embed&utm_campaign=share-popup&utm_content=52429e4ef7bf4deda1309364a2cda86f" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">
+peachyroyalty </a> on
+<a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=52429e4ef7bf4deda1309364a2cda86f" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
+</p>
+</div>
+<p>我渲染的结果，可以看到半透明的树叶混合顺序仍然是错的（其实在blender里面如果不用cycles渲染，树叶的混合顺序也是错的）。</p>
+<figure>
+<img src="attachment/ae4920e639fad546be98cfdc9e775ddf.png"
+alt="渲染的结果，可以看到半透明的树叶混合顺序仍然是错的" />
+<figcaption
+aria-hidden="true">渲染的结果，可以看到半透明的树叶混合顺序仍然是错的</figcaption>
+</figure>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2024-02-08-使用esp32-c3制作网络控制键盘/index.html">使用esp32-c...</a></div>
+        <div class="sibling-page-date">2024-02-08</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2024-02-08-使用esp32-c3制作网络控制键盘/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
