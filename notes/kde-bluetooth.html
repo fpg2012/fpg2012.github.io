@@ -3,17 +3,17 @@
 <html>
     <head>
         
-        <title>Empty Space - Vulkan Tutorial笔记</title>
+        <title>Empty Space - 解决KDE登录时不默认启用蓝牙的问题</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="Vulkan Tutorial笔记">
+        <meta name="description" content="解决KDE登录时不默认启用蓝牙的问题">
         
 
         
-        <meta name="keywords" content="Vulkan,note">
+        <meta name="keywords" content="KDE,蓝牙">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -57,16 +57,16 @@
         <main>
             
 <div class='post-menu'>
-    <div class='menu-title'>Vulkan Tutorial笔记</div>
+    <div class='menu-title'>解决KDE登录时不默认启用蓝牙的问题</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>Vulkan Tutorial笔记</h1>
+    <h1>解决KDE登录时不默认启用蓝牙的问题</h1>
     
     <div class="date-bar">
-        <span class="date">2024-02-04</span>
+        <span class="date">2024-03-19</span>
     </div>
     <div class="category-bar">
     
@@ -75,33 +75,30 @@
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#Vulkan</span>
+        <span class="tag">#KDE</span>
     
-        <span class="tag">#note</span>
+        <span class="tag">#蓝牙</span>
     
     </div>
 </div>
 <hr class="hr-wavy">
 <div class="post-content">
-    <p>因为是用XMind记录的，所以不太方便转markdown。</p>
-<p><a href="./vulkan_tutorial.pdf">笔记pdf</a></p>
+    <p>最近每次登录KDE后，蓝牙都会默认被禁用。即使重新把蓝牙配置成“默认启用”，也还是无济于事。可能是KDE的一个bug。</p>
+<p><a
+href="https://www.reddit.com/r/ManjaroLinux/comments/12fgj3o/kde_plasma_bluetooth_not_automatically_powered_on/">Reddit上</a>给出了一个简单粗暴的解决方案。</p>
+<p>删掉<code>~/.config/bluedevilgloablrc</code>。</p>
+<p>然后在KDE设置里面修改蓝牙配置（重新生成一份这个文件）。</p>
 
 </div>
 
 <div class="sibling-pages">
     
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/kde-bluetooth.html">〈</a></div>
-    <div class="sibling-page sibling-page-next">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/kde-bluetooth.html">解决KDE登录时不...</a></div>
-        <div class="sibling-page-date">2024-03-19</div>
-    </div>
-    
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/2023-11-13-kmp.html">KMP实现和笔记...</a></div>
-        <div class="sibling-page-date">2023-11-13</div>
+        <div class="sibling-page-title"><a href="//nth233.top/notes/vulkan-tutorial/index.html">Vulkan Tu...</a></div>
+        <div class="sibling-page-date">2024-02-04</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/2023-11-13-kmp.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/vulkan-tutorial/index.html">〉</a></div>
     
 </div>
 

@@ -214,6 +214,7 @@ main {
   line-break: normal;
   scroll-padding: 5ex;
   transition: all 0.25s ease-in-out;
+  min-height: calc(100vh - 10rem);
 }
 
 .post-front-matter {

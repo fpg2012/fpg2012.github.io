@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Thu, 14 Mar 2024 06:18:38 GMT</pubDate>
-    <lastBuildDate>Thu, 14 Mar 2024 06:18:38 GMT</lastBuildDate>
+    <pubDate>Wed, 20 Mar 2024 03:53:42 GMT</pubDate>
+    <lastBuildDate>Wed, 20 Mar 2024 03:53:42 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>解决KDE登录时不默认启用蓝牙的问题</title>
+      <link>https://nth233.top/notes/kde-bluetooth.html</link>
+      
+      <description>解决KDE登录时不默认启用蓝牙的问题</description>
+      
+      <pubDate>2024-03-19</pubDate>
+      <guid>12523288498147147246</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>KDE</category>
+        
+          <category>蓝牙</category>
+        
+      
+    </item>
     
     
     
