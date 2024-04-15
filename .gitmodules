@@ -1,3 +1,6 @@
 [submodule "enchant-gen"]
 	path = enchant-gen
 	url = https://github.com/fpg2012/enchant-gen
+[submodule "_theme_empty"]
+	path = _theme_empty
+	url = git@github.com:fpg2012/sushi-theme-empty.git

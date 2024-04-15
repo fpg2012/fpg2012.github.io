@@ -2,6 +2,6 @@ site_name: "Empty Space"
 author: "nth233"
 url: "//nth233.top"
 favicon: "/assets/favicon"
-theme_dir: "_theme"
+theme_dir: "_theme_empty"
 
 utterances: true

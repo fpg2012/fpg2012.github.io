@@ -3,7 +3,7 @@ author: "nth233"
 url: "//nth233.top"
 #url: "//localhost:5000"
 gen_dir: "_gen"
-theme_dir: "_theme"
+theme_dir: "_theme_empty"
 
 converter_choice:
   "md": "convert-win.exe"

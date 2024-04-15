@@ -1,9 +1,0 @@
----
-to_ext: "xml"
-layout: feed2
-paginate: sitetree.posts._list
-paginate_batch: 100
-title: "rss"
-nolist: true
-date: "1970-1-2"
----
