@@ -1,19 +1,13 @@
 <site>
     
     
-    
-    
-    
-    
-    
-    
     <page>
         <title>
         
         homepage
         
         </title>
-        <url>////nth233.top/index.html</url>
+        <url>////nth233.top/_theme_empty/index.html</url>
         <search-text>
         
         
@@ -33,7 +27,7 @@
         404
         
         </title>
-        <url>////nth233.top/404.html</url>
+        <url>////nth233.top/_theme_empty/404.html</url>
         <search-text>
         
         
@@ -42,6 +36,12 @@
         
         </search-text>
     </page>
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1892,31 +1892,26 @@ $ python main.py --listen 0.0.0.0 --use-split-cross-attention
         
 # 短期内完成
 
-- [ ] ~~Intel Arc A770使用体验~~放弃
-- [ ] ~~毕业杂记~~ 年度总结
-- [ ] ~~八月总结~~放弃
-- [ ] ~~掌阅Smart Air体验报告~~放弃
+- [ ] sushi的新功能
+
+## 笔记
+
 - [ ] 《希腊史》笔记
 - [ ] 《罗马帝国衰亡史》编节版笔记
-- [ ] Vulkan Tutorial总结
 - [ ] 《动物农场》笔记
 - [ ] 《巴黎圣母院》笔记（想法：把一段时间看的书整合成一篇笔记，而不是分别写笔记）
 
 # 博客优化
 
-1. ~~简单的搜索功能（添加`search.xml`和相关的js）~~完成
-2. ~~自动生成目录（方案一：用pandoc-filter生成；方案二：在前端用js生成）~~完成
-3. 更丰富的侧边栏：点赞、分享、阅读量统计、阅读时间估算、作者自我评价
-4. 图片懒加载、渐进加载
-5. 扩展markdown语法（加入可折叠的引用框、warning、error等等）（使用pandoc-filter可以比较容易地实现）
-6. 编写自用的markdown解析器加速页面渲染速度
-7. ~~加密内容~~放弃
-8. 优化列表的css（现在缩进似乎太多）
+1. 更丰富的侧边栏：点赞、分享、阅读量统计、阅读时间估算、作者自我评价
+2. 图片懒加载、渐进加载
+3. 扩展markdown语法（加入可折叠的引用框、warning、error等等）（使用pandoc-filter可以比较容易地实现）
+4. 编写自用的markdown解析器加速页面渲染速度
+5. 优化列表的css（现在缩进似乎太多）
 
 # 长期准备
 
-- [ ] 自制方向键盘（STM32或ESP32)
-- [ ] 哈尔变换笔记
+年度总结
 
         
         </search-text>
