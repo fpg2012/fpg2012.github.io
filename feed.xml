@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Sat, 27 Apr 2024 16:30:26 GMT</pubDate>
-    <lastBuildDate>Sat, 27 Apr 2024 16:30:26 GMT</lastBuildDate>
+    <pubDate>Sat, 27 Apr 2024 16:39:09 GMT</pubDate>
+    <lastBuildDate>Sat, 27 Apr 2024 16:39:09 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>写个程序，输出它自己的源代码</title>
+      <link>https://nth233.top/posts/2024-04-27-输出自己源代码的程序.html</link>
+      
+      <description>根据递归引理，基本上任何语言都能写出这样的程序</description>
+      
+      <pubDate>2024-04-27</pubDate>
+      <guid>1275805657428543434</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>计算理论</category>
+        
+          <category>递归引理</category>
+        
+      
+    </item>
     
     
     
