@@ -3,17 +3,17 @@
 <html>
     <head>
         
-        <title>Empty Space - 解决KDE登录时不默认启用蓝牙的问题</title>
+        <title>Empty Space - 解决blender找不到libsycl.so.6的问题</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="解决KDE登录时不默认启用蓝牙的问题">
+        <meta name="description" content="">
         
 
         
-        <meta name="keywords" content="KDE,蓝牙">
+        <meta name="keywords" content="blender,intel,sycl">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -57,16 +57,16 @@
         <main>
             
 <div class='post-menu'>
-    <div class='menu-title'>解决KDE登录时不默认启用蓝牙的问题</div>
+    <div class='menu-title'>解决blender找不到libsycl.so.6的问题</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>解决KDE登录时不默认启用蓝牙的问题</h1>
+    <h1>解决blender找不到libsycl.so.6的问题</h1>
     
     <div class="date-bar">
-        <span class="date">2024-03-19</span>
+        <span class="date">2024-05-04</span>
     </div>
     <div class="category-bar">
     
@@ -75,36 +75,38 @@
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#KDE</span>
+        <span class="tag">#blender</span>
     
-        <span class="tag">#蓝牙</span>
+        <span class="tag">#intel</span>
+    
+        <span class="tag">#sycl</span>
     
     </div>
 </div>
 <hr class="hr-wavy">
 <div class="post-content">
-    <p>最近每次登录KDE后，蓝牙都会默认被禁用。即使重新把蓝牙配置成“默认启用”，也还是无济于事。可能是KDE的一个bug。</p>
-<p><a
-href="https://www.reddit.com/r/ManjaroLinux/comments/12fgj3o/kde_plasma_bluetooth_not_automatically_powered_on/">Reddit上</a>给出了一个简单粗暴的解决方案。</p>
-<p>删掉<code>~/.config/bluedevilgloablrc</code>。</p>
-<p>然后在KDE设置里面修改蓝牙配置（重新生成一份这个文件）。</p>
+    <h2 id="前因">前因</h2>
+<p>大约半年前，我Arch
+Linux上的blender突然间打不开了。当时排查了半天才发现是因为没有设置intel
+oneapi的环境变量。安装<code>intel-oneapi-basekit</code>，执行<code>/opt/intel/oneapi/setvars.sh</code>后，方可使用blender。</p>
+<p>几个月前某次intel
+oneapi更新之后，blender又打不开了……无论怎么设置环境变量都不管用。打不开的原因是找不到libsycl.so.6。我翻了一下<code>/opt/intel/oneapi</code>，发现确实只有libsycl.so.7。尝试过安装旧版oneapi-basekit，一通操作之后虽然可以启动blender，但是无法使用intel显卡的硬件加速。</p>
+<h2 id="解决方案">解决方案</h2>
+<p>不要使用Arch
+Linux软件仓库里的blender，直接从blender官网下载可执行文件！</p>
+<p>就这么简单。</p>
+<p>Arch仓库里面的blender是有问题的。尽管archbbs上面有人提出blender无法启动的问题，但是似乎一直没有得到重视，快一年过去了，问题依旧存在。</p>
 
 </div>
 
 <div class="sibling-pages">
     
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/blender-sycl.html">〈</a></div>
-    <div class="sibling-page sibling-page-next">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/blender-sycl.html">解决blender...</a></div>
-        <div class="sibling-page-date">2024-05-04</div>
-    </div>
-    
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/vulkan-tutorial/index.html">Vulkan Tu...</a></div>
-        <div class="sibling-page-date">2024-02-04</div>
+        <div class="sibling-page-title"><a href="//nth233.top/notes/kde-bluetooth.html">解决KDE登录时不...</a></div>
+        <div class="sibling-page-date">2024-03-19</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/vulkan-tutorial/index.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/kde-bluetooth.html">〉</a></div>
     
 </div>
 
