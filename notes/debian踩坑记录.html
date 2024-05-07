@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - debian踩坑记录</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="记录安装debian以来踩到的坑">
+        
+
+        
+        <meta name="keywords" content="debian,linux">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='post-menu'>
+    <div class='menu-title'>debian踩坑记录</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>debian踩坑记录</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-05-07</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔note〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#debian</span>
+    
+        <span class="tag">#linux</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p><a
+href="https://forum.soulsand.top/d/167-an-zhuang-debianhou-yu-dao-de-keng/15">原帖（不定期更新）</a></p>
+<p>debian作为一个稳定的Linux发行版，基本上东西都是开箱即用的。不过偶尔也需要折腾。</p>
+<p>我认为的目前比较不折腾的方案：</p>
+<p>尽量直接用带桌面环境的iso镜像安装，桌面环境尽量用稳定的Gnome、KDE。由于Debian仓库里面的Gnome一般不是最新版，所以插件不兼容的问题比较轻微。</p>
+<h2 id="gnome插件">1 GNOME插件</h2>
+<p>GNOME必用的插件：Tray Icon、GTile、gnome-input-method-kimpanel</p>
+<p>如有必要还可以考虑装个农历日历的插件。</p>
+<h2 id="能联网但是wifi不由network-manager管理">2
+能联网，但是WiFi不由Network Manager管理</h2>
+<p>具体表现为设置当中显示“No WiFi Adapter Found”</p>
+<p>解决方案：</p>
+<p>修改<code>/etc/NetworkManger/NetworkManager.conf</code>，把<code>managed=false</code>改成<code>managed=true</code>
+操作完之后重启。</p>
+<h2 id="intel-arc-a770显卡没法使用">3 Intel Arc a770显卡没法使用</h2>
+<p>具体表现：找不到显示器/GPU</p>
+<p>解决方案：</p>
+<p>用6.5版本以上的内核。比如，安装<code>linux-image-amd64-6.5.0</code>。
+也可以自己编译内核。编译时使用<code>make bindeb-pkg</code>即可直接打包。注意，<code>make deb-pkg</code>现在似乎不太管用了。</p>
+<h2 id="sway下xwayland应用分数缩放会模糊">4
+Sway下XWayland应用分数缩放会模糊</h2>
+<p>具体表现：Chromium、Firefox、vscode等应用</p>
+<p>解决方案：无解。Firefox可以引入Mozilla的源，安装新版以避免使用XWayland。Chromium以及一批基于electron的应用可以启用<code>--ozone-platform-hint=auto</code>避免使用XWayland。</p>
+<h2 id="fcitx5不能自启动">5 fcitx5不能自启动</h2>
+<p>具体表现：不自启动</p>
+<p>解决方案：im-config我是没搞懂该怎么用，于是使用最简单的解决方案——在Gnome
+Tweaks中设置fcitx5为自启动应用。如果使用Sway等wm，直接在启动脚本里面启动fcitx5就行了。</p>
+<h2 id="sway下chromium等软件使用wayland后没法用输入法">6
+Sway下Chromium等软件使用Wayland后，没法用输入法</h2>
+<p>解决方案：试试添加环境变量能否解决问题，参考archwiki。可能要等Sway更新。</p>
+<h2 id="gnome-农历日历无法启用">7 Gnome 农历日历无法启用</h2>
+<p>具体表现：显示缺少依赖</p>
+<p>解决方案：把作者写的ChineseCanlendar的依赖装了。</p>
+<blockquote>
+<p>吐槽：我很疑惑，为什么这个插件的作者不干脆把插件开源到GitHub/GitLab上。</p>
+</blockquote>
+<h2 id="中文字体很丑">8 中文字体很丑</h2>
+<p>具体表现：点阵字体/日文字型</p>
+<p>解决方案：
+安装自己觉得好看的字体。推荐<code>fonts-noto-cjk</code>思源黑体和思源宋体。然后在Gnome
+Tweaks中修改字体。
+更进一步，可以修改fontconfig的配置，让默认字体也好看一下。修改<code>~/.config/fontconfig/fonts.conf</code>，以下是我的配置</p>
+<div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;
+&lt;fontconfig&gt;
+  &lt;dir&gt;~/.fonts&lt;/dir&gt;
+  &lt;match&gt;
+    &lt;test name=&quot;family&quot;&gt;
+      &lt;string&gt;monospace&lt;/string&gt;
+    &lt;/test&gt;
+    &lt;edit binding=&quot;strong&quot; mode=&quot;prepend&quot; name=&quot;family&quot;&gt;
+      &lt;string&gt;JetBrains Mono NL&lt;/string&gt;
+      &lt;string&gt;Ubuntu Mono&lt;/string&gt;
+      &lt;string&gt;Noto Color Emoji&lt;/string&gt;
+      &lt;string&gt;Noto Sans CJK SC&lt;/string&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match&gt;
+    &lt;test name=&quot;family&quot;&gt;
+      &lt;string&gt;sans-serif&lt;/string&gt;
+    &lt;/test&gt;
+    &lt;edit binding=&quot;strong&quot; mode=&quot;prepend&quot; name=&quot;family&quot;&gt;
+      &lt;string&gt;Noto Sans CJK SC&lt;/string&gt;
+      &lt;string&gt;Noto Sans&lt;/string&gt;
+      &lt;string&gt;Noto Sans Arabic&lt;/string&gt;
+      &lt;string&gt;Noto Color Emoji&lt;/string&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match&gt;
+    &lt;test name=&quot;family&quot;&gt;
+      &lt;string&gt;serif&lt;/string&gt;
+    &lt;/test&gt;
+    &lt;edit binding=&quot;strong&quot; mode=&quot;prepend&quot; name=&quot;family&quot;&gt;
+      &lt;string&gt;Noto Serif&lt;/string&gt;
+      &lt;string&gt;Noto Serif CJK SC&lt;/string&gt;
+      &lt;string&gt;Noto Color Emoji&lt;/string&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;antialias&quot;&gt;
+      &lt;bool&gt;true&lt;/bool&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;hinting&quot;&gt;
+      &lt;bool&gt;true&lt;/bool&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;hintstyle&quot;&gt;
+      &lt;const&gt;hintfull&lt;/const&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;rgba&quot;&gt;
+      &lt;const&gt;none&lt;/const&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;lcdfilter&quot;&gt;
+      &lt;const&gt;lcddefault&lt;/const&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+  &lt;match target=&quot;font&quot;&gt;
+    &lt;edit mode=&quot;assign&quot; name=&quot;embeddedbitmap&quot;&gt;
+      &lt;bool&gt;true&lt;/bool&gt;
+    &lt;/edit&gt;
+  &lt;/match&gt;
+&lt;/fontconfig&gt;
+</pre></div>
+
+<h2 id="apt-update失败">9 apt update失败</h2>
+<p>解决方案：一般是软件仓库镜像没有正确设置。修改软件仓库镜像（建议顺便改成国内源），参考
+https://mirrors.tuna.tsinghua.edu.cn/help/debian/</p>
+<h2 id="自己的用户不能用sudo命令">10 自己的用户不能用sudo命令</h2>
+<p>具体表现：不在sudo组当中。</p>
+<p>解决方案：
+解法一：<code>su</code>进入root，然后<code>visudo</code>，修改sudo的配置文件，给某个具体的用户/用户组使用sudo的权力。
+解法二：把具体的某个用户加入<code>sudo</code>组</p>
+<div class="highlight"><pre><span></span>usermod [你的用户名] -a -G sudo
+</pre></div>
+
+<p>操作完之后注销重新登陆</p>
+<h2 id="仓库里没有某某软件仓库里没有某某软件的某某版本">11
+仓库里没有某某软件/仓库里没有某某软件的某某版本</h2>
+<p>解决方案：
+解法一：自己编译安装到<code>/usr/local</code>或者其他随便什么地方（记得改PATH）
+解法二：下载别人打包好的<code>deb</code> 解法三：用nix
+解法四：实在不得已，可以用flatpak或者AppImage
+解法五：环境实在太难配置，不得已可以用docker 解法六：虚拟机
+<del>解法七：用arch</del></p>
+<blockquote>
+<p>软件包少/软件包旧，其实是导致debian比arch还要折腾的根本原因</p>
+</blockquote>
+<h2 id="安装的时候不能创建btrfs子卷">12 安装的时候不能创建Btrfs子卷</h2>
+<p>解决方案：</p>
+<p>有些人的办法是：在安装的时候<code>ctrl-alt-f6</code>切换到别的tty，然后手动分子卷。（最合理的办法）</p>
+<p>我的办法是： 1.
+正常安装，分区选btrfs。此时安装介质会创建一个<code>@rootfs</code>子卷，然后把全部东西都放在里面。
+2.
+安装完成后，进另一个Linux系统或者用U盘进LiveCD救援系统，然后手动分子卷，把<code>@rootfs</code>里面的东西移动到新的子卷里面（很朴素的办法，但是一般可行）
+3.
+相对应地修改<code>/etc/fstab</code>，让系统启动时正确地挂载各个子卷。</p>
+<p>终极办法是：不用btrfs。实际上我觉得大部分人用默认的ext4就够了。</p>
+<h2 id="没有默认启用gpu加速视频编解码">13
+没有默认启用GPU加速视频编解码</h2>
+<p>解决方案： 参考 https://wiki.debian.org/HardwareVideoAcceleration
+对于intel GPU，安装<code>intel-media-va-driver</code>
+或者<code>intel-media-va-driver-non-free</code>。
+然后检查看看<code>vainfo</code>命令的输出是否正确。</p>
+<h2 id="依赖冲突">14 依赖冲突</h2>
+<p>具体表现：用dpkg强制安装软件，或者安装来自非官方源的软件，或者安装其他deb系发行版的源的软件时，版本不一致造成依赖冲突。</p>
+<p>预防措施：不要做上述事情。遇事不决可以考虑用一下nix。</p>
+<p>解决方案：把有问题的源去掉，把造成冲突的软件包一个一个卸掉，<a
+href="https://pkgs.org">手动下载</a>并强制安装正确版本的软件包。
+强制卸载</p>
+<div class="highlight"><pre><span></span>dpkg --remove --force-all [包名]
+</pre></div>
+
+<p>强制安装</p>
+<div class="highlight"><pre><span></span>dpkg -i [deb包路径]
+</pre></div>
+
+<p>然后尝试修复</p>
+<div class="highlight"><pre><span></span>apt -f install
+</pre></div>
+
+<blockquote>
+<p>这是我最讨厌debian/ubuntu/fedora等发行版的一点，傻逼依赖问题很容易发生，而且处理起来经常半小时起步
+这也是Arch这类发行版看起来很折腾、其实很省心的原因</p>
+</blockquote>
+<p>所以debian这种发行版更适合用在万年不更新的场合。桌面系统还是尽量用Arch、OpenSUSE风滚草、NixOS这类。头疼的问题一般有人替你头疼过了。</p>
+<h2
+id="arch-linux下grub的os-prober无法找到另一个磁盘的btrfs分区上的debian内核">15
+Arch
+Linux下grub的os-prober无法找到另一个磁盘的btrfs分区上的debian内核</h2>
+<p>具体表现：更新grub配置后没有debian的启动项。</p>
+<p>解决方案：自己写一个grub的menuenrty到/boot/grub/custom.conf里面。具体写法参考Arch
+Wiki的grub页面。</p>
+<h2 id="firefox版本太旧">16 firefox版本太旧</h2>
+<p>不要用仓库里的firefox-esr，直接添加Mozilla官方给的ppa源。</p>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/notes/blender-sycl.html">解决blender...</a></div>
+        <div class="sibling-page-date">2024-05-04</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/blender-sycl.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
