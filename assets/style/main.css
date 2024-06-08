@@ -760,14 +760,26 @@ span.comment-area-power-by {
   filter: blur(2px);
 }
 
+.post-ad {
+	width: max(12%, 14em);
+	background: var(--header-bg-color);
+	float: left;
+	left: calc(((100% - max(50em, 40%))/2) - max(12%, 14em) - 2em);
+	position: sticky;
+	padding: 0;
+	margin: 0 1em 1em 1em;
+	max-height: calc(20vh);
+	border: var(--common-border-color) 1px solid;
+}
+
 @media (max-width:1300px) {
-  .post-menu {
+  .post-menu, .post-ad {
     display: none;
   }
 }
 
 @media (max-width:600px) {
-  .archive-item-more {
+  .archive-item-more, .post-ad {
     display: none;
   }
 
@@ -814,7 +826,7 @@ span.comment-area-power-by {
     display: block;
   }
 
-  .post-menu {
+  .post-menu, .post-ad {
     display: none;
   }
 }
