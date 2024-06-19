@@ -15,10 +15,40 @@
     
     
     
-    <pubDate>Sat, 08 Jun 2024 07:30:35 GMT</pubDate>
-    <lastBuildDate>Sat, 08 Jun 2024 07:30:35 GMT</lastBuildDate>
+    <pubDate>Wed, 19 Jun 2024 06:50:42 GMT</pubDate>
+    <lastBuildDate>Wed, 19 Jun 2024 06:50:42 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>傅里叶变换笔记</title>
+      <link>https://nth233.top/posts/2024-06-19-傅里叶变换笔记.html</link>
+      
+      <description>尝试梳理一下傅里叶变换相关的只是</description>
+      
+      <pubDate>2024-06-19</pubDate>
+      <guid>9320457285127413429</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>数学</category>
+        
+          <category>傅里叶</category>
+        
+          <category>信号</category>
+        
+          <category>FFT</category>
+        
+          <category>Fourier</category>
+        
+      
+    </item>
     
     
     

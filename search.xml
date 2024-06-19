@@ -48,6 +48,512 @@
     <page>
         <title>
         
+        傅里叶变换笔记
+        
+        </title>
+        <url>////nth233.top/posts/2024-06-19-傅里叶变换笔记.html</url>
+        <search-text>
+        
+        
+            数学
+        
+            傅里叶
+        
+            信号
+        
+            FFT
+        
+            Fourier
+        
+        
+        
+        尝试梳理一下傅里叶变换相关的只是
+        
+        
+        
+
+
+&gt; - 函数和内积
+&gt; - 正交函数系
+&gt; - 傅里叶级数和离散傅里叶变换
+&gt; - 连续时间傅里叶变换
+&gt; - ~~傅里叶变换的特性~~
+&gt; - 快速傅里叶变换
+&gt; - ~~快速傅里叶变换的优化~~
+&gt; - 附：卷积
+
+## 函数和内积
+
+在开始之前有必要复习一下线性代数而知识。
+
+在n维的线性空间中，两个向量之间可以做内积$\boldsymbol a \cdot \boldsymbol b = \langle \boldsymbol a, \boldsymbol b\rangle$，实际上就是求一个向量在另一个向量上投影的长度。内积为0，则两个向量正交。
+
+线性无关的n个向量构成这个线性空间的一个基。如果这n个向量之间两两正交，且长度都为1，那么称为这个线性空间的一个标准正交基。选定标准正交基，相当于给这个线性空间建立坐标系。向量$\boldsymbol a$的坐标可以通过和标准正交基的内积给出。
+
+$$
+\begin{align}
+&amp;\boldsymbol a = (a_0, a_1, a_2, \dots, a_n)^T = \sum_{i=0}^n a_i\boldsymbol e_i \\
+&amp; a_i = \boldsymbol a \cdot \boldsymbol e_i
+\end{align}
+$$
+
+因为我们选取的是标准正交基，这个坐标是唯一的。
+
+给定坐标后，便可以比较方便地计算内积。
+
+$$
+\langle \boldsymbol a,  \boldsymbol b\rangle = \sum_{i = 0}^{n}a_i b_i
+$$
+
+如果引入复数，那么则要把一个向量的每个坐标都取共轭。
+
+$$
+\langle \boldsymbol a,  \boldsymbol b\rangle = \sum_{i = 0}^{n}a_i b_i^*
+$$
+
+这些概念可以推广到无穷维上，比如说离散信号$x[n]$，函数$x(t)$，也许还可以包括多项式。下面两个式子分别要求积分收敛、求和收敛（实际上就是对应能量有限的信号，这些信号构成的空间叫做平方可积空间）。
+
+$$
+\langle x(t),y(t) \rangle = \int_{-\infty}^{+\infty}x(t)y(t)^*\mathrm{d}t
+$$
+
+$$
+\langle x[n],y[n] \rangle = \sum_{n = -\infty}^{+\infty}x[n]y[n]^*
+$$
+
+如果把多项式当作是函数，那么可以套用函数内积的公式。如果把n次多项式当作2n维向量（取其系数），则可以套用向量内积的公式。
+
+可以认为傅里叶级数/变换就是把函数分解到$e^{jk\omega_0 t}$这组基上面。
+
+## 傅里叶级数
+
+在开始前先考察一下两个函数系的正交型。
+
+一个是三角函数系，就是下面这组函数：
+
+$$
+1, \sin \omega_0 x, \cos\omega_0 x, \sin 2\omega_0x, \cos 2\omega_0x, \dots, \sin n\omega_0x, \cos n\omega_0x, \dots
+$$
+
+类似地有复指数函数系$e^{j\omega_0 nt}$
+
+### 三角函数系的正交性
+
+可以看到上述函数系中，所有函数都有个公共周期$T = 2\pi / \omega_0$，下文称之为基波周期。
+
+任取函数系中的两个不同函数，在基波周期上做内积，有下面三种情况
+
+$$
+\begin{align}
+&amp; \int_{T} \sin n_1\omega_0t\cdot \cos n_2\omega_0t dt \\
+&amp; \int_{T} \sin n_1\omega_0t\cdot \sin n_2\omega_0t dt \\
+&amp; \int_{T} \cos n_1\omega_0t\cdot \cos n_2\omega_0t dt
+\end{align}
+$$
+
+不难验证这几个积分结果都是0。
+
+&gt; 取周期为$[-T/2, T/2]$，然后利用奇偶性
+
+如果相同的函数自己与自己做内积
+
+$$
+\int_T (\sin n\omega_0t)^2 dt = 2\int_0^{\frac{\pi}{\omega_0}}\frac{1-\cos 2n\omega_0 t}{2}dt = \frac{\pi}{\omega_0} = T/2
+$$
+
+### 复指数函数系
+
+$$
+\int_{-\pi/\omega_o}^{\pi/\omega_0} e^{j\omega_0 nt} \cdot e^{-j\omega_0 mt} dt
+$$
+
+类似地，$n\ne m$时，积分为0，否则积分为$2\pi/\omega_0 = T$
+
+&gt; 考虑一个LIT系统，给予其一个复指数激励$x(t) = e^{j\omega_0 nt}$，如果已知起冲激响应$h(t)$，则响应函数$y(t)$为冲激响应和激励的卷积，如下
+&gt; 
+&gt; $$
+&gt; y(t) = \int_{-\infty}^{+\infty}h(\tau)x(t-\tau)d\tau = e^{j\omega_0nt}\int_{-\infty}^{+\infty}h(\tau)e^{-j\omega_0n\tau}d\tau
+&gt; $$
+&gt; 
+&gt; 可以写作下式，即响应是激励乘以某个倍数，这个“倍数”只和频率$\omega$有关。
+&gt; 
+&gt; $$
+&gt; y(t) = H(jn\omega_0) x(t) = H(j\omega)x(t)
+&gt; $$
+&gt; 
+&gt; 如果能把任意激励都分解成复指数函数的线性组合，那么分析这一系统就变得十分简单。
+
+### 傅里叶级数的引入
+
+我们可以把上述两个函数系直观理解为正交基，在此基础上引入傅里叶变换就简单了。
+
+对于满足特定条件（Dirichlet条件）的实周期函数$f(x)$，可以将其展开为三角级数。
+
+$$
+f(x) = A_0 + \sum_{k=1}^{\infty}(A_k \cos k\omega_0 x + B_k \sin k\omega_0 x )
+$$
+
+实际上就是用三角函数系的线性组合来表示这个函数。
+
+同理，可以展开为复指数函数的线性组合（此时就不要求$f(x)$是实函数了）
+
+$$
+f(x) = \sum_{k=-\infty}^{+\infty}A_ke^{jk\omega_0x}
+$$
+
+这便是傅里叶级数展开，上述里两式成为傅里叶级数的综合式。对于实周期函数来说，这两种形式是可以相互转换的，只需要用一下欧拉公式。
+
+既然我们已经将三角函数系和复指数函数系当作的正交基，那么求取上述两个式子的系数就很容易了——只需做一下内积，然后归一化一下。
+
+对于三角函数系：
+
+$$
+\begin{align}
+&amp; A_k = \frac{2}{T}\int_T f(x)\cos k\omega_0 x dx \\
+&amp; B_k = \frac{2}{T}\int_T f(x)\sin k\omega_0 x dx \\
+&amp; A_0 = \frac{1}{T}\int_T f(x) dx
+\end{align}
+$$
+
+对于复指数函数系：
+
+$$
+A_k = \frac{1}{T}\int_T f(x)e^{-j\omega_0 kx}dx
+$$
+
+这几个式子成为傅里叶级数的分析式。
+
+&gt; 只要把$f(x)$的综合式代到分析式里面，就能简单验证一下正确性，
+
+### 离散傅里叶变换（DFT）
+
+给个以周期为$N$的离散信号$x[n]$，它也可以分解为一系列不同频率分量的叠加。但是此处要注意，离散时间的函数系和连续时间的函数系有本质的不同。在于
+
+$$
+e^{jk\frac{2\pi}{N}n} = e^{j(k+N)\frac{2\pi}{N}n}
+$$
+
+所以，其实频率$k\omega_0$的分量和$(k+N)\omega_0$的分量是**一模一样**的。换句话说，离散信号的频率分量个数是有限的。也可以认为它的傅里叶级数系数有周期性。
+
+$$
+x[n] = \sum_{k=0}^{N}a_ke^{jk\omega_0n}
+$$
+
+系数的获取一样是通过内积
+
+$$
+a_k = \frac{1}{N}\sum_{n=0}^{N}x[n]e^{-jk\omega_0n}
+$$
+
+这就是DFT。
+
+实际上做DFT，只需要截取一个周期出来就够了。我们把截取出来的信号看作一个$N$维向量$\boldsymbol x$，把傅里叶系数也看作一个向量$\boldsymbol a = (a_0, a_1, \dots, a_N)^T$。把$e^{j\frac{2\pi}{N} n}$记为$\omega_N^n$
+
+$$
+\boldsymbol x = \begin{bmatrix}
+1 &amp; 1 &amp; 1 &amp;\cdots &amp; 1 \\
+1 &amp; \omega_N^1 &amp; \omega_N^2 &amp; \cdots &amp; \omega_N^{N-1} \\
+1 &amp; \omega_N^2 &amp; \omega_N^4 &amp; \cdots &amp; \omega_N^{2(N-1)} \\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+1 &amp; \omega_N^{k(N-1)} &amp; \omega_N^{2(N-1)} &amp; \cdots &amp; \omega_N^{(N-1)^2} \\
+\end{bmatrix} \boldsymbol a
+$$
+
+把这个矩阵记为$F$，则$\boldsymbol x = F \boldsymbol a$，其中
+
+$$
+F_{kn} = \omega_N^{(k-1)(n-1)}
+$$
+
+这个矩阵做的就是傅里叶逆变换。它的逆，即$\omega_N$全部换成$\omega_N^{-1}$，然后前面乘上$1/N$，做的就是傅里叶变换。通过这个矩阵乘法我们也能知道，直接做DFT的时间复杂度是$O(N^2)$
+
+## 傅里叶变换、离散时间傅里叶变换（DTFT）
+
+无论是傅里叶级数，还是DFT，都要求函数具有周期性。如果遇到没有周期性的函数，该怎么处理呢？如果函数的支撑（非0区间）有限，那么我们可以直接把他延拓成一个周期信号。如果支撑无限，该怎么办呢？
+
+傅里叶指出，可以把非周期函数也当作周期函数，只不过它们的周期无限大。
+
+首先我们截取$f(x)$在$[-T/2, T/2]$区间的一小段进行周期性的重复，得到$\tilde f (t)$，求其傅里叶级数系数
+
+$$
+A_k = \frac{1}{T}\int_T \tilde f(x)e^{-j\frac{2\pi}{T} kx}dx = \frac{1}{T}X(jk\omega_0)
+$$
+
+带入综合公式
+
+$$
+\tilde f(x) = \sum_{k=-\infty}^{+\infty}X(jk\omega_0)e^{jk\omega_0x}\frac{1}{T}
+$$
+
+$T\to +\infty$时，这个式子变成一个积分，$\tilde f(x)$变成$f(x)$，得到傅里叶变换综合公式
+
+$$
+f(x) = \int_{-\infty}^{+\infty}X(j\omega)e^{j\omega x}d\omega
+$$
+
+根据定义
+
+$$
+X(j\omega) = \int_T f(x)e^{-j\omega x}dx 
+$$
+
+在$T\to +\infty$是，变为傅里叶变换分析公式
+
+$$
+X(j\omega) = \int_{-\infty}^{+\infty} f(x)e^{-j\omega x}dx
+$$
+
+考虑这几个式子的意义：随着周期趋于无限、频率越分越细，频率不再只取几个离散的值，而是变成连续的。也可以认为周期函数存在傅里叶变换，只不过频域里是“离散”的（一系列冲激函数）
+
+对于离散时间的非周期信号也可以做类似的推导，只不过频域内得到的也是个周期函数。
+
+$f(x)$和$X(j\omega)$为一对傅里叶变换对，记作
+
+$$
+f(x) {\overset{\mathcal F}{\longleftrightarrow}} X(j\omega)
+$$
+
+$$
+X(j\omega) = \mathcal F[ f(x)], f(x) = \mathcal F^{-1} [X(j\omega)]
+$$
+
+## 傅里叶变换的性质
+
+这里只简单罗列，不证明。实际上要证明起来并不困难。
+
+假设有
+
+$$
+x(t) \overset{\mathcal F}{\longleftrightarrow} X(j\omega)
+$$
+
+### 线性
+
+$$
+ax_1(t) + bx_2(t) \overset{\mathcal F}{\longleftrightarrow} aX_1(j\omega) + b X_2(j\omega)
+$$
+
+### 时移
+
+$$
+x(t-t_0) \overset{\mathcal F}{\longleftrightarrow} e^{-j\omega t_0}X(j\omega)
+$$
+
+### 微分
+
+$$
+\frac{\mathrm d x(t)}{\mathrm dt} \overset{\mathcal F}{\longleftrightarrow} j\omega X(j\omega)
+$$
+
+### 积分
+
+$$
+\int_{-\infty}^{t} x(t) \overset{\mathcal F}{\longleftrightarrow} \frac{1}{j\omega} X(j\omega)
+$$
+
+### 缩放（尺度变换）和时间反转
+
+$$
+x(at) \overset{\mathcal F}{\longleftrightarrow} \frac{1}{|a|}X\left(\frac{j\omega}{|a|}\right)
+$$
+
+### 共轭
+
+$$
+x(t)^* \overset{\mathcal F}{\longleftrightarrow} X(-j\omega)^*
+$$
+
+### 帕斯瓦尔定理
+
+谐波分量的平均功率为傅里叶系数的模平方。信号的总功率为各个分量功率之和。
+
+### 卷积性质
+
+时域内卷积，相当于频域内乘积。时域内乘积，相当于频域内卷积。
+
+$$
+x(t) * h(t) \overset{\mathcal F}{\longleftrightarrow} X(j\omega)H(j\omega)
+$$
+
+### 对偶性
+
+时域和频域互为对偶。对频域再做傅里叶变换，得到的函数和时域很像。
+
+## 快速傅里叶变换（FFT）
+
+和上文一致，我们定义$\omega_n$
+
+$$
+\omega_n = \exp \left(\frac{j2\pi}{n}\right)
+$$
+
+$\omega_n^k \ (k = 0,1,2,\dots,n-1)$都是$x^n = 1$的根，所以也叫单位复数根。
+
+### 消去引理
+
+$$
+\omega_{pn}^{pk} = \exp \left(\frac{j2\pi pk}{pn}\right) = \omega_n^k
+$$
+
+意思是可以消去指数和下标的公因数。假如n是偶数，那么$\omega_n^2 = \omega_{n\over 2}$
+
+FFT利用这一性质，可以把DFT时间复杂度从$O(n^2)$降到$O(n\log n)$
+
+### 一个观察
+
+我们把DFT的式子再抄一遍，不过为了避免混淆，原来的$n$改成$t$，原来的$N$改成$n$。从这里开始我们均假设$n$是2的幂次，意味着$n$可以不断地整除2。
+
+$$
+a_k = \frac{1}{n}\sum_{t=0}^{n}x[t]e^{-jk\omega_0t} = \frac{1}{n}\sum_{t=0}^{n}x[t]{\omega_n^{-kt}}
+$$
+
+记$x_0$为$x$的偶数项构成的序列，$x_1$为奇数项构成的序列。则可以把上面的求和奇偶拆开：
+
+$$
+\begin{align}
+a[k] = &amp; \frac{1}{n} \sum^{n/2-1}_{t=0} x[2t]\omega_n^{2kt} + \frac{1}{n} \sum^{n/2-1}_{t=0} x[2t+1]\omega_n^{2kt+k} \\
+= &amp; \frac{1}{n} \sum^{n/2-1}_{t=0} x_{0}[t]\omega_{n\over 2}^{kt} + \frac{1}{n} \omega_n^k\sum^{n/2-1}_{t=0} x_1[t]\omega_{n\over 2}^{kt}
+\end{align}
+$$
+
+当$k\ge \frac{n}{2}$时，可知
+
+$$
+\omega_{n\over 2}^{kt} = \omega_{n\over 2}^{\left(k - \frac{n}{2}\right)t}, \omega_n^k = -\omega_n^{k-\frac{n}{2}}
+$$
+
+如果DFT变换为$a = \mathrm {DFT}(x)$，则有$h = \mathrm{DFT}(x_0), g=\mathrm{DFT}(x_1)$
+
+则
+
+$$
+a[k] = h[k] + \omega_n^kg[k]
+$$
+
+### FFT伪代码
+
+综合上面得到的式子，已经可以写出FFT的伪代码了。
+
+```python
+def FFT(x):
+    n = len(x)
+    if n == 1:
+        return x
+    omega_n = exp(2*pi/n), omega = 1
+    h = FFT(even(x)) # even()表示取偶数项
+    g = FFT(odd(x)) # odd()表示取奇数项
+    for k = 0 to n/2-1:
+        a[k] = h[k] + omega*g[k]
+        a[k+n/2] = h[k] - omega*g[k]
+        omega *= omega_n
+    return a
+```
+
+用主定理分析一下（其实不用主定理，这个分治算法的结构和归并排序是一样的），可知时间复杂度是$O(n\log n)$
+
+## 傅里叶变换的应用
+
+暂略（解微分方程、滤波、更快的多项式乘法）
+
+---
+
+## 附：卷积
+
+可以从不同的角度导入卷积的概念。
+
+### 信号的角度
+
+信号系统接受一个输入（激励），产生一个输出（响应）。如果一个系统满足线性、时不变两个条件，称为LIT系统。下面把激励统计记作$x(t)$，响应统计记为$y(t)$，离散情况也类似，只要把$(t)$替换成$[n]$就可以了。
+
+线性，$ax_1(t) + bx_2(t)$的响应是$ay_1(t) + by_2(t)$
+
+时不变，即$x(t-t_0)$的响应是$y(t-t_0)$，就是给输入多少时延，输出就会有多少时延
+
+在离散情况下，我们定义脉冲信号
+
+$$
+\delta[n] = \begin{cases}1 &amp; n = 0 \\ 0 &amp; n \ne 0\end{cases}
+$$
+
+任何离散信号都可以表示成延时脉冲信号的线性组合
+
+$$
+x[n] = \sum_{k = -\infty}^{+\infty}x[k]\delta[n-k]
+$$
+
+所以根据LIT系统的性质，输入的线性组合，输出也是相同的线性组合，假设$\delta[n]$对应的响应是$h[n]$，那么
+
+$$
+y[n] = \sum_{k = -\infty}^{+\infty}x[k]h[n-k]
+$$
+
+这个操作称为卷积。
+
+连续信号可以视为延迟后的冲激函数的叠加
+
+$$
+x(t) = \int_{-\infty}^{+\infty} x(\tau)\delta(t-\tau)d\tau
+$$
+
+我们假设冲激函数$\delta(t)$对应的响应为$h(t)$，称为冲激响应。那么根据线性和时不变两个性质，输出就是
+
+$$
+y(t) = \int_{-\infty}^{+\infty} x(\tau)h(t-\tau)d\tau
+$$
+
+后面这个运算我们称为卷积，即
+
+$$
+y(t) = x(t) * h(t) = \int_{-\infty}^{+\infty} x(\tau)h(t-\tau)d\tau
+$$
+
+### 多项式的角度
+
+假如我们有两个n次多项式$P(x)$和$Q(x)$。回忆一下，我们可以用$x^n$项的系数来表示n次多项式。比如说
+
+$$
+P(x) = p_0 + p_1 x + p_2 x^2 + \dots + p_nx^n
+$$
+
+表示为这个向量
+
+$$
+(p_0, p_1, p_2, \dots, p_n)^T
+$$
+
+两个多项式的和/差就是对应的两个向量相加/减。但当我们考虑多项式的乘积的时候，情况就复杂了。n次多项式的乘积是个2n次的多项式。我们需要先把这两个多项式“扩展”到2n次（也就是想象它们是2n次多项式，只不过对于n次以上的项，系数全是0）。那么乘积为
+
+$$
+R(x) = P(x)Q(x) = \sum_{m=0}^{2n} \sum^{m}_{k=0} p_kq_{m-k}x^{m}
+$$
+
+建议这里动笔验证一下。也就是
+
+$$
+r_m = \sum^{m}_{k=0} p_kq_{m-k}
+$$
+
+后面这个操作也是卷积，只不过区间不是无穷的。
+
+### 概率论的角度
+
+如果给定两个连续型随机变量$X$和$Y$，对应的概率密度函数分别是$p_X(x)$和$p_Y(y)$，那么它们的和$Z = X+Y$的概率密度函数$p_Z(z)$为
+
+$$
+p_Z(z) = \int_{-\infty}^{+\infty}p_X(x)p_Y(z-x)dx
+$$
+
+这也是卷积。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         2024-05阅读笔记
         
         </title>
