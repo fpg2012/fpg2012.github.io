@@ -92,7 +92,7 @@ html.dark-theme hr {
   /* color: var(--common-font-color);
   background-color: var(--body-bg-color);
   border-top: 1px solid var(--common-border-color); */
-  display: none;
+  /* display: none; */
 }
 
 a {
