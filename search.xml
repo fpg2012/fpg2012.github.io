@@ -48,6 +48,56 @@
     <page>
         <title>
         
+        Plans - 开坑计划
+        
+        </title>
+        <url>////nth233.top/plan/index.html</url>
+        <search-text>
+        
+        
+            plan
+        
+        
+        
+        
+        
+## 计划
+
+| 填坑度 | 内容 | 计划时间 | 栏目 |
+|-----|-----|-----|-----|
+| 90% | 2024-06 阅读笔记 | 2024-06 | notes |
+| 60% | 关于京吹的长评 | 2024-07 | notes 或者 posts |
+| 0%  | 简单的刚体物理模拟总结 | 2024-07/08 | posts |
+
+## 咕咕：无限期拖延
+
+&gt; 已经快忘了这些本来要写什么了
+
+- [ ] 《希腊史》笔记
+- [ ] 《罗马帝国衰亡史》编节版笔记
+- [ ] 《动物农场》笔记
+- [ ] 《巴黎圣母院》笔记
+
+## 博客优化
+
+- 更丰富的侧边栏：点赞、分享、阅读量统计、阅读时间估算、作者自我评价
+
+### 不优先
+
+- 图片懒加载、渐进加载
+- 扩展markdown语法（加入可折叠的引用框、warning、error等等）（使用pandoc-filter可以比较容易地实现）
+- 编写自用的markdown解析器加速页面渲染速度，或者给sushi加上多线程渲染
+- 优化列表的css（现在缩进似乎太多）
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         傅里叶变换笔记
         
         </title>
@@ -3004,51 +3054,6 @@ $ python main.py --listen 0.0.0.0 --use-split-cross-attention
 [I 卡也要炼！本地运行 Stable Diffusion &amp; ComfyUI](https://kwaa.dev/stable-diffusion)
 
 [ComfyUI](https://github.com/comfyanonymous/ComfyUI)
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
-        Plans - 开坑计划
-        
-        </title>
-        <url>////nth233.top/plan/index.html</url>
-        <search-text>
-        
-        
-            plan
-        
-        
-        
-        
-        
-# 短期内完成
-
-- [ ] sushi的新功能
-
-## 笔记
-
-- [ ] 《希腊史》笔记
-- [ ] 《罗马帝国衰亡史》编节版笔记
-- [ ] 《动物农场》笔记
-- [ ] 《巴黎圣母院》笔记（想法：把一段时间看的书整合成一篇笔记，而不是分别写笔记）
-
-# 博客优化
-
-1. 更丰富的侧边栏：点赞、分享、阅读量统计、阅读时间估算、作者自我评价
-2. 图片懒加载、渐进加载
-3. 扩展markdown语法（加入可折叠的引用框、warning、error等等）（使用pandoc-filter可以比较容易地实现）
-4. 编写自用的markdown解析器加速页面渲染速度
-5. 优化列表的css（现在缩进似乎太多）
-
-# 长期准备
-
-年度总结
 
         
         </search-text>
