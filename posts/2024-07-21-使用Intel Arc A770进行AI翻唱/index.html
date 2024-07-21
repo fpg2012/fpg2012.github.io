@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 使用Intel Arc A770和RVC模型进行AI翻唱</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="使用Intel Arc A770和RVC模型进行AI翻唱">
+        
+        
+        <meta name="google-adsense-account" content="ca-pub-1326905152915272">
+        
+        
+        <meta name="keywords" content="AI,Intel,A770,AI翻唱">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='post-ad'>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1326905152915272"
+     crossorigin="anonymous"></script>
+<!-- ad1 -->
+<ins class="adsbygoogle"
+     style="display:inline-block;width:250px;height:250px"
+     data-ad-client="ca-pub-1326905152915272"
+     data-ad-slot="6012284430"></ins>
+<script>
+     (adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+        
+</div>
+
+<div class='post-menu'>
+    <div class='menu-title'>使用Intel Arc A770和RVC模型进行AI翻唱</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>使用Intel Arc A770和RVC模型进行AI翻唱</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-07-21</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#AI</span>
+    
+        <span class="tag">#Intel</span>
+    
+        <span class="tag">#A770</span>
+    
+        <span class="tag">#AI翻唱</span>
+    
+    </div>
+</div>
+<hr class="hr-wavy">
+<div class="post-content">
+    <p>去年八月份我在尝试AI翻唱的时候，没能在这块显卡上把so-vits-ai给跑起来（可能也是因为当时做的调查很不充分，没找到<a
+href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI">这个repo</a>。如今已经一年过去，情况已经有了很多变化，我也比去年要更有时间。</p>
+<p>多亏了这个<a
+href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI/pull/1204">Pull
+Request</a>，I卡上面也能丝滑地进行AI翻唱了，效果很好，配置很简单。</p>
+<h2 id="准备docker环境">准备Docker环境</h2>
+<p>以下内容针对Linux，如果你使用Windows，那么建议使用WSL2，可以参考官方教程（见文末参考）。</p>
+<p>如果没有安装docker，那就安装一下。启用docker服务。</p>
+<div class="highlight"><pre><span></span># pacman -S docker
+# systemctl start docker
+</pre></div>
+
+<p>然后拉取Intel的官方映像（Image）。我自己就直接用去年折腾AI画图的那个映像了。</p>
+<div class="highlight"><pre><span></span># docker pull intel/intel-extension-for-pytorch:xpu-flex-2.0.110-xpu
+</pre></div>
+
+<p>然后检查一下环境是否正常。运行映像，<code>&lt;image_name&gt;:&lt;tag&gt;</code>自己替换一下（<code>intel-extension-for-pytorch:xpu-flex-2.0.110-xpu</code>），下文不再说明。</p>
+<div class="highlight"><pre><span></span># docker run --rm -it --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</pre></div>
+
+<p>然后检查一下是否能跑。在docker里运行以下代码，看能否正确输出IPEX的版本、显卡设备的信息。</p>
+<div class="highlight"><pre><span></span>$ python -c &quot;import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f&#39;[{i}]: {torch.xpu.get_device_properties(i)}&#39;) for i in range(torch.xpu.device_count())];&quot;
+</pre></div>
+
+<h2 id="不使用docker">不使用Docker？</h2>
+<p>我个人强烈建议非Ubuntu
+22.04的用户使用Docker，不然真的太折腾了。我自己反正是没能在Arch上跑起来，部分原因是intel-oneapi-basekit太新了。</p>
+<p>Ubuntu 22.04下可以按照官方教程（见文末参考）把IPEX的环境配一下（ps.
+我自己没尝试过）</p>
+<h2 id="准备好rvc-webui">准备好RVC-WebUI</h2>
+<p>找个合适的位置，我这里假设是<code>/workspace</code>，把这个repo克隆下来。</p>
+<div class="highlight"><pre><span></span>https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI.git rvc
+</pre></div>
+
+<p>然后进docker映像，启动命令里面记得把<code>/workspace/rvc</code>映射到容器的<code>/opt/rvc</code>，这里我们顺便把容器的<code>7865</code>端口映射出来。</p>
+<div class="highlight"><pre><span></span># docker run --rm -it -v /workspace/lab/rvc:/opt/rvc -p 7865:7865 --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</pre></div>
+
+<p>然后在容器的命令行里面配置一下环境，在执行pip命令之前可以顺便换成国内的镜像加加速。</p>
+<div class="highlight"><pre><span></span>$ cd /opt/rvc
+$ pip install -r requirements-ipex.txt
+# sudo apt install ffmpeg
+</pre></div>
+
+<p>如果没有出现问题，可以把容器的当前状态commit到一个新的映像里面，省得每次启动都要配一遍环境。<code>&lt;container_id&gt;</code>指的是容器的id，可以<code>docker ps</code>看一下。<code>rvc</code>是新映像的名字。</p>
+<div class="highlight"><pre><span></span># docker commit &lt;container_id&gt; rvc
+</pre></div>
+
+<h2 id="下载rvc所需的必要模型">下载RVC所需的必要模型</h2>
+<p>上<a
+href="https://huggingface.co/lj1995/VoiceConversionWebUI/tree/main/">Huggingface
+Hub</a>找对应路径的模型，放到<code>/workspace/rvc</code>下的对应位置：</p>
+<ul>
+<li>assets/hubert/hubert_base.pt</li>
+<li>assets/pretrained</li>
+<li>assets/uvr5_weights</li>
+<li>assets/pretrained_v2</li>
+</ul>
+<h2 id="找个训练好的音色模型">找个训练好的音色模型</h2>
+<p>比如说川大统领的<a
+href="https://huggingface.co/sail-rvc/Donald_Trump__RVC_v2_">RVC音色模型</a>。我们需要两个文件，一个是模型本身<code>model.pth</code>，另一个是index文件<code>model.index</code>。把模型放到<code>assets/weights</code>里面。</p>
+<h2 id="开始">开始！</h2>
+<p>在容器中运行<code>infer-web.py</code></p>
+<div class="highlight"><pre><span></span>python3 infer-web.py
+</pre></div>
+
+<p>然后在浏览器打开对应的网址。如果不喜欢界面是全英文，可以把源码里面的<code>i18n/i18n.py</code>改一下。</p>
+<p>首先找首歌。WebUI自带了一个界面供我们调用模型分离主要人声和伴奏。</p>
+<p>拿到纯人声的歌声之后，我们在一开始的页面选中刚才下载的音色模型、对应的index文件、要替换音色的纯人声歌声，然后直接点一下转换就成了（如果刚才没有下载rmvpe模型，这里要把音高提取算法换成别的，其他参数一般直接使用默认值即可）。</p>
+<audio controls>
+<source src="Trump.mp3" type="audio/mp3">
+<p>Your browser does not support the audio element. </audio></p>
+<h2 id="参考">参考</h2>
+<ul>
+<li><a
+href="https://github.com/RVC-Project/Retrieval-based-Voice-Conversion-WebUI?tab=readme-ov-file">Retrieval-based-Voice-Conversion-WebUI</a></li>
+<li><a
+href="https://intel.github.io/intel-extension-for-pytorch/cpu/latest/#">IPEX</a></li>
+<li>我之前的文章<a
+href="https://nth233.top/posts/2023-09-03-intel-arc-a770-ai">使用Intel
+Arc A770进行AI画图</a></li>
+</ul>
+
+</div>
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2024-06-19-傅里叶变换笔记.html">傅里叶变换笔记...</a></div>
+        <div class="sibling-page-date">2024-06-19</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2024-06-19-傅里叶变换笔记.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
