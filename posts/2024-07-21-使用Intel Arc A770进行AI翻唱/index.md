@@ -102,7 +102,7 @@ python3 infer-web.py
 拿到纯人声的歌声之后，我们在一开始的页面选中刚才下载的音色模型、对应的index文件、要替换音色的纯人声歌声，然后直接点一下转换就成了（如果刚才没有下载rmvpe模型，这里要把音高提取算法换成别的，其他参数一般直接使用默认值即可）。
 
 <audio controls>
-    <source src="Trump.mp3" type="audio/mp3">
+    <source src="Trump.mp3" type="audio/mp3"/>
 Your browser does not support the audio element.
 </audio>
 
