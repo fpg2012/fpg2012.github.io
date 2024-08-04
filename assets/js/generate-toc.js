@@ -1,6 +1,5 @@
-function generate_toc() {
+function generate_toc(menu) {
   post_content = document.querySelector('.post-content');
-  menu = document.querySelector('.post-menu');
   var flag = false;
   post_content.childNodes.forEach( node => {
     if (!node.tagName) {
@@ -46,4 +45,11 @@ function generate_toc() {
   })
 }
 
-generate_toc();
+function generate_all_toc() {
+  menu = document.querySelectorAll('.post-menu');
+  menu.forEach((value, key, array) => {
+    generate_toc(value);
+  })
+}
+
+generate_all_toc();
