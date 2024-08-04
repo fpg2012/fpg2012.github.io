@@ -784,7 +784,8 @@ span.comment-area-power-by {
 .counting-stars-btn {
 	color: gray;
 	padding: 0.1em;
-  transition: all 0.5s cubic-bezier(.68,-0.55,.27,1.55)
+  transition: all 0.5s cubic-bezier(.68,-0.55,.27,1.55);
+  filter: grayscale(1.0);
 }
 
 .counting-stars-indicator {
@@ -795,6 +796,7 @@ span.comment-area-power-by {
 .counting-stars-liked {
 	color: coral;
   font-size: 1.4rem;
+  filter: grayscale(0.0);
 }
 
 .post-bottom-like-bar {
