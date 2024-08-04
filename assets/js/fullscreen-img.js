@@ -1,4 +1,4 @@
-window.onload = () => {
+window.addEventListener('load', () => {
     let gen_onclick = function(img) {
         return function(e) {
             var container = document.getElementById("fullscreen-img-container");
@@ -20,4 +20,4 @@ window.onload = () => {
         container.setAttribute("class", "hidden");
         container.innerText = "";
     }
-};
+})

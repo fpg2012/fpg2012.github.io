@@ -23,8 +23,8 @@ function generate_toc() {
     menu_node = createElement('div', '', 'menu-item menu-'+node.tagName.toLowerCase());
     a = createElement('a', node.innerText, 'menu-item-link');
     a.setAttribute('href', '#' + node.id);
-    console.log(menu_node);
-    console.log(a);
+    // console.log(menu_node);
+    // console.log(a);
     menu_node.appendChild(a);
     return menu_node;
   }
