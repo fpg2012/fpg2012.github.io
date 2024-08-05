@@ -3,9 +3,11 @@ author: "nth233"
 url: "//localhost:5000"
 gen_dir: "_test_gen"
 theme_dir: "_theme_empty"
+utterances: true
 
-#valine:
-#  appid: z2BI9uqhDzhyed4haUSq5K98-gzGzoHsz
-#  appkey: 4R2vpq8Wy392JAroRiaL7MJY
+counting_stars:
+  url: "//localhost:6039"
 
-#isso: true
+social_media:
+  bilibili: "//space.bilibili.com/11616223"
+  github: "//github.com/fpg2012"

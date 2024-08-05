@@ -5,4 +5,10 @@ favicon: "/assets/favicon"
 theme_dir: "_theme_empty"
 
 utterances: true
-google_ad: ca-pub-1326905152915272
+
+counting_stars:
+  url: "//like.soulsand.top"
+
+social_media:
+  bilibili: "//space.bilibili.com/11616223"
+  github: "//github.com/fpg2012"
