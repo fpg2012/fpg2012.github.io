@@ -15,10 +15,36 @@
     
     
     
-    <pubDate>Sat, 19 Oct 2024 09:57:52 GMT</pubDate>
-    <lastBuildDate>Sat, 19 Oct 2024 09:57:52 GMT</lastBuildDate>
+    <pubDate>Sat, 30 Nov 2024 06:43:40 GMT</pubDate>
+    <lastBuildDate>Sat, 30 Nov 2024 06:43:40 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>分块计算Attention</title>
+      <link>https://nth233.top/notes/attention.html</link>
+      
+      <description>分块计算Attention</description>
+      
+      <pubDate>2024-11-30</pubDate>
+      <guid>12556265507903637436</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>AI</category>
+        
+          <category>transformer</category>
+        
+          <category>algorithm</category>
+        
+      
+    </item>
     
     
     
