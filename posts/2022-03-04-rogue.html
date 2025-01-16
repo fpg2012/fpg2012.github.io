@@ -222,33 +222,33 @@ Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
 <p>底栏显示了一些关于现状的信息。</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>信息</th>
 <th>意义</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>Level</td>
 <td>此数字代表你向下走了几层，从1开始计数，随深入地牢而提高</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Gold</td>
 <td>当前金币数</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Hp</td>
 <td>当前生命值和最大生命值。休息可以回复之。</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Str</td>
 <td>当前力量和历史最大力量。数字越大越大越强，最大99。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>Arm</td>
 <td>当前护甲值。越大则护甲越有效。</td>
 </tr>
-<tr>
+<tr class="even">
 <td>Exp</td>
 <td>当前经验等级和经验点数。经验越高法术攻击力和法术抗性越高。</td>
 </tr>
@@ -260,73 +260,73 @@ Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
 <p>主体部分显示已经探索的本层地图。每个符号都有其含义。</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>符号</th>
 <th>意义</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><code>@</code></td>
 <td>玩家</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>-</code>，<code>\|</code></td>
 <td>墙</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>+</code></td>
 <td>门</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>.</code></td>
 <td>地板</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>#</code></td>
 <td>通道</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>*</code></td>
 <td>金</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>)</code></td>
 <td>武器</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>]</code></td>
 <td>护甲</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>!</code></td>
 <td>魔药</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>?</code></td>
 <td>纸，通常是魔法卷轴</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>=</code></td>
 <td>戒指</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>/</code></td>
 <td>法杖</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>^</code></td>
 <td>陷阱</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>%</code></td>
 <td>阶梯，通往下一层</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>:</code></td>
 <td>食物</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>A-Z</code></td>
 <td>大写字母代表敌对生物</td>
 </tr>
@@ -340,169 +340,169 @@ Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
 <col style="width: 82%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>命令</th>
 <th>说明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><code>?</code></td>
 <td>帮助。用于询问命令的用法。输入<code>*</code>列出所有命令。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>/</code></td>
 <td>「屏幕上显示的是什么？」指令。用于询问某个显示符的意义。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>h</code>、<code>H</code>、<code>^H</code></td>
 <td>左移。大写表示左移直到遇见某物。<code>^H</code>（即<code>&lt;Ctrl&gt;</code>+<code>&lt;H&gt;</code>）表示左移直到墙。其他移动命令以此类推。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>j</code></td>
 <td>下移</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>k</code></td>
 <td>上移</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>l</code></td>
 <td>右移</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>y</code></td>
 <td>左上移</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>u</code></td>
 <td>右上移</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>b</code></td>
 <td>左下移</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>n</code></td>
 <td>右下移</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>t</code></td>
 <td>抛出指令。前缀指令，后接移动指令代表抛出方向。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>f</code></td>
 <td>战斗直到一方死亡。前缀指令，后接移动指令代表攻击方向。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>m</code></td>
 <td>不拾取。前缀指令，后接移动指令。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>z</code></td>
 <td>施法。前缀指令，后接移动指令代表施法方向。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>^</code></td>
 <td>辨别陷阱。前缀指令，后接移动指令代表方向。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>s</code></td>
 <td>搜查陷阱和隐藏门。检查和你邻接的每一格。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>&gt;</code></td>
 <td>进入下一层。仅站在台阶上时有效。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>&lt;</code></td>
 <td>回到上一层。仅取得「焉得护符」且站在台阶上时有效。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>.</code></td>
 <td>什么也不做，休息。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>,</code></td>
 <td>拾取。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>i</code></td>
 <td>物品清单。列出背包中的所有物品。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>I</code></td>
 <td>可选物品清单。解释背包中某个物品的作用。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>q</code></td>
 <td>饮用〔quaff〕魔药</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>r</code></td>
 <td>阅读卷轴</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>e</code></td>
 <td>进食</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>w</code></td>
 <td>装备武器。从背包中选取武器替换当前武器。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>W</code></td>
 <td>穿上盔甲</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>T</code></td>
 <td>卸下盔甲</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>P</code></td>
 <td>戴上戒指</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>R</code></td>
 <td>摘下戒指</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>d</code></td>
 <td>丢弃物品。从背包中选取物品放到地上。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>c</code></td>
 <td>命名。魔药和卷轴默认以性状或标题命名，使用之后会才能知道其作用。但是在使用前可以为其命名，便于你区分。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>o</code></td>
 <td>检查游戏设置。将在后文详细说明。</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>&lt;Esc&gt;</code></td>
 <td>取消</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>Q</code></td>
 <td>退出</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>S</code></td>
 <td>存档</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>v</code></td>
 <td>显示版本号</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>)</code></td>
 <td>显示当前武器</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>]</code></td>
 <td>显示当前护甲</td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>=</code></td>
 <td>显示当前戒指</td>
 </tr>
@@ -523,37 +523,37 @@ Level: 1 Gold: 0 Hp: 12(12) Str: 16(16) Arm: 4 Exp: 1/0
 <p>地牢中的护甲有若干种类，有一些是附魔过的，还有一些是诅咒过的，当然还有普通的。不同的护甲有不同的护甲值。护甲值越高，护甲抵御攻击的效果越好。下面是普通护甲的护甲值列表。</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>类型</th>
 <th>护甲值</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>无</td>
 <td>0</td>
 </tr>
-<tr>
+<tr class="even">
 <td>皮革甲〔Leather armor〕</td>
 <td>2</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>带钉皮甲〔Studded leather〕／锁甲〔Ring mail〕</td>
 <td>3</td>
 </tr>
-<tr>
+<tr class="even">
 <td>鳞甲〔Scale mail〕</td>
 <td>4</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>链甲〔Chain mail〕</td>
 <td>5</td>
 </tr>
-<tr>
+<tr class="even">
 <td>带甲〔Banded mail〕／板甲〔Splint mail〕</td>
 <td>6</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>铠甲〔Plate mail〕</td>
 <td>7</td>
 </tr>
@@ -603,33 +603,33 @@ $ export ROGUEOPTS
 <col style="width: 57%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>选项</th>
 <th>说明</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>jump[nojump]</td>
 <td>直到移动结束后才刷新界面，节省CPU资源</td>
 </tr>
-<tr>
+<tr class="even">
 <td>passgo[nopassgo]</td>
 <td>自动走到通道另一头，如果通道中有岔路，则会停下。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>skull[skull]</td>
 <td>在游戏结束时显示墓碑</td>
 </tr>
-<tr>
+<tr class="even">
 <td>name[account name]</td>
 <td>主角的名字</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>fruit[slime-mold]</td>
 <td>水果命名列表</td>
 </tr>
-<tr>
+<tr class="even">
 <td>file[~/rogue.save]</td>
 <td>默认存档位置</td>
 </tr>
@@ -716,8 +716,9 @@ UNIX一同发行。</p>
         </main>
         <script src="//nth233.top/assets/js/search.js"></script>
         <footer>
-<span>© nth233 2024 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+<span>© nth233 2019-2025 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
 </footer>
+
         <div id="fullscreen-img-container" class="hidden">
         </div>
         <div id="top-button" onclick="window.scrollTo(0,0)">△</div>

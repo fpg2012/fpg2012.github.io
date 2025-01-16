@@ -3,17 +3,17 @@
 <html>
     <head>
         
-        <title>Empty Space - 使用无头的wayvnc做远程桌面——乱水</title>
+        <title>Empty Space - 在现有的btrfs子卷上安装Ubuntu</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑端解决的问题。不过前几天我发现了WayVNC，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用wlroots做合成器〔Compositor〕的窗口管理器，比如sway，十分的轻量。图省事我用了Nix来安装。">
+        <meta name="description" content="比想象中的复杂，但又比想象中的简单">
         
 
         
-        <meta name="keywords" content="note,破事水,远程桌面,wayvnc,wayland,sway">
+        <meta name="keywords" content="linux,ubuntu">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -79,16 +79,16 @@
 </div>
 
 <div class='right-side-bar post-menu'>
-    <div class='menu-title'>使用无头的wayvnc做远程桌面——乱水</div>
+    <div class='menu-title'>在现有的btrfs子卷上安装Ubuntu</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>使用无头的wayvnc做远程桌面——乱水</h1>
+    <h1>在现有的btrfs子卷上安装Ubuntu</h1>
     
     <div class="date-bar">
-        <span class="date">2022-12-5</span>
+        <span class="date">2025-01-16</span>
     </div>
     <div class="category-bar">
     
@@ -97,17 +97,9 @@
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#note</span>
+        <span class="tag">#linux</span>
     
-        <span class="tag">#破事水</span>
-    
-        <span class="tag">#远程桌面</span>
-    
-        <span class="tag">#wayvnc</span>
-    
-        <span class="tag">#wayland</span>
-    
-        <span class="tag">#sway</span>
+        <span class="tag">#ubuntu</span>
     
     </div>
 </div>
@@ -137,67 +129,78 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    <h2 id="起因">起因</h2>
-<p>虽说服务器上一般没有必要跑图形界面，但还是偶尔会碰到有些烦人的程序CLI不能跑，比如百度网盘。</p>
-<p>正巧，远古MC存档的备份就在百度网盘上……最后折腾了半天，也没成功把远程桌面搞起来，最后还是用<code>Baidupcs-Go</code>这个第三方CLI客户端解决的问题。</p>
-<p>不过前几天我发现了<code>WayVNC</code>，十分适合没有物理屏幕的远程服务器。一方面是FAQ里写得清清楚楚，另一方面是用<code>wlroots</code>做合成器〔Compositor〕的窗口管理器，比如<code>sway</code>，十分的轻量。</p>
-<h2 id="搭建">搭建</h2>
-<p>因为阿里云的服务器用的是debian 10
-buster这个远古版本，包基本上旧得不行，比如就没有sway。要安装可以参照<a
-href="https://github.com/swaywm/sway/wiki/Debian-10-(Buster)-Installation">sway的wiki关于debian
-10的这篇文章</a>手动编译，麻烦的很。所以选择用Nix。</p>
-<h3 id="安装nix">安装Nix</h3>
-<p>参照<a
-href="https://nixos.org/download.html#download-nix">Nix的文档</a>.</p>
-<p>执行脚本，安装Nix（多用户）:</p>
-<div class="highlight"><pre><span></span>$<span class="w"> </span>sh<span class="w"> </span>&lt;<span class="o">(</span>curl<span class="w"> </span>-L<span class="w"> </span>https://nixos.org/nix/install<span class="o">)</span><span class="w"> </span>--daemon
+    <p>Ubuntu的安装程序不能识别btrfs子卷，但是我偏偏又需要把它装到一个现有的btrfs子卷里面，因此才需要像下文那样折腾。</p>
+<h2 id="tldr-省流版">TL;DR 省流版</h2>
+<p>在虚拟机里装好一个ubuntu，然后把整个系统复制到目标子卷里面。改改<code>/etc/fstab</code>和引导。</p>
+<h2 id="前情提要">前情提要</h2>
+<p>事情是这样的，原先我装了个debian，用掉了所有的空闲空间，文件系统选了btrfs（很有先见之明）。但是因为intel
+oneapi理论上只适配的ubuntu，在arch和debian上跑会有各种问题。一直以来我都不得不用docker，直到最近才决定和自己和解，装个ubuntu。</p>
+<p>但是debian所在的btrfs分区里面有一些很重要的数据，而我现在手边偏偏没有足够空间来备份。综上所述，我只能想办法把ubuntu直接装到一个新的子卷里面。</p>
+<h2 id="方法">方法</h2>
+<h3 id="在虚拟机里装个ubuntu">在虚拟机里装个ubuntu</h3>
+<p>先建个<code>qcow2</code>映像，之后往里面装ubuntu，不一定要32G，够装系统就行了：</p>
+<div class="highlight"><pre><span></span>$ qemu-img create -f qcow2 ubuntu.qcow2 32G
 </pre></div>
 
-<p>然后重启一下服务器。Nix就安装好了。</p>
-<h3 id="安装所需的软件包">安装所需的软件包</h3>
-<div class="highlight"><pre><span></span>nix-env<span class="w"> </span>--install<span class="w"> </span>--attr<span class="w"> </span>sway<span class="w"> </span>wayvnc
+<p>然后写个脚本启动qemu，在同一个目录下新建<code>start.sh</code></p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+qemu-system-x86_64<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-m<span class="w"> </span>16G<span class="w"> </span><span class="c1"># 根据实际情况调整虚拟机内存大小 \</span>
+<span class="w">    </span>-enable-kvm<span class="w"> </span><span class="c1"># 开kvm性能显著更好 \</span>
+<span class="w">    </span>-boot<span class="w"> </span>uefi<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-display<span class="w"> </span>gtk,gl<span class="o">=</span>on<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-vga<span class="w"> </span>qxl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-smp<span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-cpu<span class="w"> </span>host<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-boot<span class="w"> </span><span class="nv">order</span><span class="o">=</span>dc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-hda<span class="w"> </span>ubuntu.qcow2<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-cdrom<span class="w"> </span>ubuntu.iso<span class="w"> </span><span class="c1"># ubuntu的iso路径 \</span>
 </pre></div>
 
-<p>我习惯安个浏览器和终端仿真器</p>
-<div class="highlight"><pre><span></span>nix-env<span class="w"> </span>--install<span class="w"> </span>--attr<span class="w"> </span>firefox<span class="w"> </span>konsole
+<div class="highlight"><pre><span></span>$ chmox +x start.sh
+$ ./start.sh
 </pre></div>
 
-<blockquote>
-<p>为什么是Qt写的konsole？因为我发现更轻量的kitty和alacritty都没法用，似乎都和openGL没法使用有关。至于为什么openGL没法用，我不太懂。</p>
-</blockquote>
-<p>然后记得配置一下sway。</p>
-<h3 id="启动wayvnc">启动<code>wayvnc</code></h3>
-<p>首先进入<code>nix-shell</code>。</p>
-<div class="highlight"><pre><span></span>nix-shell<span class="w"> </span>-p<span class="w"> </span>sway<span class="w"> </span>wayvnc<span class="w"> </span>firefox<span class="w"> </span>konsole
+<p>然后在里面装好系统。</p>
+<h3 id="挂载qcow2映像">挂载qcow2映像</h3>
+<div class="highlight"><pre><span></span># qemu-nbd --connect /dev/nbd0 ubuntu.qcow2
+# mount /dev/nbd0p1 /mnt
 </pre></div>
 
-<p>然后按照<a
-href="https://github.com/any1/wayvnc/blob/master/FAQ.md">WayVNC的FAQ</a>，以无头〔headless〕模式启动sway。</p>
-<p>设置三个环境变量</p>
-<div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">WLR_BACKENDS</span><span class="o">=</span>headless
-<span class="nb">export</span><span class="w"> </span><span class="nv">WLR_LIBINPUT_NO_DEVICES</span><span class="o">=</span><span class="m">1</span>
-<span class="nb">export</span><span class="w"> </span><span class="nv">WAYLAND_DISPLAY</span><span class="o">=</span>wayland-1
+<p>mount前最好用fdisk检查一下是不是<code>/dev/nbd0p1</code>。</p>
+<h3
+id="用rsync复制整个系统到子卷里面">用rsync复制整个系统到子卷里面</h3>
+<p>假设目标已经子卷已经挂载到<code>/ubuntu</code>，虚拟机的盘片挂载到了<code>/mnt</code>。</p>
+<div class="highlight"><pre><span></span># rsync -aX --progress --stats /mnt/ /ubuntu/
 </pre></div>
 
-<p>然后启动sway：</p>
-<div class="highlight"><pre><span></span>sway<span class="w"> </span><span class="p">&amp;</span><span class="w"> </span><span class="c1"># 加上&amp;是为了sway可以在后台运行</span>
+<p>注意<code>/mnt/</code>不要写成<code>/mnt</code></p>
+<h3 id="改etcfstab和引导">改/etc/fstab和引导</h3>
+<p>假设ubuntu已经复制到了<code>/ubuntu</code>里面。根据个人实际情况自己改<code>/ubuntu/etc/fstab</code>，参见<a
+href="https://wiki.archlinux.org/title/Fstab">archwiki</a>。</p>
+<p>更新grub配置文件，如果os-prober找不到ubuntu，就自己写一条。如果需要自己写，修改或新建<code>/boot/grub/custom.cfg</code>，参见<a
+href="https://wiki.archlinux.org/title/GRUB#Dual-booting">archwiki</a>。</p>
+<div class="highlight"><pre><span></span>menuentry &#39;Ubuntu GNU/Linux&#39; --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option &#39;gnulinux-simple-eea47a38-15db-4ba8-a2ec-a35ee9503ed1&#39; {
+    load_video
+    insmod gzio
+    if [ x$grub_platform = xxen ]; then insmod xzio; insmod lzopio; fi
+    insmod part_gpt
+    insmod btrfs
+    search --no-floppy --fs-uuid --set=root eea47a38-15db-4ba8-a2ec-a35ee9503ed1
+    echo    &#39;Loading Ubuntu ...&#39;
+    linux   /@ubuntu/boot/vmlinuz root=UUID=eea47a38-15db-4ba8-a2ec-a35ee9503ed1 ro rootflags=subvol=@ubuntu
+    echo    &#39;Loading initial ramdisk ...&#39;
+    initrd  /@ubuntu/boot/initrd.img
+}
 </pre></div>
 
-<p>然后启动WayVNC</p>
-<div class="highlight"><pre><span></span>wayvnc<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span><span class="m">2304</span><span class="w"> </span><span class="c1"># 端口号改成自己需要的</span>
-</pre></div>
-
-<p>如果一切正常，那么现在可以用VNC工具，比如<code>vinagre</code>，连接远程桌面了。</p>
-<blockquote>
-<p>注意！如果不进一步配置，那么这个连接没有任何密码、没有加密，也就不安全。如果要长期开着WayVNC，建议加上身份校验，参考<a
-href="https://github.com/any1/wayvnc">WayVNC的GitHub页面</a>。</p>
-</blockquote>
-<p>如果要调整屏幕的大小，开启sway之后执行下面的命令：</p>
-<div class="highlight"><pre><span></span>swaymsg<span class="w"> </span>output<span class="w"> </span><span class="s2">&quot;HEADLESS-1&quot;</span><span class="w"> </span>resolution<span class="w"> </span>1920x1080<span class="w"> </span><span class="c1"># 大小自己调</span>
-</pre></div>
-
-<h2 id="后记">后记</h2>
-<p>虽说服务器带宽有点小，画面传过来有点卡顿掉帧，但毕竟不是不能用……应付偶尔的需求足够了。</p>
+<p>不要照抄。有几个地方需要根据实际情况修改。</p>
+<ol type="1">
+<li>第7行，<code>root=</code>后面的部分改成ubuntu所在的btrfs分区的uuid，可以用<code>lsblk -o +UUID</code>来查看</li>
+<li><code>linux</code>是指明内核的命令，<code>vmlinuz</code>改成具体的内核文件名。<code>root=</code>后面修改同上，<code>subvol=</code>后面改成实际的子卷名</li>
+<li><code>initrd</code>是指明initramfs的命令，后面改成实际initramfs的路径</li>
+</ol>
 
 </div>
 
@@ -221,18 +224,12 @@ href="https://github.com/any1/wayvnc">WayVNC的GitHub页面</a>。</p>
 
 <div class="sibling-pages">
     
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/buzzing.html">〈</a></div>
-    <div class="sibling-page sibling-page-next">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/buzzing.html">解决Linux下音...</a></div>
-        <div class="sibling-page-date">2023-9-24</div>
-    </div>
-    
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/median-algo.html">找中位数的线性时间...</a></div>
-        <div class="sibling-page-date">2022-11-25</div>
+        <div class="sibling-page-title"><a href="//nth233.top/notes/attention.html">分块计算Atten...</a></div>
+        <div class="sibling-page-date">2024-11-30</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/median-algo.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/notes/attention.html">〉</a></div>
     
 </div>
 
