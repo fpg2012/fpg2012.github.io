@@ -1,0 +1,5 @@
+title: "sushi v0.2.10“支持”typst了"
+date: 2025-01-19
+tag: ["typst", "sushi"]
+description: "刚刚更新的#link(\"https://github.com/fpg2012/sushi\")[sushi v0.2.10]静态页面生成器现在可以处理typst文件了。"
+category: ["dev"]

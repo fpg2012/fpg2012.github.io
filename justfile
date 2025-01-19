@@ -25,17 +25,6 @@ clean-gen:
 	rm -rf *
 	cd ..
 
-deploy-gen:
-	cd _gen
-	git add .
-	git commit -m "Update: `date`"
-	git push
-	cd ..
-
-deploy: deploy-gen
-	git commit -a
-	git push
-
 new-post:
 	cp _model/post.md "posts/`date -I`-newpost.md"
 
