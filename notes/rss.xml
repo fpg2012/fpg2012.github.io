@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Thu, 16 Jan 2025 15:37:23 GMT</pubDate>
-    <lastBuildDate>Thu, 16 Jan 2025 15:37:23 GMT</lastBuildDate>
+    <pubDate>Sun, 19 Jan 2025 17:58:38 GMT</pubDate>
+    <lastBuildDate>Sun, 19 Jan 2025 17:58:38 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>sushi v0.2.10“支持”typst了</title>
+      <link>https://nth233.top/notes/hello-typst.pdf</link>
+      
+      <description>刚刚更新的#link("https://github.com/fpg2012/sushi")[sushi v0.2.10]静态页面生成器现在可以处理typst文件了。</description>
+      
+      <pubDate>2025-01-19</pubDate>
+      <guid>7803502595919360685</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>typst</category>
+        
+          <category>sushi</category>
+        
+      
+    </item>
     
     
     
