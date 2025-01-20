@@ -129,100 +129,78 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    
-Ubuntu的安装程序不能识别btrfs子卷，但是我偏偏又需要把它装到一个现有的btrfs子卷里面，因此才需要像下文那样折腾。
+    <p>Ubuntu的安装程序不能识别btrfs子卷，但是我偏偏又需要把它装到一个现有的btrfs子卷里面，因此才需要像下文那样折腾。</p>
+<h2 id="tldr-省流版">TL;DR 省流版</h2>
+<p>在虚拟机里装好一个ubuntu，然后把整个系统复制到目标子卷里面。改改<code>/etc/fstab</code>和引导。</p>
+<h2 id="前情提要">前情提要</h2>
+<p>事情是这样的，原先我装了个debian，用掉了所有的空闲空间，文件系统选了btrfs（很有先见之明）。但是因为intel
+oneapi理论上只适配的ubuntu，在arch和debian上跑会有各种问题。一直以来我都不得不用docker，直到最近才决定和自己和解，装个ubuntu。</p>
+<p>但是debian所在的btrfs分区里面有一些很重要的数据，而我现在手边偏偏没有足够空间来备份。综上所述，我只能想办法把ubuntu直接装到一个新的子卷里面。</p>
+<h2 id="方法">方法</h2>
+<h3 id="在虚拟机里装个ubuntu">在虚拟机里装个ubuntu</h3>
+<p>先建个<code>qcow2</code>映像，之后往里面装ubuntu，不一定要32G，够装系统就行了：</p>
+<div class="highlight"><pre><span></span>$ qemu-img create -f qcow2 ubuntu.qcow2 32G
+</pre></div>
 
-## TL;DR 省流版
+<p>然后写个脚本启动qemu，在同一个目录下新建<code>start.sh</code></p>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
 
-在虚拟机里装好一个ubuntu，然后把整个系统复制到目标子卷里面。改改`/etc/fstab`和引导。
+qemu-system-x86_64<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-m<span class="w"> </span>16G<span class="w"> </span><span class="c1"># 根据实际情况调整虚拟机内存大小 \</span>
+<span class="w">    </span>-enable-kvm<span class="w"> </span><span class="c1"># 开kvm性能显著更好 \</span>
+<span class="w">    </span>-boot<span class="w"> </span>uefi<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-display<span class="w"> </span>gtk,gl<span class="o">=</span>on<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-vga<span class="w"> </span>qxl<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-smp<span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-cpu<span class="w"> </span>host<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-boot<span class="w"> </span><span class="nv">order</span><span class="o">=</span>dc<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-hda<span class="w"> </span>ubuntu.qcow2<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-cdrom<span class="w"> </span>ubuntu.iso<span class="w"> </span><span class="c1"># ubuntu的iso路径 \</span>
+</pre></div>
 
-## 前情提要
-
-事情是这样的，原先我装了个debian，用掉了所有的空闲空间，文件系统选了btrfs（很有先见之明）。但是因为intel oneapi理论上只适配的ubuntu，在arch和debian上跑会有各种问题。一直以来我都不得不用docker，直到最近才决定和自己和解，装个ubuntu。
-
-但是debian所在的btrfs分区里面有一些很重要的数据，而我现在手边偏偏没有足够空间来备份。综上所述，我只能想办法把ubuntu直接装到一个新的子卷里面。
-
-## 方法
-
-### 在虚拟机里装个ubuntu
-
-先建个`qcow2`映像，之后往里面装ubuntu，不一定要32G，够装系统就行了：
-
-```
-$ qemu-img create -f qcow2 ubuntu.qcow2 32G
-```
-
-然后写个脚本启动qemu，在同一个目录下新建`start.sh`
-
-```bash
-#!/bin/bash
-
-qemu-system-x86_64 \
-    -m 16G # 根据实际情况调整虚拟机内存大小 \
-    -enable-kvm # 开kvm性能显著更好 \
-    -boot uefi \
-    -display gtk,gl=on \
-    -vga qxl \
-    -smp 6 \
-    -cpu host \
-    -boot order=dc \
-    -hda ubuntu.qcow2 \
-    -cdrom ubuntu.iso # ubuntu的iso路径 \
-```
-
-```
-$ chmox +x start.sh
+<div class="highlight"><pre><span></span>$ chmox +x start.sh
 $ ./start.sh
-```
+</pre></div>
 
-然后在里面装好系统。
-
-### 挂载qcow2映像
-
-```
-# qemu-nbd --connect /dev/nbd0 ubuntu.qcow2
+<p>然后在里面装好系统。</p>
+<h3 id="挂载qcow2映像">挂载qcow2映像</h3>
+<div class="highlight"><pre><span></span># qemu-nbd --connect /dev/nbd0 ubuntu.qcow2
 # mount /dev/nbd0p1 /mnt
-```
+</pre></div>
 
-mount前最好用fdisk检查一下是不是`/dev/nbd0p1`。
+<p>mount前最好用fdisk检查一下是不是<code>/dev/nbd0p1</code>。</p>
+<h3
+id="用rsync复制整个系统到子卷里面">用rsync复制整个系统到子卷里面</h3>
+<p>假设目标已经子卷已经挂载到<code>/ubuntu</code>，虚拟机的盘片挂载到了<code>/mnt</code>。</p>
+<div class="highlight"><pre><span></span># rsync -aX --progress --stats /mnt/ /ubuntu/
+</pre></div>
 
-### 用rsync复制整个系统到子卷里面
-
-假设目标已经子卷已经挂载到`/ubuntu`，虚拟机的盘片挂载到了`/mnt`。
-
-```
-# rsync -aX --progress --stats /mnt/ /ubuntu/
-```
-
-注意`/mnt/`不要写成`/mnt`
-
-### 改/etc/fstab和引导
-
-假设ubuntu已经复制到了`/ubuntu`里面。根据个人实际情况自己改`/ubuntu/etc/fstab`，参见[archwiki](https://wiki.archlinux.org/title/Fstab)。
-
-更新grub配置文件，如果os-prober找不到ubuntu，就自己写一条。如果需要自己写，修改或新建`/boot/grub/custom.cfg`，参见[archwiki](https://wiki.archlinux.org/title/GRUB#Dual-booting)。
-
-```
-menuentry 'Ubuntu GNU/Linux' --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-simple-eea47a38-15db-4ba8-a2ec-a35ee9503ed1' {
-	load_video
-	insmod gzio
-	if [ x$grub_platform = xxen ]; then insmod xzio; insmod lzopio; fi
-	insmod part_gpt
-	insmod btrfs
-	search --no-floppy --fs-uuid --set=root eea47a38-15db-4ba8-a2ec-a35ee9503ed1
-	echo	'Loading Ubuntu ...'
-	linux	/@ubuntu/boot/vmlinuz root=UUID=eea47a38-15db-4ba8-a2ec-a35ee9503ed1 ro rootflags=subvol=@ubuntu
-	echo	'Loading initial ramdisk ...'
-	initrd	/@ubuntu/boot/initrd.img
+<p>注意<code>/mnt/</code>不要写成<code>/mnt</code></p>
+<h3 id="改etcfstab和引导">改/etc/fstab和引导</h3>
+<p>假设ubuntu已经复制到了<code>/ubuntu</code>里面。根据个人实际情况自己改<code>/ubuntu/etc/fstab</code>，参见<a
+href="https://wiki.archlinux.org/title/Fstab">archwiki</a>。</p>
+<p>更新grub配置文件，如果os-prober找不到ubuntu，就自己写一条。如果需要自己写，修改或新建<code>/boot/grub/custom.cfg</code>，参见<a
+href="https://wiki.archlinux.org/title/GRUB#Dual-booting">archwiki</a>。</p>
+<div class="highlight"><pre><span></span>menuentry &#39;Ubuntu GNU/Linux&#39; --class ubuntu --class gnu-linux --class gnu --class os $menuentry_id_option &#39;gnulinux-simple-eea47a38-15db-4ba8-a2ec-a35ee9503ed1&#39; {
+    load_video
+    insmod gzio
+    if [ x$grub_platform = xxen ]; then insmod xzio; insmod lzopio; fi
+    insmod part_gpt
+    insmod btrfs
+    search --no-floppy --fs-uuid --set=root eea47a38-15db-4ba8-a2ec-a35ee9503ed1
+    echo    &#39;Loading Ubuntu ...&#39;
+    linux   /@ubuntu/boot/vmlinuz root=UUID=eea47a38-15db-4ba8-a2ec-a35ee9503ed1 ro rootflags=subvol=@ubuntu
+    echo    &#39;Loading initial ramdisk ...&#39;
+    initrd  /@ubuntu/boot/initrd.img
 }
-```
+</pre></div>
 
-不要照抄。有几个地方需要根据实际情况修改。
-
-1. 第7行，`root=`后面的部分改成ubuntu所在的btrfs分区的uuid，可以用`lsblk -o +UUID`来查看
-2. `linux`是指明内核的命令，`vmlinuz`改成具体的内核文件名。`root=`后面修改同上，`subvol=`后面改成实际的子卷名
-3. `initrd`是指明initramfs的命令，后面改成实际initramfs的路径
-
+<p>不要照抄。有几个地方需要根据实际情况修改。</p>
+<ol type="1">
+<li>第7行，<code>root=</code>后面的部分改成ubuntu所在的btrfs分区的uuid，可以用<code>lsblk -o +UUID</code>来查看</li>
+<li><code>linux</code>是指明内核的命令，<code>vmlinuz</code>改成具体的内核文件名。<code>root=</code>后面修改同上，<code>subvol=</code>后面改成实际的子卷名</li>
+<li><code>initrd</code>是指明initramfs的命令，后面改成实际initramfs的路径</li>
+</ol>
 
 </div>
 
