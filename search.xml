@@ -48,6 +48,138 @@
     <page>
         <title>
         
+        C/C++/Rust动态加载动态链接库
+        
+        </title>
+        <url>////nth233.top/notes/动态链接库.html</url>
+        <search-text>
+        
+        
+            C
+        
+            C++
+        
+            Rust
+        
+            lib
+        
+        
+        
+        C使用`dlopen`系统调用，Rust用libloading这个板条箱
+        
+        
+        ## TL;DR
+
+C使用`dlopen`系统调用，Rust用[libloading](https://crates.io/libloading)这个板条箱。dlopen的用法可以看手册（~~RTFM~~)
+```
+man dlopen
+```
+
+## Example of Rust
+
+示例：
+
+```rust
+use std::env;
+use libloading::{Library, Symbol};
+use std::ffi::CString;
+use std::os::raw::c_char;
+
+type AddFunc = unsafe fn(i32, i32) -&gt; i32;
+type MsgFunc = unsafe fn(*const c_char, *mut *mut c_char);
+
+fn main() {
+    let library_path = env::args().nth(1).expect(&quot;USAGE: loading &lt;LIB&gt;&quot;);
+    unsafe {
+        let lib = Library::new(library_path).unwrap();
+        let func: Symbol&lt;AddFunc&gt; = lib.get(b&quot;add&quot;).unwrap();
+        let answer = func(1, 2);
+        println!(&quot;1 + 2 = {}&quot;, answer);
+
+        let func2: Symbol&lt;MsgFunc&gt; = lib.get(b&quot;echo2&quot;).unwrap();
+        let message = CString::new(&quot;helloworld&quot;).unwrap();
+        let mut message2: *mut c_char = 0x0 as *mut c_char;
+        func2(message.as_ptr(), &amp;mut message2);
+        print!(&quot;{} =&gt; {}&quot;, message.to_str().unwrap(), CString::from_raw(message2).to_str().unwrap());
+    }
+}
+```
+
+C代码
+
+```c
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+int add(int a, int b) {
+    return a + b;
+}
+
+void echo(const char* input, char** output) {
+    int len = strlen(input);
+    *output = (char*)malloc(len + 1);
+    for (int i = 0; i &lt; len; i++) {
+        (*output)[i] = input[i] + 1;
+    }
+    (*output)[len] = &#39;\0&#39;;
+}
+
+void echo2(const char* input, char** output) {
+    int len = strlen(input);
+    *output = (char*)malloc(len + 1);
+    for (int i = 0; i &lt; len; i++) {
+        (*output)[i] = toupper(input[i]);
+    }
+    (*output)[len] = &#39;\0&#39;;
+}
+```
+
+把C代码编译成动态链接库，其中`-fPIC`表示位置无关，`-shared`表示动态链接库
+
+```
+gcc -c -fPIC adder.c -o libadder.o
+gcc -shared libadder.o -o libadder2.so
+```
+
+最后运行程序，得到结果如下
+
+```
+1 + 2 = 3
+helloworld =&gt; HELLOWORLD
+```
+
+---
+
+实际上rust代码之间也可以这样动态互调
+
+```
+#[no_mangle]
+pub extern &quot;C&quot; fn add(a: isize, b: isize) -&gt; isize {
+    a + b
+}
+```
+
+编译，`cdynlib`表示使用C ABI的动态链接库
+
+```
+rustc --crate-type cdylib adder.rs
+```
+
+## Ref
+- https://www.michaelfbryan.com/rust-ffi-guide/dynamic_loading.html
+- https://github.com/nagisa/rust_libloading
+- https://man7.org/linux/man-pages/man3/dlopen.3.html
+- https://eli.thegreenplace.net/2012/08/24/plugins-in-c
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         介绍一下去年做的杀戮尖塔mod
         
         </title>
