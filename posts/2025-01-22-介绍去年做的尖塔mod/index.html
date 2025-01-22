@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 介绍一下去年做的杀戮尖塔mod</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="本文主要是记录一下当时卡牌的设计思路，还有制作mod的整个过程，免得以后忘了。">
+        
+
+        
+        <meta name="keywords" content="slay the spire,java,game,尖塔,mod,Tinclad,脆皮战士">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//nth233.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>介绍一下去年做的杀戮尖塔mod</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>介绍一下去年做的杀戮尖塔mod</h1>
+    
+    <div class="date-bar">
+        <span class="date">2025-01-22</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#slay the spire</span>
+    
+        <span class="tag">#java</span>
+    
+        <span class="tag">#game</span>
+    
+        <span class="tag">#尖塔</span>
+    
+        <span class="tag">#mod</span>
+    
+        <span class="tag">#Tinclad</span>
+    
+        <span class="tag">#脆皮战士</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <p>去年七八月份心血来潮，突然想做个<a
+href="https://store.steampowered.com/app/646570?snr=5000_5100__">杀戮尖塔</a>的mod，于是做了一些调查，用了一两个星期<del>粗制滥造</del>把“脆皮战士”做了出来。卡牌的设计大概只用了两三天，然后接下来的一个多星期一张一张逐一实现出来，边做边测。卡图画完之后就放到了创意工坊上面。（和一些打磨很久的mod相比，还是不够匠心）。创意工坊链接如下，感兴趣可以玩一下：</p>
+<blockquote>
+<p><a
+href="https://steamcommunity.com/sharedfiles/filedetails/?id=3306830639">https://steamcommunity.com/sharedfiles/filedetails/?id=3306830639</a></p>
+</blockquote>
+<p>本文主要是记录一下当时卡牌的设计思路，还有制作mod的整个过程，免得以后忘了。</p>
+<h2 id="思路">思路</h2>
+<p>在原版当中，<strong>敏捷、荆棘、多层护甲</strong>这几个power虽然有出现，但是在玩家身上用得很少，即使有，数值也给得很扣。敏捷只有猎人能加，而且只能加2点。荆棘和多层护甲基本上只能靠遗物。</p>
+<h3 id="名字来由">名字来由</h3>
+<p>之所以叫做“脆皮战士”，是因为我本来打算照搬战士的机制，但是用在<strong>敏捷</strong>上面。虽然机制类似展示，但是因为脆皮，所以只能像猎人那样闪躲——脆皮战士。就结果而言，和战士、猎人都不像，所以创意工坊的大图有点欺骗的意味（</p>
+<figure>
+<img src="image.jpg" alt="创意工坊大图" />
+<figcaption aria-hidden="true">创意工坊大图</figcaption>
+</figure>
+<h3 id="以敏捷为核心">以敏捷为核心</h3>
+<p>我本意是以这几个机制为核心，特别是敏捷。原计划把原版用在<strong>力量</strong>上面的设计直接搬到<strong>敏捷</strong>上，<del>就结果而言，根本行不通</del>。稍微给点数值就会破坏整个游戏体验。敏捷稍稍加一点，就能极大提高防御能力，让怪变得没啥威胁；荆棘则相当于每回合稳定加伤，因为尖塔的怪攻击欲望一般都比较强；多层护甲只要超过一个临界值，基本上相当于无敌。所以为了充分利用这些机制，又不破坏游戏体验，<strong>必须引入一些debuff来做平衡。</strong></p>
+<blockquote>
+<p>ps.
+尖塔优先鼓励攻击而不是防御，这样设计是有道理的，如果防御比攻击容易太多，怪物会变得没有威胁，整个游戏会变得十分无聊。</p>
+<p>因此，怪物的血条比玩家的长很多，输出比<del>启动之后</del>的玩家低很多。一场战斗中怪物一般会有一定的成长，玩家必须启动得比怪物快。如果玩家的构筑牌组无法在输出上成长，那么按照原版的数值来说，基本上必死无疑。一局游戏中，玩家牌组的平均输出也得比怪物的数值膨胀快才行，不然迟早倒在某一层。</p>
+</blockquote>
+<p>为了以敏捷为核心，我考虑了这几种debuff：</p>
+<ul>
+<li>输出和运转的成长要牺牲敏捷，比如过牌，加费，加力量，获得残影、缓冲</li>
+<li>临时敏捷</li>
+<li>把单纯的防御牌变少</li>
+<li>牺牲血量换敏捷</li>
+<li>降低基础防御数值，考虑把一部分格挡拆分到下回合</li>
+<li>给敌人叠甲</li>
+<li>敌人意图是攻击是才加敏捷——让加敏捷和叠甲争用有限的费用</li>
+</ul>
+<p>不过测试下来，debuff加太多有点偏弱，所以最后金卡基本上没啥debuff，甚至有过牌和敏捷兼得的牌，初始卡组的基础防御数值也只降了一点点；减少防御牌也不是一个好设计，会大大提高叠甲的方差。所以根本上还是要让敏捷能够转换成输出，因此加了一张失去少量敏捷，但造成敏捷量n倍伤害的牌，实测敏捷和输出的互换不能1:1，1:3~1:5会好一些。</p>
+<p>为了博点上限，自然会有一些翻倍的设计，不过敏捷翻n倍似乎意义不大，线性增加一般就足够了。所以翻倍主要靠增加叠甲频率，少量多次，相当于叠甲翻倍。另外就是敏捷翻倍换力量。敏捷直接翻倍的牌是有的，但是只给临时敏捷。<strong>纯敏捷流</strong>是可行的，但是启动需要关键牌，比如有一张烧牌拿敏捷的牌。</p>
+<p>卡牌列表可以参考<a
+href="https://docs.qq.com/sheet/DUmVveGJUTUJOZ3hE?tab=BB08J2">这个腾讯文档</a>，但是以实际代码为准。</p>
+<h3 id="荆棘缠绕击晕">荆棘，缠绕，击晕</h3>
+<p>荆棘的数值很难调整。不过脆皮战士本来就是输出低、防御高，引入荆棘也算是一种补强。因为机制太粗暴了，怎么砍数值都没啥用，而且加上尖塔的怪攻击欲望都比较高，<strong>荆棘流</strong>可能是目前最容易赢的策略了。有一张将荆棘翻倍的牌，加快叠荆棘的速度，可能是上限最高的牌之一。</p>
+<p>我本以为缠绕会比原版就有的中毒强，但实测下来，即使加上了一些翻倍的机制，还是不强。根本原因在于缠绕的结算时间——怪物回合结束时结算，所以很多情况下，用中毒可以斩杀，但用缠绕不能。<strong>缠绕流</strong>可玩，但是不强。所以我把缠绕和击晕挂钩了起来，多给缠绕一点奖励。</p>
+<p>还有一张牌可以给敌人加力量，但是击晕一回合。不过击晕没法形成流派。</p>
+<h3 id="无限">无限？</h3>
+<p>无限和翻倍一样，是比较危险的设计。但是为了博一下上限，整个牌组还是有无限的可能性，只要集齐几张关键牌就行了。只要玩家构筑目的足够明确，无限是比较容易的，但至于的启动快慢，就要看运气了。</p>
+<p>“脆皮战士”的无限和<strong>消耗</strong>这个机制挂钩，消耗-回忆-消耗这个循环，是无限的核心。<strong>回忆</strong>类似战士的<strong>发掘</strong>，但发掘不能发掘发掘，回忆可以回忆回忆。升级后的回忆可以一次回忆两张牌，所以只要有两张回忆，就能无限。下一节“特殊机制”里面会提到，拿到回忆的手段是相对丰富的，不一定非要在牌组里有回忆这张牌。</p>
+<p>所以与其说是无限，不如说是<strong>消耗流</strong>。有了双无限之后，问题只剩下怎么早点把牌都烧掉，并且稳定地变出费用来。</p>
+<p>还有一种以来敌人意图的伪无限。敌人意图不是击晕的时候，<strong>良机</strong>这张牌可以用于过牌，如果牌组足够小，有两张良机，并且有0费牌或者费用魔术，就能无限。</p>
+<h3 id="特殊机制">特殊机制</h3>
+<p>为了让角色更特别一些，加入了一个找回童年记忆的设定。<strong>追忆</strong>这张牌会往消耗堆中加入一张诅咒牌（<strong>往事</strong>），只要把往事从消耗堆回忆出来，就会加入牌组。往事被移除出牌组的时候，可以获得特殊遗物——一定程度上算是质变。<strong>反省</strong>会往消耗堆当中加入一张<strong>平凡形态</strong>。消耗堆中的牌没有那么容易获得，即使获得了里面的牌，要打出费用还是很高，所以这种玩法有一定的门槛。</p>
+<p><strong>平凡形态</strong>是一张形态牌，效果是获得很多层人工制品。对于脆皮战士来说，很多层人工制品是可以完全改变玩法的。前面提到，为了平衡掉敏捷带来的大量防御能力，很多牌都有副作用，一旦打出平凡形态，副作用就没了，极大提高强度。</p>
+<p><strong>匆忙打击</strong>在打出之后会随机消耗两张牌，此外，<em>它的基础伤害会更新为上一次实际造成的伤害</em>+一个小随机数。因此更新基础伤害这个机制，使得它可以自成一个流派。</p>
+<p>还有一个隐藏流派，需要特殊事件才能解锁（所以请多走问号房间）。</p>
+<blockquote>
+<p>大致思路就这些，感谢你看到这里，<del>快去<a
+href="https://steamcommunity.com/sharedfiles/filedetails/?id=3306830639">创意工坊</a>订阅</del></p>
+</blockquote>
+<h2 id="如何开始写mod">如何开始写mod</h2>
+<blockquote>
+<p>这部分主要参见<a
+href="https://github.com/Alchyr/BasicMod/wiki">BasicMod</a>。</p>
+</blockquote>
+<p>尖塔的mod全部都要依赖ModTheSpire才能运作，原理大概是给尖塔打patch。直接从ModTheSpire上手显然太难了，所以有了<a
+href="https://github.com/daviscook477/BaseMod">BaseMod</a>，提供了一个比较友好的接口，比如说要自定义卡牌，直接继承<code>CustomCard</code>然后开始写代码就行了。不过BaseMod的文档还是不够友好，好在<a
+href="https://github.com/Alchyr/BasicMod">BasicMod</a>出现了，可以理解为BaseMod的使用示例，加上step
+by step的文档，对我这种Java苦手友好多了。</p>
+<p>很多mod都会引入StsLib这个依赖。StsLib源自著名mod“崩坠”❲downfall❳，里面包括了一些常用的效果——有效避免了每个modder都重复造一些轮子。</p>
+<h3 id="准备好basicmod">准备好BasicMod</h3>
+<p>把BasicMod的源码整个搞下来，参照<a
+href="https://github.com/Alchyr/BasicMod/wiki">它的wiki</a>改改<code>pom.xml</code>。基本上没有什么坑，这里没有必要再把wiki抄一遍。</p>
+<h3 id="参考尖塔和其他mod的源码">参考尖塔和其他mod的源码</h3>
+<p>尖塔的源码非常重要，很多东西的实现需要自己去源码里面看<del>，然后你就会发现一堆奇葩实现</del>。看完之后可以直接抄来用。</p>
+<p>卡牌主要有几个要点，Attack、Defense和一个Magic
+Number。Attack和Defense都有对应的Base Attack、Base
+Defense，对应没有任何加成的版本。所有其他可变动的数值一般都要放在Magic
+Number里面实现。——尖塔描述学第一定律，一张牌至多只有三个数可以变。</p>
+<p>BasicMod里面只有英文的示例，如果要多语言本地化，需要在localization文件夹下面新增语言。以简体中文（<code>zhs</code>）为例，在<code>localization</code>下面新建<code>zhs</code>文件夹，然后把英文<code>eng</code>下面的那些<code>*String.json</code>全部复制进来，一个一个改。游戏中会把关键字自动标黄，如果需要自己加关键字，改<code>Keywords.json</code>，比如：</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;ID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Chained&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;PROPER_NAME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;连锁&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;NAMES&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&quot;连锁&quot;</span><span class="w"> </span><span class="p">],</span>
+<span class="w">  </span><span class="nt">&quot;DESCRIPTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;若攻击伤害未造成生命值减少，则再造成一次攻击伤害。连锁n表示至多触发n次。&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>只要卡牌中出现“连锁”这个词，就会被标黄。一个关键词可以有多个NAME，但ID必须唯一。所有ID前面都会自动加上<code>${modID}:</code>，也就是你的modID加上冒号，所以在卡牌描述里也必须得加上：</p>
+<div class="highlight"><pre><span></span><span class="nt">&quot;${modID}:Test&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;NAME&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;试探&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;DESCRIPTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;造成 !D! 点伤害 NL modbynth233:连锁 3， 若未触发连锁，获得一张 modbynth233:良机&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;UPGRADE_DESCRIPTION&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;造成 !D! 点伤害 NL modbynth233:连锁 3， 若未触发连锁，获得一张 modbynth233:良机+&quot;</span>
+<span class="p">}</span>
+</pre></div>
+
+<h3 id="发布到创意工坊">发布到创意工坊</h3>
+<p>到尖塔的安装目录下面，如果是Linux用Steam安装的，一般在：</p>
+<div class="highlight"><pre><span></span>~/.local/share/Steam/steamapps/common/SlayTheSpire
+</pre></div>
+
+<p>里面会有个<code>mod-uploader.jar</code>文件。执行下面的命令会新建一个叫<code>my-mod</code>的文件夹（可以自己换成别的名字）</p>
+<div class="highlight"><pre><span></span>java -jar mod-uploader.jar new -w my-mod
+</pre></div>
+
+<p>文件夹里有个<code>README.md</code>告诉你接下来该怎么做。改改<code>config.json</code>，把编译好的jar包放到contents里，换掉<code>image.jpg</code>，最后大概像这样：</p>
+<div class="highlight"><pre><span></span>my-mod
+├── config.json
+├── content
+│   └── modByNth233.jar
+├── image.jpg
+└── README.md
+</pre></div>
+
+<p>最后执行：</p>
+<div class="highlight"><pre><span></span>java -jar mod-uploader.jar upload -w my-mod
+</pre></div>
+
+<p>就能把mod发布到Steam创意工坊上。
+以我的为例，<code>config.json</code>大概长这样：</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;steamPublishedID&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;xxxxxxxxxx&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Tinclad 脆皮战士&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;请先安装 Dependency: BaseMod, StsLib, ModTheSpire \n A Character which plays with Dexterity, Thorn, Constricted and other mechanisms uncommon in the base game. \n 一个以敏捷为核心的简单角色，尽可能保持机制和数值极简。把原版比较少用的机制发挥了一下（比如荆棘、缠绕、缓慢）。 \n Github：https://github.com/fpg2012/modByNth233&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;visibility&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;public&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;changeNote&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;[2024-08-18] Fix bugs: \n - Net+ do not exhaust itself\n - Dispose, Recall, FlashBack crash the game due to mistakes in my English translation JSON files&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="s2">&quot;Character&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;English&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;Simplified Chinese&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>往<code>tags</code>当中加入对应的语言，才会使你的mod显示在对应语言的分区里面。</p>
+<h2 id="吐槽">吐槽</h2>
+<p>我很不喜欢BaseMod组织卡牌贴图的方式，一张卡牌一个图片文件，非常琐碎。所以尝试自己写，试图直接加载整个atlas。虽然可能粗看可能看不出什么问题，但是bug很多。</p>
+<p>附，朋友写的一点文案：</p>
+<blockquote>
+<p>这塔里想要活下去，就要不断的战斗。但是，你的力量太弱小了，唯有追求更快的速度，躲避怪物的攻击，找准间隙还击，一点一点蚕食对方，才有赢的可能。记住，在这里，战斗只为了生存，任何超出这条界线的想法，都只会让你再经历一遍「那种痛苦」。</p>
+<p>「那你为什么有时候宁愿挨怪物一击，也要攻击它们呢？」</p>
+<p>「那是因为我的血脉法术。我能燃烧血液来快速治疗伤口，你学不来——</p>
+<p>「受了伤，你的行动就会渐渐迟缓，然后再被击伤，最终“死掉”。」</p>
+<p>说完，面具男拔出刀竖立在面前，把刀面当做镜子一动不动地端详着自己脸上的面具，他的目光闪烁着。他的名字，他的脸，还有他此时此刻的想法，都埋葬在了这冰冷的，早已失去光泽的金属面具后面。他的一切，早就在那一天全都卖给了那个恶魔，甚至被尼奥复活的痛苦，不知道何时起也无法撼动他麻木的心，如果，自己胸口跳动的，还是心脏的话。</p>
+<p>如今，唯一能让他还感觉自己活着的，只剩下身旁的少年了。</p>
+</blockquote>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2024-07-25-使用Intel Arc A770进行AI翻唱（训练篇）/index.html">使用Intel A...</a></div>
+        <div class="sibling-page-date">2024-07-25</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2024-07-25-使用Intel Arc A770进行AI翻唱（训练篇）/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async>
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//nth233.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2025 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
