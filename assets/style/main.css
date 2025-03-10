@@ -857,6 +857,11 @@ span.comment-area-power-by {
 	align-items: center;
 }
 
+#footnotes {
+	font-size: 0.8rem;
+	line-height: 0.8rem;
+}
+
 @media (max-width:1300px) {
   .right-side-bar, .left-side-bar, hr.frontmatter-hr {
     display: none;
