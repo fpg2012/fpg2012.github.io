@@ -9,7 +9,7 @@ layout: post
 ---
 ## 0 诡异的退格键
 
-最近在用glfw和dear imgui写一个简单的deepseek[客户端](https://github.com/fpg2012/ds-cpp)，又遇到了“喜闻乐见”的输入法问题。最令人恼火的就是退格键不能被正确处理的问题。就像下面这个视频展示的，在输入预编辑的时候，按下退格键不仅会删除预编辑的内容，还会导致已经输入的内容被删掉，输入体验稀烂。
+最近在用glfw和dear imgui写一个简单的deepseek[客户端](https://github.com/fpg2012/ds-cpp)，又遇到了“喜闻乐见”的输入法问题。最令人恼火的就是退格键不能被正确处理。就像下面这个视频展示的，预编辑的时候，按下退格键不仅会删除预编辑的内容，还会删除已经输入的内容，体验稀烂。
 
 <div style="width: 100; display: flex; justify-content: center">
 <video controls width="400">
@@ -38,7 +38,7 @@ layout: post
 
 ### 给glfw打补丁
 
-GLFW处理XIM协议[^xim]的方法不太正确，有些键盘事件没有被正确过滤掉（比如输入时的退格键）。下载这个[补丁](https://github.com/fpg2012/ds-cpp/blob/main/glfw_x11_ime.patch)，然后用`patch`命令打到glfw 3.4的源代码里面去。这个补丁修改的东西其实很简单，就是如果事件被过滤掉，就无视这个事件。类似的解决方案其实在MC的那个bug report里面就有人给出了，不知道为什么glfw到现在还是没有改正过来。
+GLFW处理XIM协议[^xim]的方法不太正确，没有正确过滤掉部分键盘事件（比如输入时的退格键）。下载这个[补丁](https://github.com/fpg2012/ds-cpp/blob/main/glfw_x11_ime.patch)，用`patch`命令打到glfw 3.4的源代码上。这个补丁的改动很小，就是让glfw无视被过滤掉的事件。类似的解决方案早有人在MC的bug report里给出，不知为何glfw至今未改正。
 
 ```
 @@ -1242,6 +1245,9 @@ static void processEvent(XEvent *event)
@@ -55,11 +55,13 @@ GLFW处理XIM协议[^xim]的方法不太正确，有些键盘事件没有被正�
 
 ## 2 Linux混乱不堪的输入法
 
-Linux下输入法问题这么多，很大程度是因为没有一个稳定、统一的协议，而且主要开发者里面中国人和日本人不多，因此对这个问题不是很重视。最早X11制定了一个XIM协议，用于和输入法通信。Tedyin的博客[^tedyin]给出了一个很好的例子解释XIM协议。XIM协议看起来简洁明了，而且也能work，但据说在特定条件下会导致程序卡死[^css_xim]。我是没搞懂为什么这个问题不能通过更新XIM协议而来解决，总之后来GTK和Qt分别开发了自己的IM Module，从此天下大乱，装个输入法都要配一堆莫名其妙的环境变量。而GLFW既不是GTK，也不是Qt，就更麻烦。在输入法协议上层，为了方便输入法开发，又出现了ibus和fcitx。ibus据说在非GNOME环境下表现不佳（但是我没查到具体的问题），GNOME下的拼音输入也有不少bug[^ibus_ubuntu]。社区持续的推广下，现在国人最常用是fcitx。
+Linux下输入法问题繁多，很大程度是因为缺少稳定、统一的协议。其次，主要开发者中，中国人和日本人少，大部分开发者不用输入法，对这个问题不太重视。最早X11制定了XIM协议，Tedyin的博客[^tedyin]给出了一个很好的例子解释这个协议，建议阅读。XIM协议看起来简洁明了，而且也能用，但据说在特定条件下会导致程序卡死[^css_xim]。社区后来不知出于什么原因，没有进一步改进XIM协议，而是由GTK和Qt分别开发自己的IM Module——从此天下大乱，装个输入法都要手动配几个莫名其妙的环境变量。GLFW既不是GTK，也不是Qt，就更麻烦。
 
-Wayland的出现非但没有缓解输入法，反而把这个问题进一步恶化了。上Arch中文论坛搜“Wayland+输入法”，能搜出来一整页的帖子。Wayland自己另起炉灶，搞了v1-v4一系列协议[^css_wayland]，compositor的兼容情况各不相同。应用开发者通常也不会把IME支持放在比较优先的位置，就导致过渡阶段💩一样的体验。
+再后来，为了方便输入法开发，又出现了ibus和fcitx。ibus据说在非GNOME环境下表现不佳（但是我没查到具体的问题），且其GNOME下的拼音输入也有不少bug[^ibus_ubuntu]。在国内社区持续的推广下，现在fcitx是中文输入的主流。
 
-总之，在2025年的今天，Linux的输入法问题成了最混乱、最糟糕、最劝退的问题之一。主要开发者长期忽视IME的支持，社区不断分裂，造新的轮子，导致新的问题。就结果而言，现在哪怕是处理一个很常见的输入法问题，都需要很多无关的知识——Linux的输入法不应该这么复杂，本来应该和Windows一样简单才对。
+与此同时，Wayland正在逐步取代X11。很遗憾的是，Wayland的出现非但没有缓解输入法问题，反而将其进一步恶化了。Wayland自己另起炉灶，搞了v1-v4一系列协议[^css_wayland]，具体兼容情况各不相同。应用开发者的反应没有协议更新的速度快，通常也不会把IME支持放在比较优先的位置，就导致过渡阶段💩一样的体验。
+
+总之，在2025年的今天，Linux的输入法问题成了最混乱、最糟糕、最劝退的问题之一，上Arch中文论坛搜“Wayland+输入法”，能搜出来一整页的帖子。主要开发者长期忽视IME，造成社区不断分裂、造新的轮子，旧的问题刚刚解决，新的问题又产生了。就结果而言，如今哪怕是处理一个很常见的输入法问题，都需要很多无关的底层知识。**Linux的输入法完全不应该这么复杂**，本来应该和Windows一样简单才对。
 
 [^mcbug]: [MC-258708 Deleting candidate CJK words in IME also deletes text already entered](https://report.bugs.mojang.com/servicedesk/customer/portal/2/MC-258708)
 [^xim]: [XIM协议](https://www.x.org/releases/X11R7.6/doc/libX11/specs/XIM/xim.html)
