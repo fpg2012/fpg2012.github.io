@@ -3,7 +3,7 @@
 <html>
     <head>
         
-        <title>Empty Space - 论有线网络的重要性</title>
+        <title>Empty Space - GLFW输入法的退格问题——Linux混乱不堪的输入法生态</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
@@ -13,7 +13,7 @@
         
 
         
-        <meta name="keywords" content="233,破事水,网络">
+        <meta name="keywords" content="glfw,输入法,imgui,linux,xim,x_input_method,x11,IME,CJK">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -79,29 +79,41 @@
 </div>
 
 <div class='right-side-bar post-menu'>
-    <div class='menu-title'>论有线网络的重要性</div>
+    <div class='menu-title'>GLFW输入法的退格问题——Linux混乱不堪的输入法生态</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>论有线网络的重要性</h1>
+    <h1>GLFW输入法的退格问题——Linux混乱不堪的输入法生态</h1>
     
     <div class="date-bar">
-        <span class="date">2022-07-08</span>
+        <span class="date">2025-03-10</span>
     </div>
     <div class="category-bar">
     
-        <span class="category">〔233〕</span>
+        <span class="category">〔dev〕</span>
     
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#233</span>
+        <span class="tag">#glfw</span>
     
-        <span class="tag">#破事水</span>
+        <span class="tag">#输入法</span>
     
-        <span class="tag">#网络</span>
+        <span class="tag">#imgui</span>
+    
+        <span class="tag">#linux</span>
+    
+        <span class="tag">#xim</span>
+    
+        <span class="tag">#x_input_method</span>
+    
+        <span class="tag">#x11</span>
+    
+        <span class="tag">#IME</span>
+    
+        <span class="tag">#CJK</span>
     
     </div>
 </div>
@@ -131,9 +143,88 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    <p>在这个遍地都是WiFi信号的时代，在家里面拉网线似乎显得有点多次一举。原本我也是这样想的，直到暑假回家，被居民区拥挤不堪的WiFi信号搞得脾气暴躁。</p>
-<p>虽然我的房间离路由器有点远，但是肯定在信号覆盖范围以内。理论上是这样，但实际用起来网络就是非常不稳定，时有时无，时而慢，时而非常慢。大概是因为邻居的路由器离我的房间太近了，而且这附近肯定家家都有路由器，信道的争抢显得尤为严重。而且我家路由器功率比不过隔壁，也只支持2.4GHz的频段，在军备竞赛中处于绝对的下风。我不想卷入军备竞赛，因此才决定花几块钱，拉一条丑陋不堪的网线到房间里面。</p>
-<p>果然效果立竿见影，仅仅改变连网方式，现在Arch更新系统的速度比原先快了5倍不止，一劳永逸（应该）地解决了无线网络不稳定的问题。电脑连网还是能有线尽量有线为好。</p>
+    <h2 id="诡异的退格键">0 诡异的退格键</h2>
+<p>最近在用glfw和dear imgui写一个简单的deepseek<a
+href="https://github.com/fpg2012/ds-cpp">客户端</a>，又遇到了“喜闻乐见”的输入法问题。最令人恼火的就是退格键不能被正确处理的问题。就像下面这个视频展示的，在输入预编辑的时候，按下退格键不仅会删除预编辑的内容，还会导致已经输入的内容被删掉，输入体验稀烂。</p>
+<div style="width: 100; display: flex; justify-content: center">
+<video controls width="400">
+<source src="输入法问题.webm" type="video/webm" />
+Download the <a href="输入法问题.webm">webm</a>
+</video>
+</div>
+<blockquote>
+<p>在Linux版本的Minecraft上也会有这样的问题，问题的根源同样是glfw<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>。</p>
+</blockquote>
+<p>另外，在Wayland下，因为没有实现wayland的输入法协议，glfw直接用不了输入法。</p>
+<h2 id="临时解决办法">1 临时解决办法</h2>
+<h3 id="强制使用x11">强制使用X11</h3>
+<p>目前Wayland下面的输入法问题可以说是一团糟，一切都处于过渡状态。解决输入法用不了的最好办法，就是不要用Wayland。在glfwInit()之前，强制glfw选定X11平台。</p>
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __linux__</span>
+<span class="w">    </span><span class="n">glfwInitHint</span><span class="p">(</span><span class="n">GLFW_PLATFORM</span><span class="p">,</span><span class="w"> </span><span class="n">GLFW_PLATFORM_X11</span><span class="p">);</span>
+<span class="cp">#endif</span>
+</pre></div>
+
+<h3 id="给glfw打补丁">给glfw打补丁</h3>
+<p>GLFW处理XIM协议<a href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>的方法不太正确，有些键盘事件没有被正确过滤掉（比如输入时的退格键）。下载这个<a
+href="https://github.com/fpg2012/ds-cpp/blob/main/glfw_x11_ime.patch">补丁</a>，然后用<code>patch</code>命令打到glfw
+3.4的源代码里面去。这个补丁修改的东西其实很简单，就是如果事件被过滤掉，就无视这个事件。类似的解决方案其实在MC的那个bug
+report里面就有人给出了，不知道为什么glfw到现在还是没有改正过来。</p>
+<div class="highlight"><pre><span></span>@@ -1242,6 +1245,9 @@ static void processEvent(XEvent *event)
+ 
+         case KeyPress:
+         {
++            if (filtered) {
++                return;
++            }
+             const int key = translateKey(keycode);
+             const int mods = translateState(event-&gt;xkey.state);
+             const int plain = !(mods &amp; (GLFW_MOD_CONTROL | GLFW_MOD_ALT));
+</pre></div>
+
+<h2 id="linux混乱不堪的输入法">2 Linux混乱不堪的输入法</h2>
+<p>Linux下输入法问题这么多，很大程度是因为没有一个稳定、统一的协议，而且主要开发者里面中国人和日本人不多，因此对这个问题不是很重视。最早X11制定了一个XIM协议，用于和输入法通信。Tedyin的博客<a
+href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>给出了一个很好的例子解释XIM协议。XIM协议看起来简洁明了，而且也能work，但据说在特定条件下会导致程序卡死<a
+href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>。我是没搞懂为什么这个问题不能通过更新XIM协议而来解决，总之后来GTK和Qt分别开发了自己的IM
+Module，从此天下大乱，装个输入法都要配一堆莫名其妙的环境变量。而GLFW既不是GTK，也不是Qt，就更麻烦。在输入法协议上层，为了方便输入法开发，又出现了ibus和fcitx。ibus据说在非GNOME环境下表现不佳（但是我没查到具体的问题），GNOME下的拼音输入也有不少bug<a
+href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>。社区持续的推广下，现在国人最常用是fcitx。</p>
+<p>Wayland的出现非但没有缓解输入法，反而把这个问题进一步恶化了。上Arch中文论坛搜“Wayland+输入法”，能搜出来一整页的帖子。Wayland自己另起炉灶，搞了v1-v4一系列协议<a
+href="#fn6" class="footnote-ref" id="fnref6"
+role="doc-noteref"><sup>6</sup></a>，compositor的兼容情况各不相同。应用开发者通常也不会把IME支持放在比较优先的位置，就导致过渡阶段💩一样的体验。</p>
+<p>总之，在2025年的今天，Linux的输入法问题成了最混乱、最糟糕、最劝退的问题之一。主要开发者长期忽视IME的支持，社区不断分裂，造新的轮子，导致新的问题。就结果而言，现在哪怕是处理一个很常见的输入法问题，都需要很多无关的知识——Linux的输入法不应该这么复杂，本来应该和Windows一样简单才对。</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a
+href="https://report.bugs.mojang.com/servicedesk/customer/portal/2/MC-258708">MC-258708
+Deleting candidate CJK words in IME also deletes text already
+entered</a><a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a
+href="https://www.x.org/releases/X11R7.6/doc/libX11/specs/XIM/xim.html">XIM协议</a><a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a
+href="https://tedyin.com/posts/a-brief-intro-to-linux-input-method-framework/">Tedyin
+- A Brief Intro to Input Method Framework, Linux IME, and XIM</a><a
+href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a
+href="https://www.csslayer.info/wordpress/tag/xim/">csslayer关于XIM的议论</a><a
+href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a
+href="https://forum.ubuntu.org.cn/viewtopic.php?t=460613">早年ubuntu论坛上的讨论</a><a
+href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a
+href="https://www.csslayer.info/wordpress/fcitx-dev/chrome-state-of-input-method-on-wayland/">csslayer
+- Chrome/Chromium 今日 Wayland 输入法支持现状</a><a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
 
 </div>
 
@@ -159,10 +250,10 @@
     
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/n233/2022-07-04-sushi新版本发布.html">sushi-gen...</a></div>
-        <div class="sibling-page-date">2022-07-04</div>
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2025-01-22-介绍去年做的尖塔mod/index.html">介绍一下去年做的杀...</a></div>
+        <div class="sibling-page-date">2025-01-22</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/n233/2022-07-04-sushi新版本发布.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2025-01-22-介绍去年做的尖塔mod/index.html">〉</a></div>
     
 </div>
 

@@ -15,10 +15,48 @@
     
     
     
-    <pubDate>Wed, 22 Jan 2025 14:06:17 GMT</pubDate>
-    <lastBuildDate>Wed, 22 Jan 2025 14:06:17 GMT</lastBuildDate>
+    <pubDate>Mon, 10 Mar 2025 04:48:11 GMT</pubDate>
+    <lastBuildDate>Mon, 10 Mar 2025 04:48:11 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>GLFW输入法的退格问题——Linux混乱不堪的输入法生态</title>
+      <link>https://nth233.top/posts/2025-03-10-glfw输入法问题的临时解决办法/index.html</link>
+      
+      <description></description>
+      
+      <pubDate>2025-03-10</pubDate>
+      <guid>10795948631026944366</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>glfw</category>
+        
+          <category>输入法</category>
+        
+          <category>imgui</category>
+        
+          <category>linux</category>
+        
+          <category>xim</category>
+        
+          <category>x_input_method</category>
+        
+          <category>x11</category>
+        
+          <category>IME</category>
+        
+          <category>CJK</category>
+        
+      
+    </item>
     
     
     
