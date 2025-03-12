@@ -378,13 +378,25 @@ href="https://www.merriam-webster.com/dictionary/let">所有关于let的词组</
 
 
     <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
 <script src="https://utteranc.es/client.js"
         repo="fpg2012/fpg2012.github.io"
         issue-term="pathname"
         label="Comment"
         theme="preferred-color-scheme"
         crossorigin="anonymous"
-        async>
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
 </script>
 </div>
 
