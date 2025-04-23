@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>tmux使用速查表</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<h1 id="tmux使用速查表">tmux使用速查表</h1>
+<h3 id="会话管理"><strong>1. 会话管理</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令/快捷键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tmux</code></td>
+<td>启动新会话</td>
+</tr>
+<tr>
+<td><code>tmux new -s &lt;name&gt;</code></td>
+<td>创建命名会话（<code>&lt;name&gt;</code>为会话名）</td>
+</tr>
+<tr>
+<td><code>tmux ls</code></td>
+<td>列出所有会话</td>
+</tr>
+<tr>
+<td><code>tmux attach -t &lt;name&gt;</code></td>
+<td>附加到指定会话</td>
+</tr>
+<tr>
+<td><code>tmux kill-session -t &lt;name&gt;</code></td>
+<td>终止指定会话</td>
+</tr>
+<tr>
+<td><code>tmux kill-server</code></td>
+<td>终止所有会话</td>
+</tr>
+<tr>
+<td><code>Ctrl+b d</code></td>
+<td><strong>分离当前会话</strong>（后台运行）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="窗口操作"><strong>2. 窗口操作</strong></h3>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+b c</code></td>
+<td>创建新窗口</td>
+</tr>
+<tr>
+<td><code>Ctrl+b &amp;</code></td>
+<td>关闭当前窗口</td>
+</tr>
+<tr>
+<td><code>Ctrl+b p</code></td>
+<td>切换到上一个窗口</td>
+</tr>
+<tr>
+<td><code>Ctrl+b n</code></td>
+<td>切换到下一个窗口</td>
+</tr>
+<tr>
+<td><code>Ctrl+b &lt;number&gt;</code></td>
+<td>切换到指定编号窗口（如 <code>0-9</code>）</td>
+</tr>
+<tr>
+<td><code>Ctrl+b ,</code></td>
+<td>重命名当前窗口</td>
+</tr>
+<tr>
+<td><code>Ctrl+b w</code></td>
+<td>列出所有窗口（可视化选择）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="面板pane操作"><strong>3. 面板（Pane）操作</strong></h3>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+b %</code></td>
+<td><strong>垂直分割面板</strong>（左右布局）</td>
+</tr>
+<tr>
+<td><code>Ctrl+b "</code></td>
+<td><strong>水平分割面板</strong>（上下布局）</td>
+</tr>
+<tr>
+<td><code>Ctrl+b &lt;arrow&gt;</code></td>
+<td>切换到指定方向的面板</td>
+</tr>
+<tr>
+<td><code>Ctrl+b x</code></td>
+<td>关闭当前面板</td>
+</tr>
+<tr>
+<td><code>Ctrl+b z</code></td>
+<td>最大化/恢复当前面板</td>
+</tr>
+<tr>
+<td><code>Ctrl+b Ctrl+&lt;arrow&gt;</code></td>
+<td>调整面板大小（按住<code>Ctrl</code>）</td>
+</tr>
+<tr>
+<td><code>Ctrl+b Space</code></td>
+<td>切换面板布局</td>
+</tr>
+<tr>
+<td><code>Ctrl+b !</code></td>
+<td>将面板拆分为新窗口</td>
+</tr>
+</tbody>
+</table>
+<h3 id="复制模式类似vim"><strong>4. 复制模式（类似vim）</strong></h3>
+<table>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+b [</code></td>
+<td>进入复制模式</td>
+</tr>
+<tr>
+<td><code>Ctrl+Space</code></td>
+<td>开始选择文本</td>
+</tr>
+<tr>
+<td><code>Enter</code></td>
+<td>复制选中的文本</td>
+</tr>
+<tr>
+<td><code>Ctrl+b ]</code></td>
+<td>粘贴已复制的文本</td>
+</tr>
+<tr>
+<td><code>/</code> 或 <code>?</code></td>
+<td>在复制模式中搜索（支持正则）</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="其他实用操作"><strong>5. 其他实用操作</strong></h3>
+<table>
+<colgroup>
+<col style="width: 48%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr>
+<th>快捷键</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ctrl+b ?</code></td>
+<td>查看所有快捷键帮助</td>
+</tr>
+<tr>
+<td><code>Ctrl+b :</code></td>
+<td>进入命令模式（输入tmux命令）</td>
+</tr>
+<tr>
+<td><code>Ctrl+b t</code></td>
+<td>显示时间</td>
+</tr>
+<tr>
+<td><code>Ctrl+b r</code></td>
+<td>重新加载tmux配置（需先修改<code>~/.tmux.conf</code>）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="配置文件.tmux.conf示例"><strong>6.
+配置文件（~/.tmux.conf）示例</strong></h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置前缀键为Ctrl+a（默认是Ctrl+b）</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> prefix C-a</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">unbind</span> C-b</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="bu">bind</span> C-a send-prefix</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 启用鼠标支持（滚动、选择面板等）</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> mouse on</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置面板分割快捷键更直观</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">bind</span> <span class="kw">|</span> <span class="ex">split-window</span> <span class="at">-h</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">bind</span> <span class="at">-</span> split-window <span class="at">-v</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 启用256色支持</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> default-terminal <span class="st">&quot;screen-256color&quot;</span></span></code></pre></div>
+<ul class="incremental">
+<li>所有快捷键基于默认前缀键
+<strong><code>Ctrl+b</code></strong>（先按<code>Ctrl+b</code>，再按后续键）。</li>
+<li>修改配置后需重启tmux或执行
+<code>tmux source-file ~/.tmux.conf</code>。</li>
+</ul>
+</body>
+</html>
