@@ -51,51 +51,6 @@
     <page>
         <title>
         
-        在Linux用Proton运行展翅翱翔（Wingspan）
-        
-        </title>
-        <url>////nth233.top/notes/2025-04-20-wingspan_linux.html</url>
-        <search-text>
-        
-        
-            Linux
-        
-            gaming
-        
-            proton
-        
-            wingspan
-        
-        
-        
-        
-        
-        
-        
-一直以来我都没法在Linux运行Wingspan，一打开就闪退。直到今天才找到一个能用的解决方法
-
-在“库”里面右键游戏，选“属性”，然后设置命令行参数
-
-```
-PROTON_USE_WINED3D=1 %command%
-```
-
-就能用了。
-
-## Reference
-
-解决方法来自[Steam社区的这个帖子](https://steamcommunity.com/app/221410/discussions/8/3106891514117624752/)。这个帖子2021年就存在了，不知道为什么我以前一直没有找到。
-
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
         2025-04阅读笔记
         
         </title>
@@ -115,7 +70,7 @@ PROTON_USE_WINED3D=1 %command%
 
 起初并不知道这是卡夫卡未完成的作品，我只看了开头就决定要看下去。
 
-我缺少有关荒诞小说的知识，也没有多少深刻的简介，只是把它当作一般的小说在看，因此反倒觉得里面的内容是比较现实的。
+我缺少有关荒诞小说的知识，对其也没有多少深刻的见解，只是把它当作一般的小说在看，因此反倒觉得里面的内容是比较现实的。
 
 K出于读者不知道的原因来到城堡。城堡不仅是个建筑，还表现得像是一个巨大、混乱、复杂、权威的官僚机器。卡夫卡似乎是把官僚机构的特点推到了极致——决策自相矛盾，内部权责不明，人员冗杂，手续繁复。城堡外的农民作为底层人员，从未去过城堡，依靠幻想与猜测在和城堡打交道，却也都害怕城堡，受到城堡的摆布。
 
@@ -192,6 +147,51 @@ K则是一个外来的破局者，自称是受聘为土地测量员（实际上�
 ## ave mujica
 
 三月份开始看的，一天时间把全集看完了，还写了个[剧情的猜测](https://nth233.top/misc/misumi)（没错，看番主要是为了解谜，如果是纯少女乐队番，我根本都不会点开）。不得不承认在这上面浪费了太多时间去找线索。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        在Linux用Proton运行展翅翱翔（Wingspan）
+        
+        </title>
+        <url>////nth233.top/notes/2025-04-20-wingspan_linux.html</url>
+        <search-text>
+        
+        
+            Linux
+        
+            gaming
+        
+            proton
+        
+            wingspan
+        
+        
+        
+        
+        
+        
+        
+一直以来我都没法在Linux运行Wingspan，一打开就闪退。直到今天才找到一个能用的解决方法
+
+在“库”里面右键游戏，选“属性”，然后设置命令行参数
+
+```
+PROTON_USE_WINED3D=1 %command%
+```
+
+就能用了。
+
+## Reference
+
+解决方法来自[Steam社区的这个帖子](https://steamcommunity.com/app/221410/discussions/8/3106891514117624752/)。这个帖子2021年就存在了，不知道为什么我以前一直没有找到。
+
 
         
         </search-text>
