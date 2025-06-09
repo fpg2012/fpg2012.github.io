@@ -582,6 +582,12 @@ img {
   font-size: 1.5rem;
 }
 
+.archive-description {
+  font-size: 1rem;
+  margin: 2em 0 0 0;
+}
+
+
 .archive-rss-feed {
   font-size: 1rem;
   align-self: flex-end;

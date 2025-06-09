@@ -51,6 +51,757 @@
     <page>
         <title>
         
+        Langevin方程、score matching、扩散模型
+        
+        </title>
+        <url>////nth233.top/posts/2025-06-09-扩散模型笔记集合/index.html</url>
+        <search-text>
+        
+        
+        扩散模型笔记集合
+        
+        
+        
+与扩散模型相关的笔记集合，只要我觉得沾边的都会整理进来，因此有些内容看起来不是和扩散模型强相关的。
+
+~~整理这些内容花费了我大量精力，如果只是贴在[notes栏目](/notes)里面，感觉有点浪费。~~
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        Score Matching的改进
+        
+        </title>
+        <url>////nth233.top/notes/score matching的改进.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            Score Matching
+        
+            NCSB
+        
+            Diffusion Model
+        
+            diff_series
+        
+        
+        
+        Score Matching的改进
+        
+        
+        
+## 朴素的Score Matching存在的问题
+
+Score Matching通过优化以下目标，用一个模型$s_\theta(x)$拟合真实分布对样本的对数梯度$\nabla_x \log p(x)$，也就是score函数$s(x)$
+
+$$
+J(\theta) = \mathbb E_{x \sim p(x)} \left[∥s_\theta(x)∥^2 - 2\nabla_x s_\theta(x)\right]
+$$
+
+通过模拟Langevin方程，我们无需知道具体的概率密度，就能从中采样。既然这套方法可以建模概率分布，就能用来做生成模型。
+
+但由于本质上score matching的优化目标是最小化MSE
+
+$$
+J(\theta) = \mathbb E_{x_\sim p_\text{data}(x)} ∥ s_\theta(x) -  \nabla_x\log p_{\text{data}}(x)∥^2
+$$
+
+对于$p(x)$较大的区域，这一损失较为准确，但对于$p(x)$较小的区域，损失较小，建模不准确。
+
+## Noise Conditional Score-Based Model
+
+NCSB的方法就是，用高斯噪声$\epsilon \sim \mathcal N(0, \sigma^2)$干扰输入样本，这样我们采样的分布就从原始的$p(x)$变成了$p_\sigma(x)$。高斯噪声让$p_\sigma(x)$比$p(x)$更加“平均”，噪声越大，就越“平均”，这样就能缓解$p(x)$在小概率区域建模不够精确的问题。
+
+但是score matching的对象从几乎无噪声的原始分布，变成了带噪声的分布。我们肯定不想学习一个噪声很大的分布。噪声太小，无法有效缓解建模不精确的问题，噪声太大，学出来的东西又没有用。
+
+于是NCSB的方法就是，准备一系列噪声，方差为$\sigma_0, \sigma_1, \dots, \sigma_T$. 其中$\sigma_0$特别小，以至于$p_{\sigma_0} (x)$和$p(x)$基本一样。$\sigma_T$特别大，以至于噪声比原始分布要大，$p_{\sigma_T}(x) \approx \mathcal N(0, \sigma_T^2)$
+
+模型拟合的函数从$s_\theta(x)$变成了$s_\theta(x, i)$
+
+对于每个$i$，要优化
+
+$$
+J_i(\theta) = \mathbb E_{x_\sim p_{\sigma_i}(x)} ∥ s_\theta(x) -  \nabla_x\log p_{\sigma_i}(x)∥^2
+$$
+
+最终的目标就是各个$i$的加权平均，权重$\lambda_i$可以直接取$\sigma_i$
+
+$$
+J(\theta) = \sum_i \lambda_i J_i(\theta) =  \sum_i \sigma_i J_i(\theta)
+$$
+
+那么如何采样呢？先初始化一个样本，按朗之万动力学模拟噪声较大的分布，然后逐渐减小噪声，退火到原始分布上。大噪声的低概率区域是较为准确的，小噪声的更接近原始分布。这样我们就能避免样本困在模拟不准确的低概率区域。
+
+###  噪声的选取和模型的选择
+
+噪声选择指数增长的序列，模型用UNet，就能在图像生成任务上取得还不错的结果。
+
+## Ref
+
+https://yang-song.net/blog/2021/score/
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        扩散模型
+        
+        </title>
+        <url>////nth233.top/notes/扩散模型/index.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            Diffusion Model
+        
+            diff_series
+        
+        
+        
+        扩散模型
+        
+        
+        
+## 前向过程
+
+原始数据记为$x_0$，前向过程$q$就是逐步加上不同强度的高斯噪声
+
+$$
+q(x_t|x_{t-1}) = \mathcal N (x_t; \sqrt{1-\beta_t}x_{t-1}, \beta_t \bold I)
+$$
+
+也就是说，$x_t = \sqrt{1-\beta_t}x_{t-1} + \sqrt{\beta_t}\epsilon_t$，$\epsilon_t \sim \mathcal N (0, \bold I)$
+
+这一步就是某种扩散。$\beta_t$反映了噪声的强度，至于$x_t$前面要乘上$\sqrt{1-\beta_t}$，应该是为了保持图像的“能量”总体上不变。可以给定$x_0$，$x_t$
+
+$$
+x_t = \sqrt{(1-\beta_t)(1-\beta_{t-1})\dots(1-\beta_1))}x_0 + \sqrt{\beta_t}\epsilon_t + \sqrt{\beta_{t-1}}\epsilon_{t-1} + \dots + \sqrt{\beta_1}\epsilon_1
+$$
+
+每一步的噪声都是独立的。两个独立的高斯分布的线性组合还是高斯分布。
+
+$$
+x_t = \sqrt{\prod (1-\beta_t)} x_0 + \sqrt{\prod \beta_t} \bar\epsilon_t
+$$
+
+假设每一步增加的噪声都很小，方差的乘积可以忽略不计，可以近似写成。
+
+$$
+q(x_t|x_0) = \mathcal N(x_t; \sqrt{\bar \alpha_t}x_0, (1-\bar \alpha_t)\bold I)
+$$
+
+其中$\bar \alpha_t = \prod^t_{s=1} (1-\beta_s)$，这种写法可以简化后面的公式。
+
+上面的公式表明，前向过程其实是个Markov过程，下个状态$x_t$只依赖上一个状态$x_{t-1}$。联合分布可以直接写出来
+
+$$
+q(x_{0:T}) = q(x_0)\prod_{t=1}^{T} q(x_t|x_{t-1})
+$$
+
+## 反向过程
+
+直接假定反向过程的状态转移概率也是某种高斯分布，用参数为$\theta$的神经网络拟合这个分布的均值和协方差。给定$x_t$，预测$x_{t-1}$，用高斯分布去拟合$x_{t-1}$在给定$x_t$之后的后验概率分布。
+
+$$
+p(x_{t-1}|x_t) = \mathcal N(x_{t-1}; \mu_\theta(x_t, t), \Sigma_\theta(x_t, t))
+$$
+
+反向过程从$x_T$出发，反向预测$x_0$。因为加了很多噪声，可以认为$p(x_T) \sim \mathcal N(0, \bold I)$
+
+可见，也是Markov过程，联合分布同样可以直接写出来。
+
+$$
+p(x_{0:T}) = p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)
+$$
+
+## 损失函数
+
+有个前向过程和反向过程，我们直接把$x_{1:T}$当作是隐变量，$x_0$是显变量，直接套用ELBO作为优化目标，就能同时最大化似然函数，最小化KL散度。
+
+$$
+\mathbb E_{\bold x_{1:T} \sim q(\bold x_{1:T}|\bold x_0)}\left[ \log \frac{p(\bold x_0 | \bold x_{1:T})p(\bold x_{1:T})}{q(\bold x_{1:T}|\bold x_0)}\right]
+$$
+
+把上面的联合分布公式代进去
+
+$$
+\mathbb E_{\bold x_{1:T} \sim q(\bold x_{1:T}|\bold x_0)}\left[ \log \frac{p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)}{\prod_{t=1}^{T} q(x_t|x_{t-1})}\right]
+$$
+
+展开成积分
+
+$$
+I_1 = \int q(x_{1:T}|x_0) \log \frac{p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)}{\prod_{t=1}^{T} q(x_t|x_{t-1})} \mathrm{d}x_{1:T}
+$$
+
+应用一下贝叶斯公式
+
+$$
+q(x_t|x_{t-1}) = \frac{q(x_{t-1}|x_t)q(x_t)}{q(x_{t-1})}
+$$
+
+但是$q(x_t)$、$q(x_{t-1})$是没意义的，此时应该意识到$x_0$要作为条件才对。
+
+刚好根据Markov性，$q(x_t|x_{t-1}) = q(x_t|x_{t-1}, x_0)$。所以
+
+$$
+q(x_t|x_{t-1}) = q(x_t|x_{t-1}, x_0) =  \frac{q(x_{t-1}|x_t, x_0)q(x_{t}, x_0)}{q(x_{t-1}, x_0)}
+$$
+
+代入上面的方程，神奇的事情就发生了
+
+$$
+\int q(x_{1:T}|x_0) \log \frac{p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)}{q(x_1|x_0)\prod_{t=2}^{T} \frac{q(x_{t-1}|x_t, x_0)q(x_{t}, x_0)}{q(x_{t-1}, x_0)}} \mathrm{d}x_{1:T}
+$$
+
+有点乱，整理一下
+
+$$
+\int q(x_{1:T}|x_0) \log \frac{p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)\prod_{t=2}^{T}q(x_{t-1}| x_0)}{q(x_1|x_0)\prod_{t=2}^{T}q(x_{t-1}|x_t, x_0)\prod_{t=2}^{T}q(x_{t}|x_0)} \mathrm{d}x_{1:T}
+$$
+
+注意到，$\prod_{t=2}^{T}q(x_{t-1}|x_0)$就是$q(x_1|x_0)\prod_{t=2}^{T-1}q(x_{t}| x_0)$，可以一下子消掉很多因子。
+
+$$
+\int q(x_{1:T}|x_0) \log \frac{p(x_T)\prod_{t=1}^{T}p(x_{t-1}|x_t)}{q(x_T|x_0)\prod_{t=2}^{T}q(x_{t-1}|x_t, x_0)} \mathrm{d}x_{1:T}
+$$
+
+拆成三项之和。
+
+第一项，利用$q(x_{1:T}|x_0) = q(x_{1:T-1}|x_T,x_0)q(x_T|x_0)$，改变积分顺序，再根据概率密度归一化的性质：
+
+$$
+\begin{aligned}
+&amp; \int q(x_{1:T}|x_0)\log \frac{p(x_T)}{q(x_T|x_0)}dx_{1:T} \\
+=&amp; \int q(x_T|x_0)\log\frac{p(x_T)}{q(x_T|x_0)}dx_T \\
+=&amp; -\mathrm{KL}(q(x_T|x_0) \| p(x_T)) \triangleq -\mathcal L_T
+\end{aligned}
+$$
+
+第二项，地位相当于VAE当中的重构项。
+
+$$
+\begin{aligned}
+&amp;\int  q(x_{1:T}|x_0)\log p(x_0|x_1)dx_{1:T} \\
+=&amp; \int q(x_1|x_0)\log p(x_0|x_1) dx_1 \\
+=&amp; \mathbb E_{x_1\sim q(x_1|x_0)}[\log p(x_0|x_1)] \triangleq -\mathcal L_0
+\end{aligned}
+$$
+
+第三项
+
+$$
+\begin{aligned}
+&amp; \int q(x_{1:T}|x_0)\log \prod_{t=2}^{T} \frac{p(x_{t-1}|x_t)}{q(x_{t-1}|x_t,x_0)}\mathrm{d}x_{1:T}\\
+=&amp;\sum_{t=2}^T\int q(x_{1:T}|x_0)\log\frac{p(x_{t-1}|x_t)}{q(x_{t-1}|x_t,x_0)}\mathrm{d}x_{1:T} \\
+=&amp; \sum_{t=2}^T\int q(x_{t-1}|x_t, x_0)\log\frac{p(x_{t-1}|x_t)}{q(x_{t-1}|x_t,x_0)}\mathrm{d}x_{t-1} \\
+=&amp; -\sum_{t=2}^T \mathrm{KL}(q(x_{t-1}|x_t, x_0) \| p(x_{t-1}|x_t)) \triangleq -\sum_{t=2}^T\mathcal L_{t-1}
+\end{aligned}
+$$
+
+总的loss如下，最小化这个loss就是最大化ELBO。
+
+$$
+\mathcal L = \sum_{t=0}^T \mathcal L_t
+$$
+
+至此loss当中的各项都有明确的意义。$\mathcal L_t$就代表$t$步对应的损失。
+
+这个损失函数是可以计算的。唯一一个看起来没法直接算出来的是$q(x_{t-1}|x_t, x_0)$，但是我们知道$q(x_{t-1}|x_0)$和$q(x_{t}|x_0)$，用一下条件概率公式就能算出$q(x_{t-1}|x_t, x_0)$。另外，这两个都是参数已知的高斯分布，所以其实条件分布的参数可以直接套公式算出来。
+
+![alt text](image.png)
+
+&lt;div&gt;
+&lt;details&gt;
+从概念上看，前向是$x_0 \rightarrow x_1 \rightarrow \dots \rightarrow x_T$，反向则是反过来。如果不看第一次扩散，变成从$x_1$出发，前向是$x_1 \rightarrow x_2 \rightarrow \dots \rightarrow x_T$，这是可看作另一个扩散过程，起点是$x_1$。如果我们递归地进行思考，照理说上面的ELBO应该可以继续拆分。并且，参考VAE的ELBO，也应该有重构项$\mathbb E_q[p(x_0|x_1)]$。
+
+我们应该可以任意地把整个过程的链条从中间某个位置拆开，切开的位置是显变量，右边是隐变量，左边是条件。但是推了半天，还是得从答案出发硬凑出一个结果，推导好像不是特别直观。
+&lt;/details&gt;
+&lt;/div&gt;
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        VAE的推导
+        
+        </title>
+        <url>////nth233.top/notes/VAE.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            VAE
+        
+            diff_series
+        
+        
+        
+        ELBO的推导
+        
+        
+        
+# VAE
+
+## 前置知识
+
+根据之前对[ELBO的推导](./ELBO.html)，我们知道最大化ELBO可以同时最大化对数似然函数，最小化KL散度。
+
+$$
+\mathbb E_{\bold z \sim q(\bold z|\bold x)}\left[ \log \frac{p(\bold x | \bold z)p(\bold z)}{q(\bold z|\bold x)}\right]
+$$
+
+ELBO可以拆开：
+
+$$
+\mathbb E_{\bold z \sim q(\bold z|\bold x)}\left[ \log p(\bold x | \bold z) \right] - \mathrm{KL} (q(\bold z|\bold x) || p(\bold z))
+$$
+
+第一项是重构项，衡量$\bold x$重构的质量。第二项是正则化，让策略不要变化太剧烈，不要和先验差别太大，确保训练比较稳定。
+
+但是要落实到实践中，光有这个式子还不够。
+
+## VAE的做法
+
+一，假设$\bold z$的先验分布是标准高斯分布。
+
+二，用神经网络描述$p_\theta(\bold x|\bold z)$和$q_\phi(\bold z | \bold x)$。如何用神经网络描述分布？我们假设$q_\phi(\bold z|\bold x)$是高斯分布。高斯分布可以完全用二阶矩来描述，我们再假设$\bold z$的每个维度都是独立的，那么就可以通过一个网络预测$\bold z$分布的均值和方差
+
+$$
+[\mu, \sigma] = \mathrm{MLP}_\phi(\bold x)
+$$
+
+然后从高斯分布$\mathcal {N} (\mu, \Sigma)$中采样$\bold z$。（各个维度独立，所以$\Sigma$是对角矩阵，对角上就是$\sigma$）。我们假设$\bold z$的每个维度独立，其实并没有任何损失，因为对于高斯分布来说，独立等价于不相关，等价于各个维度没有线性关系。如果考虑不独立的情形，也不过是再加一层线性变换罢了。
+
+采样得到$\bold z$之后，我们用另一个网络预测$\bold x$。
+
+三，损失函数的进一步简化。对于高斯分布来说，KL散度可以解析地写出来。重构项可以用MSE代替，对于分割也可以用交叉熵代替。用MSE相当于假设$\bold x$是高斯分布，用交叉熵隐含了伯努利分布，可以参考苏剑林的博客。
+
+四，重参数化技巧。“重参数化”听着很高大上，其实就是把采样$\bold z$的过程，重写成从标准高斯中采样，然后再变换到所需的分布，这点也是高斯分布的性质决定的（高斯分布的线性组合还是高斯分布，只不过均值和方差会发生改变，所有高斯分布都可以线性变换一下“标准化”回标准高斯分布。操作很简单，但是却很必要，因为直接采样$\bold z$，会导致$\mu$和$\sigma$都没有梯度，重参数化之后，$\mu$和$\sigma$就有梯度了，没梯度的只剩下“从标准高斯分布采样”这个操作，。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        ELBO变分下界
+        
+        </title>
+        <url>////nth233.top/notes/ELBO.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            ELBO
+        
+            VAE
+        
+            diff_series
+        
+        
+        
+        ELBO的推导
+        
+        
+        
+## 预备知识
+
+### 带隐变量的最大似然估计
+
+假设有两个随机变量$\bold z$和$\bold x$，二者存在相关性，显变量$\bold x$能够被观测到，隐变量$\bold z$无法被观测到。我们希望能够用一参数为$\theta$的模型来表达它们的关系。
+
+通过实验，独立同分布地采集数据，得到数据集$\{\bold x_i\}$，可以最大化似然函数$\mathcal L(\theta)$优化这一模型（让样本出现概率尽可能大）。
+
+$$
+\mathcal L (\theta) = -\sum \log p_\theta(\bold x_i)
+$$
+
+然而由于模型中隐变量的存在，$p(\bold x_i)$不可求。根据全概率公式，有下面的结果。这一积分一般情况下无法直接求解。
+
+$$
+p(\bold x_i) = \int p(\bold x_i|\bold z) \mathrm d\bold z
+$$
+
+### Jensen不等式
+
+对于凸函数$f(x)$，随机变量$X$，有
+
+$$
+f(\mathbb E[X]) \le \mathbb E[f(X)]
+$$
+
+对于凹函数，则反过来。
+
+### KL散度
+
+KL散度衡量两个概率分布的差异。
+
+$$
+\mathrm{KL}(q(x) || p(x)) \triangleq \int q(x)\log \frac{q(x)}{p(x)}\mathrm{d}x
+$$
+
+两个分布相等的时候，KL散度为0。可以用Jensen不等式证明KL散度是非负的。
+
+从信息论的角度看，KL散度反映了用$p(x)$取代$q(x)$所损失的信息量。
+
+$$
+\int q(x)\log \frac{q(x)}{p(x)}\mathrm{d}x = - \int q(x)\log p(x)\mathrm{d}x - \left[-\int q(x)\log q(x)\mathrm{d}x\right]
+$$
+
+第一项是互信息，第二项是$q(x)$的信息。KL散度不是对称的，所以叫做“散度”（divergence）而不是“距离”（distance）。
+
+## 引入变分分布
+
+引入一个变分函数$q_\phi(\bold z | \bold x)$，意义是估计隐变量$\bold z$。这个函数应该和真实的$p(\bold z| \bold x)$尽量接近，也就是最小化二者的KL散度$\mathrm{KL}(q_\phi(\bold z|\bold x) || p_\theta(\bold z|\bold x))$。
+
+### 最大化似然函数
+
+回到似然函数上
+
+$$
+\begin{aligned}
+\log p_\theta(\bold x) =&amp; \log \int p(\bold x|\bold z)p(\bold z) \mathrm d\bold z \\
+=&amp; \log \int q(\bold z| \bold x) \frac{p(\bold x | \bold z)p(\bold z)}{q(\bold z|\bold x)}\mathrm{d} \bold z \\
+=&amp; \log \mathbb E_{\bold z \sim q(\bold z|\bold x)}\left[\frac{p(\bold x | \bold z)p(\bold z)}{q(\bold z|\bold x)}\right] \\
+\ge&amp;\ \mathbb E_{\bold z \sim q(\bold z|\bold x)}\left[ \log \frac{p(\bold x | \bold z)p(\bold z)}{q(\bold z|\bold x)}\right] \\
+\triangleq&amp; \  \mathrm{ELBO}
+\end{aligned}
+$$
+
+最大化ELBO就是在最大化似然函数。
+
+### 最小化KL散度
+
+$$
+\begin{aligned}
+&amp;\mathrm{KL}(q(\bold z|\bold x) || p(\bold z|\bold x))\\
+=&amp; \int q(\bold z | \bold x)\log \frac{q(\bold z | \bold x)}{p(\bold z | \bold x)} \mathrm{d}\bold z \\
+=&amp;\ \mathbb E_{\bold z \sim q(\bold z| \bold x)} \left[ \log \frac{q(\bold z | \bold x)}{p(\bold z | \bold x)} \right] \\
+=&amp;\ \mathbb E_{\bold z \sim q(\bold z| \bold x)} \left[ \log \frac{q(\bold z | \bold x)}{p(\bold z | \bold x)p(\bold x) } + \log p(\bold x) \right] \\
+=&amp; \mathbb E_{\bold z \sim q(\bold z| \bold x)} \left[ \log \frac{q(\bold z | \bold x)}{p(\bold x | \bold z)p(\bold z) } \right] + \log p(\bold x)
+\end{aligned}
+$$
+
+至此，我们已经得到了类似上一小节的结果。移项一下，就能得到
+
+$$
+\log p(\bold x) = \mathrm{KL} - \mathbb E_{\bold z \sim q(\bold z| \bold x)} \left[ \log \frac{q(\bold z | \bold x)}{p(\bold x | \bold z)p(\bold z) }\right] = \mathrm{KL} + \mathrm{ELBO}
+$$
+
+对于$q_\phi$来说，$p(\bold x)$和它无关，所以最大化ELBO就是最小化KL。
+
+## 优化
+
+用小批量的随机梯度下降法（梯度上升法）来求解，ELBO里面的期望可以通过采样来计算。不需要交替优化$\theta$和$\phi$，可以让它们协同训练。
+
+当碰到类似问题的时候，比如最大似然估计的同时还要估计隐变量，就应该想到ELBO。
+
+## ELBO的进一步解释
+
+把ELBO拆开，可以得到两项，一项是重构损失，一项是正则化项。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        Langevin方程和Score Matching
+        
+        </title>
+        <url>////nth233.top/notes/朗之万方程.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            Langevin
+        
+            Score Matching
+        
+            diff_series
+        
+        
+        
+        Langevin方程和Score Matching
+        
+        
+        
+## 朗之万方程
+
+Langevin方程描述了微观粒子运动（Langevin读音类似朗之万，因为是法国人）。大概是下面这种形式
+
+$$
+m\ddot{x} = -\gamma \dot{x} + F_{\text{ext}} + dW_t
+$$
+
+$\ddot x$是加速度，$\dot x$是速度。这个公式本质上就是牛顿第二定律，右边第一项表示粒子受到的黏滞阻力（和速度成反比），$F_{\text{ext}}$表示外力（比如重力，这里我们总是认为外力来自某个保守场），$dW_t$是维纳过程的增量。
+
+$W_t$维纳过程，其实就是布朗运动，或者说随机游走。我们认为它的均值是0、关于$t$是独立的，并且是平稳的，服从高斯分布。也就是
+
+$$
+dW_t \sim \mathcal N(0, \sigma^2)
+$$
+
+因为每个时刻都是独立的，所以自相关函数形式如下，$\delta$表示狄拉克函数，也就是说只有$s=t$的时候有个无穷大的相关性，其他时候不相关，$\langle \cdot \rangle$ 的含义是取期望/取平均。
+
+$$
+\langle dW_s \cdot dW_t \rangle = 2\sigma \cdot \delta(s-t)
+$$
+
+所以总的来看，朗之万方程大概就是在说，粒子受到的力来自三个部分，除了阻力和外力，还有一个来自涨落的随机力，这个随机力均值为0，并且每一时刻的随机力之间是不相关的。
+
+## 玻尔兹曼分布
+
+在统计物理当中有个结论。当系统处于平衡态的时候，粒子在空间上服从玻尔兹曼分布，也就是说，某一点$x$处的密度$n(x)$和势能$E_p$有关。
+
+$$
+n(x) \propto \exp(-E_p/kT)
+$$
+
+势能越大，概率越小。温度越低，系统的能量也越低，越趋近于低势能的点；温度越高，分布就越平均。$k$是玻尔兹曼常数，出现在这里的原因是为了把内能和开氏温标对齐。
+
+&gt; 简单起见，考虑最简单的重力场中的大气密度分布，这是个经典例子。假设重力场中的大气处处等温，几乎无限高。我们任选一个参考平面为$h=0$，那么在高度$h$处，任取一个小小的高度微元$dh$
+&gt;
+&gt; 上下的压强差 $dP = n(h) mg\cdot dh$
+&gt;
+&gt; 压强来自粒子的碰撞，$P \propto n \langle E_k \rangle$，$\langle E_k \rangle$表示平均动能，类似于求期望，平均动能实际上就是内能，正比于$kT$。因为温度处处相同，所以$P \propto n/(kT)$，代入上面的方程
+&gt; 
+&gt; $$\frac{dn}{dh} = C nmgh/(kT) $$
+&gt;
+&gt; 这是个可以分离变量的微分方程，很好求，求解出来就会有上面的指数形式。这个结论不难推广到一般的保守场。
+
+Langevin方程从微观的角度描述了粒子的运动，而玻尔兹曼定律从宏观的角度描述了粒子密度的分布。这也就意味着我们只要按照Langevin方程模拟粒子的运动，就能从对应的玻尔兹曼分布中采样。至于这个分布长什么样子，取决于势能，也就是保守场。
+
+## Score Matching
+
+概率密度就像是气体密度，可以想象成有很多粒子按照概率密度弥散在空间当中，只不过这个空间可能是高维的，并且需要归一化。玻尔兹曼常数$k$在这里有点碍眼，可以直接去掉。在样本点$x$（或者叫做状态$x$）的概率密度：
+
+$$
+p(x) = \frac{1}{Z} \exp (-E(x)/T)
+$$
+
+概率密度需要归一化，所以有个有个$Z = \int \exp(-E(x)/T)dx$在分母（如果状态是离散的，积分就变成求和，概率密度改成概率分布）。这个形式和softmax一模一样。这个积分在一般情况下是没法算的，**intractable**。
+
+原则上，我们可以训练一个模型去学习这个势能$E_{\theta} (x)$。拿到一个样本，模型输出其势能，然后最大化对数似然函数，记模型参数是$\theta$。不失一般性，我们直接假设$T=1$，那就有似然函数
+
+$$
+J(\theta|x) = \log p(x|\theta) = -E_\theta(x) - \log Z
+$$
+
+使用梯度上升的方法最大化这个函数会碰到问题。$Z$和$\theta$有关，不能看成常数，因此
+
+$$
+\nabla_\theta\log p(x|\theta) = -\nabla_\theta E_\theta(x) - \nabla_\theta Z
+$$
+
+等式右边第一项好求，反向传播一下就能算出来。第二项归一化因子涉及高维度的积分，没法求。因此在训练的时候，基于势能的方法没法进行。
+
+有没有方法可以彻底绕开这个归一化因子呢？我们可以注意到$Z$和$x$无关（积分积掉了），只要两边都对$x$求梯度，$Z$就不见了。换句话说，我们不需要学习势能，转而学习势能的负梯度——也就是力场！。
+
+$$
+\nabla_x \log p(x|\theta) = -\nabla_xE_\theta(x) = s_\theta(x)
+$$
+
+$s_\theta(x)$就是score函数。我们的优化目标转而变成把score函数和真实分布的梯度匹配上，最小化二者的平方损失
+
+$$
+\text{MSE}(s_\theta(x), \nabla_x \log p_{\text{data}}(x))
+$$
+
+也就是最小化
+
+$$
+J(\theta) = \mathbb E_{x_\sim p_\text{data}(x)} ∥ s_\theta(x) -  \nabla_x\log p_{\text{data}}(x)∥^2
+$$
+
+但是我们并不知道真实分布对样本$x$的梯度。我们把期望写回积分的形式。根据期望的定义，有
+
+$$
+J(\theta) = \int_\Omega p_\text{data}(x) ∥s_\theta(x) - \nabla_x\log p_\text{data}(x)∥^2dx
+$$
+
+其中$\Omega$是样本空间。
+
+我们简化一下记号，$p_\text{data}(x)$记作$p(x)$，$\nabla_x \log p_\text{data}(x)$记作$s(x)$，把平方损失展开：
+
+$$
+∥s_\theta(x) - s(x)∥^2 = ∥s_\theta(x)∥^2 + ∥s(x)∥^2 - 2s_\theta(x)\cdot s(x)
+$$
+
+第二项和$\theta$无关，直接写成常数$C$，代回到积分当中
+
+$$
+\int_\Omega p(x) \left[∥s_\theta(x)∥^2 - 2s_\theta(x)\cdot s(x) + C\right]dx
+$$
+
+把常数提出去，变成$\int_\Omega p(x)Cdx$，和$\theta$无关，在优化的时候直接不用管。那么剩下的项就是
+
+$$
+\int_\Omega p(x)∥s_\theta(x)∥^2dx - 2\int_\Omega p(x)s_\theta(x)\cdot s(x)dx
+$$
+
+第一项就是$\mathbb E_{x_\sim p_\text{data}(x)}\left[∥s_\theta(x)∥^2\right]$，这个好算，就是从数据集里面采样，然后算score函数的平方。
+
+第二项可以作分部积分
+
+$$
+\begin{aligned}
+2\int_\Omega p(x)s_\theta(x)\cdot \nabla_x \log p(x)dx
+ =&amp; 2\int_\Omega s_\theta(x) \cdot \nabla_x p(x) dx \\
+ =&amp; 2\int_\Omega s_\theta(x) \cdot d\nabla_x p(x) \\
+ = &amp; 2\int_{\partial \Omega}s_\theta(x) \cdot \nabla_x p(x) \cdot n(x) dS - 2\int_\Omega p(x) \nabla_x s_\theta(x) dx
+\end{aligned}
+$$
+
+如果$\Omega = \mathbb R^d$，并且概率密度在无穷远处衰减为0，那么第一项会是0。只剩下第二项，也就是$s_\theta(x)$对$x$的梯度的期望。
+
+所以最后优化目标变成了
+
+$$
+J(\theta) = \mathbb E_{x \sim p(x)} \left[∥s_\theta(x)∥^2 - 2\nabla_x s_\theta(x)\right]
+$$
+
+不需要真实PDF的梯度了。因为我们采用神经网络来拟合$s(x)$，因此$s_\theta(x)$对$x$的梯度也可以用反向传播算法求出来。这个优化目标里面每一项都可以算。数据集如果很大，期望不好求，可以minibatch + 随机梯度下降。
+
+前面说到，score函数其实就是力场，有了力场之后，我们可以通过模拟Langevin方程来采样。甚至还可以引入Metropolis-Hasting来确保是平稳的（想象一下那个拒绝概率，分子分母里面的势能都在指数上面，相除会变成做差，做差实际上就是对$x$的梯度，也就是score函数）。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        Metropolis-Hastings采样
+        
+        </title>
+        <url>////nth233.top/notes/MH采样.html</url>
+        <search-text>
+        
+        
+            论文笔记
+        
+            Metropolis-Hastings
+        
+            MCMC
+        
+            Stochastic Process
+        
+            diff_series
+        
+        
+        
+        Metropolis-Hastings采样
+        
+        
+        
+# Metropolis-Hastings采样
+
+MH采样，是一种MCMC采样方法。所谓MCMC，就是构造一个Markov链，使它的平稳分布$\pi(x)$就是我们想要采样的分布，这样一来，我们只要随机选取Markov链的一个状态$x_0$，然后根据状态转移矩阵反复更新这个状态，最终的状态就是我们想要的样本，因为这个Markov链平稳分布就是我们想要的分布，因为最终状态$x_t \sim \pi(x_t)$。
+
+## 做法
+
+MH采样主要有两个要素：
+
+1. 提议分布$q(x&#39;|x)$，也就是Markov链的状态转移概率。这个分布的选取基本上是任意的，只要方便采样就行。
+2. 接受概率$A(x&#39;, x)$，决定是否要接受状态$x&#39;$，如果不接受，就保留原状态，用来保证这个链是平稳的。
+
+$$
+A(x&#39;|x_t) = \min \left( 1, \frac{\pi(x&#39;) q(x_t|x&#39;)}{\pi(x_t)q(x&#39;|x_t)} \right)
+$$
+
+## 正确性的证明
+
+主要就是要证明平稳分布确实是$\pi(x)$。
+
+首先，我们写出对应Markov链的状态转移概率，如果$x&#39; \ne x$
+
+$$
+P(x&#39;|x) = q(x&#39;|x)A(x&#39;|x)
+$$
+
+如果 $x&#39; = x$，那么除了正常的转移概率，还要加上转移到其他状态被拒绝的概率
+
+$$
+P(x|x) = q(x|x)A(x|x) + (1 - \sum A(u|x)q(u|x)du )
+$$
+
+这个时候我们要介绍一下**细致平衡条件**。Markov链只要满足下面这个细致平衡条件，就存在平稳分布，平稳分布就是$\pi(x)$
+
+$$
+\pi(x) P(x&#39;|x) = \pi(x&#39;)P(x|x&#39;)
+$$
+
+我们可以简单阐述一下这个条件的意义。假设Markov链已经平稳，那么不管再怎么转移状态，都还是平稳分布。我们可以想象有一大堆粒子，按照平稳分布处于各个状态中，那么从一个状态a转移到另一个状态b的粒子个数，和从b转移到a的粒子个数应该一样多，否则就不平稳了。反过来，假如处于Markov链现在处于某个分布，从a到b的粒子数，等于从b到a的粒子数，那么这个分布在下一时刻也不会发生任何改变，因此是平稳分布。
+
+$x = x&#39;$时，显然是满足细致平衡条件的，不信可以代进去看看（笑）。
+
+因此只要考虑考虑$x \ne x&#39;$的情况，又分两种情况
+
+若 $\displaystyle \frac{\pi(x&#39;) q(x_t|x&#39;)}{\pi(x_t)q(x&#39;|x_t)} \le 1$，那么
+
+$$
+P(x&#39;|x_t) = q(x&#39;|x_t)A(x&#39;|x_t) = q(x&#39;|x_t)\frac{\pi(x&#39;) q(x_t|x&#39;)}{\pi(x_t)q(x&#39;|x_t)} = \pi(x&#39;)q(x_t|x&#39;) / \pi(x_t)
+$$
+
+并且一定有 $\displaystyle \frac{\pi(x_t) q(x&#39;|x_t)}{\pi(x&#39;)q(x_t|x&#39;)} \ge 1$
+
+所以
+
+$$
+P(x_t|x&#39;) = q(x_t|x&#39;) A(x_t|x&#39;) = q(x_t|x&#39;)
+$$
+
+两个式子联立，直接就是细致平衡条件。
+
+若 $\displaystyle \frac{\pi(x&#39;) q(x_t|x&#39;)}{\pi(x_t)q(x&#39;|x_t)} \gt 1$，和上面完全同理。
+
+那么是不是只有一个平稳分布呢？如果马尔可夫链是不可约的，只会有唯一的平稳分布。而且因为存在拒绝下一个样本的可能性，这个链是非周期的。非周期的不可约马氏链，有且只有一个平稳分布。
+
+## MH采样的问题
+
+MH采样难以应付高维分布。在维数很高的时候，拒绝概率很大，导致采样效率实际上很低。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         2025-04阅读笔记
         
         </title>

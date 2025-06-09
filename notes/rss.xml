@@ -15,10 +15,178 @@
     
     
     
-    <pubDate>Tue, 29 Apr 2025 04:23:29 GMT</pubDate>
-    <lastBuildDate>Tue, 29 Apr 2025 04:23:29 GMT</lastBuildDate>
+    <pubDate>Mon, 09 Jun 2025 03:38:08 GMT</pubDate>
+    <lastBuildDate>Mon, 09 Jun 2025 03:38:08 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>Score Matching的改进</title>
+      <link>https://nth233.top/notes/score matching的改进.html</link>
+      
+      <description>Score Matching的改进</description>
+      
+      <pubDate>2025-06-05</pubDate>
+      <guid>14301348025833772353</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>Score Matching</category>
+        
+          <category>NCSB</category>
+        
+          <category>Diffusion Model</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>扩散模型</title>
+      <link>https://nth233.top/notes/扩散模型/index.html</link>
+      
+      <description>扩散模型</description>
+      
+      <pubDate>2025-06-03</pubDate>
+      <guid>9177829802581267242</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>Diffusion Model</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>VAE的推导</title>
+      <link>https://nth233.top/notes/VAE.html</link>
+      
+      <description>ELBO的推导</description>
+      
+      <pubDate>2025-06-02</pubDate>
+      <guid>1375151326864361527</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>VAE</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>ELBO变分下界</title>
+      <link>https://nth233.top/notes/ELBO.html</link>
+      
+      <description>ELBO的推导</description>
+      
+      <pubDate>2025-06-01</pubDate>
+      <guid>5914738223690481419</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>ELBO</category>
+        
+          <category>VAE</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Langevin方程和Score Matching</title>
+      <link>https://nth233.top/notes/朗之万方程.html</link>
+      
+      <description>Langevin方程和Score Matching</description>
+      
+      <pubDate>2025-05-31</pubDate>
+      <guid>12830483622427726892</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>Langevin</category>
+        
+          <category>Score Matching</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Metropolis-Hastings采样</title>
+      <link>https://nth233.top/notes/MH采样.html</link>
+      
+      <description>Metropolis-Hastings采样</description>
+      
+      <pubDate>2025-05-30</pubDate>
+      <guid>8215480057415538387</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>Metropolis-Hastings</category>
+        
+          <category>MCMC</category>
+        
+          <category>Stochastic Process</category>
+        
+          <category>diff_series</category>
+        
+      
+    </item>
     
     
     
