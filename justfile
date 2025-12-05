@@ -26,7 +26,8 @@ clean-gen:
 	cd ..
 
 new-post:
-	cp _model/post.md "posts/`date -I`-newpost.md"
+	mkdir -p "posts/`date -I`-newpost"
+	cp _model/post.md "posts/`date -I`-newpost/index.md"
 
 new-note:
 	cp _model/note.md "notes/`date -I`-newnote.md"
