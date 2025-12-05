@@ -15,10 +15,36 @@
     
     
     
-    <pubDate>Thu, 07 Aug 2025 13:38:07 GMT</pubDate>
-    <lastBuildDate>Thu, 07 Aug 2025 13:38:07 GMT</lastBuildDate>
+    <pubDate>Fri, 05 Dec 2025 12:00:40 GMT</pubDate>
+    <lastBuildDate>Fri, 05 Dec 2025 12:00:40 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>针对Minecraft/glfw退格问题的补丁</title>
+      <link>https://nth233.top/posts/2025-12-02-glfw输入法补丁/index.html</link>
+      
+      <description>给Minecraft实现“正确”的输入法处理逻辑</description>
+      
+      <pubDate>2025-12-02</pubDate>
+      <guid>17537282036646471820</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>glfw</category>
+        
+          <category>输入法</category>
+        
+          <category>minecraft</category>
+        
+      
+    </item>
     
     
     

@@ -22,12 +22,6 @@
     
     
     
-    
-    
-    
-    
-    
-    
     <page>
         <title>
         
@@ -42,6 +36,160 @@
         
         
         
+        
+        </search-text>
+    </page>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <page>
+        <title>
+        
+        针对Minecraft/glfw退格问题的补丁
+        
+        </title>
+        <url>////nth233.top/posts/2025-12-02-glfw输入法补丁/index.html</url>
+        <search-text>
+        
+        
+            glfw
+        
+            输入法
+        
+            minecraft
+        
+        
+        
+        给Minecraft实现“正确”的输入法处理逻辑
+        
+        
+        
+## 背景
+
+今年上半年我写过一篇blog（[glfw输入法问题的临时解决办法](/posts/2025-03-10-glfw输入法问题的临时解决办法/)），吐槽了一下glfw下退格键被输入法和应用程序同时触发两次的问题。由于退格键这个信号同时被传给了输入法和glfw，导致我删除预编辑文本的时候，会把已经输入的文本也删掉，导致输入体验非常糟糕。
+
+最常见的例子就是Minecraft。除了MC之外，所有使用Dear ImGui的程序也都会碰到一模一样的问题。
+
+我本以为这是Linux特有的问题，没想下半年用了mac之后，又碰到了一模一样的问题，于是干脆fork了一下glfw，做了点微小的修改（详见[glfw-ime-fix](https://github.com/fpg2012/glfw-ime-fix)）……
+
+上次的blog更多是在吐槽glfw的错误处理方式和Linux的输入法生态，对于解决方案描述得很简略。这次会尽量详细地说明解决方案。
+
+&gt; 没错，这就是我把同样的主题拿出来再水一遍的原因。
+
+## 解决方案
+
+我fork了glfw 3.4，然后做了几个微小的改动，在预编辑文本的时候把多余的键盘事件过滤掉了。
+
+&gt; 参考[README](https://github.com/fpg2012/glfw-ime-fix)。这里面有更详细的步骤说明。
+
+这里只做概念上的描述。
+
+首先clone下[glfw-ime-fix](https://github.com/fpg2012/glfw-ime-fix)，然后编译出所需的动态链接库：
+
+- 对于Linux：`libglfw.3.4.so`
+- 对于MacOS： `libglfw.3.4.dylib`
+
+然后用这个动态链接库去替换Minecraft依赖项中的libglfw。
+
+### 针对Minecraft的问题。
+
+MC是java写的，要调用glfw，需要用到lwjgl。
+
+在lwjgl的jar包里有个libglfw.so或者libglfw.dylib。把这个动态链接库换成我们修改过的glfw，就能解决输入法问题。（另外也要更新一下checksum，否则校验jar包的时候会不通过）
+
+## 问题原因
+
+最核心的原因就在于退格键被触发两次。
+
+一开始，系统告诉glfw：“用户按下了退格键”。glfw同时做了两个处理：
+
+1. 通过`_glfwInputKey`告诉应用：“用户按下了退格键”
+2. 通过输入法协议告诉输入法：“用户按下了退格键，你需要删掉预编辑文本”
+
+不管是MC还是Dear ImGui，核心的开发人员都不需要使用比较复杂的输入法（不需要按多次键盘来输入一个字符），因此他们最简单、最直接的想法，就是自己实现输入的处理：**“当用户按下退格键的时候，我删掉文本框里的一个字”**。他们没有意识到，“退格”不一定是一个独立的输入，很可能是输入**一个字**的中间步骤。
+
+&gt; 这也不完全是开发者的责任。处理**平台相关**的输入逻辑，应该是glfw的事情！开发者本身也不容易拿到输入法的状态，何况他们选择用glfw，可能本身也是为了方便跨平台。
+
+这就导致了同时删除预编辑文本和已输入文本的问题。
+
+因此，要解决这个问题，就必须过滤掉一部分glfwInputKey事件。具体来说，当输入法有预编辑文本的时候，只把消息告诉输入法，不告诉应用。
+
+### 两个核心函数
+
+对于glfw的用户来说，glfw分别提供了提供了键盘事件和字符输入事件的[接口](https://www.glfw.org/docs/latest/group__input.html#ga1caf18159767e761185e49a3be019f8d)。
+
+- `glfwSetKeyCallback`
+- `glfwSetCharCallback`
+
+设置好这两个回调函数，glfw就会在获得事件的时候，调用这两个回调函数。更具体地说，在`input.c`里面，glfw定义了两个函数。
+
+- `_glfwInputKey`，这个函数会调用key callback
+- `_glfwInputChar`，这个函数会调用char callback，这个函数直接和输入法相关
+
+在底层具体平台的实现中（`x11_window.c`或者`cocoa_window.m`），glfw从系统获取键盘事件和输入法事件，并且调用上述两个函数告知应用程序。
+
+### 具体解决方案
+
+X11下，可以通过`XFilterEvent`函数过滤掉多余的事件（包括比如在使用XIM时，关掉预编辑时的退格事件）。glfw本身也调用了这个函数，但总会放行`_glfwInputKey`，导致这个过滤形同虚设。只要把过滤逻辑加回去就行了。
+
+Mac上的解决方案也很简单。TextInput接口提供了一个函数，可以检测当前是否有预编辑文本`hasMarkedText`，只要监测到有预编辑文本，就不调用`_glfwInputKey`。
+
+这种简单的处理逻辑应该能够适用于大部分情况（包括Minecraft和基于Dear ImGUI的一大堆应用）。
+
+### Wayland问题
+
+Wayland下不存在上面提到的重复退格问题——因为根本就没法用输入法。
+
+glfw目前没有实现wayland的text-input-v3协议（令人难绷的是，这个协议从2018年提出到现在，一直处于“unstable”状态。即便wayland下输入法协议的主流就是它，但很多人根本不愿意去适配，宁可等一个“stable”的协议出来）。
+
+很难说glfw和wayland谁是一坨💩，总之把这俩放到一块之后，对需要输入法的人来说，没有一个正常图形界面该有的体验。
+
+我暂时没有搞明白wayland的输入法协议该怎么用，等之后搞清楚了以后再考虑给glfw打个text-input-v3的补丁。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        2025-11阅读笔记
+        
+        </title>
+        <url>////nth233.top/notes/2025-11阅读笔记.html</url>
+        <search-text>
+        
+        
+            读书笔记
+        
+        
+        
+        2024-11阅读笔记
+        
+        
+        
+## 《心》
+
+## 《魔戒》
+
+
         
         </search-text>
     </page>
@@ -1096,6 +1244,114 @@ KDE桌面下，按`Meta` + `Shift` + `S`，并且移动鼠标，会在画出红�
     <page>
         <title>
         
+        疑点和推测
+        
+        </title>
+        <url>////nth233.top/misc/misumi.html</url>
+        <search-text>
+        
+        
+            ave_mujica
+        
+        
+        
+        
+        
+        
+        ## 0 《三角初音的故事》存在的疑点
+1. 姐妹二人至少差两岁，在小时候体型差应该非常明显。
+2. 姐妹二人同母异父，即使长得像，也应该会有明显区别。
+3. 祥子每年都会去岛上度假，为何唯独初音故事中只提到一次。（那一次之后呢？）
+4. 初华母亲为什么要告诉初华她的所谓“身世”，此类事情应该会瞒着孩子才对。为何不告诉妹妹，只告诉姐姐。（真的有告诉她吗？）
+5. 丰川定治如何就能确定是他的女儿。（真的有做亲子鉴定吗？）
+6. 妹妹发烧，姐姐为何“回过神来”就到了丰川别墅门口。
+7. 短时间内无法同时看到猎户座和天蝎座。（初华真的有和祥子相见吗？）
+8. 初华怎么能够知道清告被踢出家族是她的原因。（是事实还是推测？）
+9. 初华向事务所报上定治的姓名，就相当于宣告了私生女的存在，但无人过问（为何没有对定治造成打击？）
+10. 妹妹怎么会知道姐姐和丰川家的特殊关系？
+
+## 1 已知信息
+
+1. 初华会臆想自己做出出格举动
+2. 初华和祥子都觉得是对方先邀请自己的
+3. 祥子对独角仙印象很深刻，连笔记本都喜欢用独角仙封面，不太可能记错捉虫的事
+4. 初华也喜欢观星
+5. 初华在东京和祥子取得了联系
+6. 定治把初华叫做初音，并且让她回去
+7. 祥子对姐妹的身世完全不知情
+8. 《三角初音的故事》中初华在“谎言/秘密的开端”处有两重声音，并且凭空变出了面具
+9. 祥子与姐妹中至少一人是玩伴
+10. 初华不愿意去别墅
+11. 定治能够认出初华
+12. 祥子印象中初华见过其母亲（那么也可能见过其父亲）
+13. 初华的偶像之路一路顺风
+14. 初华对祥子存在特殊感情，可能掺杂了羡慕、仰慕、怀旧、友情，甚至可能包括建立亲密关系的渴望。已知初华没有对包括真奈在内的其他人抱有这种感情，因此绝对超出童年玩伴的程度。目前为止剧情对初华的其他社交关系涉及得很少。
+15. 祥子和初华同龄
+16. 初华离开了住处，很可能已经离开东京
+17. 为什么Ave Mujica重组这个“明确被上头禁止”的事情，可以由祥子牵头直接重来。
+
+## 2 推断
+
+1. 初华和初音只能存在一个，另一个要么根本不存在，要么已经死亡。否则体型差距很难解释。
+2. 《三角初音的故事》是初华的内心独白。而故事中必然存在推测、记忆偏差和谎言。
+3. 初华和祥子夜晚的观星可能是想象的，祥子从来没有提到观星的事情，初华的记忆也存在矛盾。
+4. 初华关于清告被踢出家族的记忆都是推测
+5. 假如初华离家出走为真，母亲和妹妹一定会做出行动。如果定治对此知情，应该也不会坐视不管，并且也会希望女儿以某种方式留在自己身边。
+6. 按照三幕结构，mujica的剧情已经进入高潮+结局的部分，在已知没有续作的情况下，此时剧情应该要收束而非发散。在前情没有足够暗示的情况下，可能没有足够篇幅突然添加一个长相相近、定位冲突的新人物，并且解决新人物和既有角色之间的矛盾。
+7. 作为商业企划，不可能让乐队最终解散，也不太可能采用开放性结局，因此祥子和初华最终一定会归队。那么剧情就必须快速、戏剧性地解决丰川家族内部的矛盾，包括定治和祥子、定治和初华、定治和清告、祥子和清告的矛盾。因此有能力掌控一切定治必然要做出转变，可能主动、被打动或者被动。主动破局者只有可能是祥子、清告、初华和定治，或者是来自丰川家族上层的压力，因为其他人对此不知情，也无法接触定治。但是没有任何已知信息暗示丰川家族还有上层。
+8. 剧本在此安排一场真假参半的独角戏，必定有其动机。动机就是引导观众从初华视角进行思考。也有可能是为了接续后续情节的发展，给出一些必要信息。《三角初音的故事》要在给出信息的同时，造成误会。
+
+## 3 故事主题
+
+1. 她的秘密（彼女の秘密）
+2. 人偶和阁楼之月
+3. 骰子已经掷下（The die is cast，没有退路，破釜沉舟）
+
+## 4 已知预告
+
+1. 祥子雨天下车
+2. 剪下的玫瑰，和剪刀一起落下至地上的石板
+3. 定治在办公室看雨，身后站着一个戴手套的人
+4. 木桌上的咖啡，初华低头
+5. 祥子雨天奔跑，背景是现代化建筑和天空
+6. 《浪击而不沉》
+
+## 5 可能的走向
+
+### 原委
+
+1. 不存在姐妹二人，初音只是作为悲情女主角的错误记忆，或者是为了靠近祥子而编造的谎言，毕竟定治也许根本不知道女儿是什么样子的，也许没法确定女儿是不是亲生的。初音的记忆错误是由于童年阴影和父亲去世的冲击造成的。清告被引咎辞职也并非初华的原因。
+2. 存在姐妹二人，且妹妹初华后来死亡（在姐姐离家出走之后）。在异乡的初华和家乡没有联系，对此完全不知情。回乡之后得知一切的初音到海边悼念养父。
+3. 存在姐妹二人，且姐姐初音早已死亡。妹妹借姐姐的身份前往东京实现梦想。
+4. 存在姐妹二人，且妹妹初华早已死亡。姐姐初音却总是幻想妹妹还在，替妹妹完成遗愿前往东京。
+5. 可能姐妹二人都没死亡。概率小。妹妹可能早就接受一切，也可能
+
+### 谁是动力
+
+1. 祥子是动力。祥子很难离开家里，但是保留和外界的联系管道。通过和外界的交互、和父亲的交互进行行动。比如借助乐队其他人的力量，在岛上找到初华。祥子需要用某种方式摆脱家族束缚，回到mujica，这样乐队才能完成重建。而家族的矛盾需要找到父亲，或者给外公强烈的刺激，才能解决。
+2. 定治是动力。似乎可能性不大，定治在没有外界影响的情况下很难自己良心发现。
+3. 清告是动力。清告存在动力，但是需要外界催化，最可能的催化剂是祥子，但这样祥子反而才是动力。
+4. 初华是动力。好像很难说得通。
+5. 其他人是动力。任何其他人要成为动力，都必须通过祥子。
+
+只能是祥子或乐队其他人作为动力，祥子起主要作用。
+
+### 可以确定的发展
+
+1. 祥子初华必然归队。
+2. 祥子不可能去瑞士，必然在最后一刻仍有挽回余地前，摆脱家族控制。摆脱的方法可能包括逃离、威胁、谈判。
+3. 落地的玫瑰必然和初华有关，很可能是拿着花的人因为震惊，弄掉了手中的东西。可能是初母见到初音/初华、姐妹相见、初母见到定治、初华见到祥子或乐队其他人。
+4. 乐队其他人必定会有所行动。其他人还没有回收的伏笔有：海铃身上的矛盾、睦的消失。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         2025-03读书笔记
         
         </title>
@@ -1206,114 +1462,6 @@ KDE桌面下，按`Meta` + `Shift` + `S`，并且移动鼠标，会在画出红�
     <page>
         <title>
         
-        疑点和推测
-        
-        </title>
-        <url>////nth233.top/misc/misumi.html</url>
-        <search-text>
-        
-        
-            ave_mujica
-        
-        
-        
-        
-        
-        
-        ## 0 《三角初音的故事》存在的疑点
-1. 姐妹二人至少差两岁，在小时候体型差应该非常明显。
-2. 姐妹二人同母异父，即使长得像，也应该会有明显区别。
-3. 祥子每年都会去岛上度假，为何唯独初音故事中只提到一次。（那一次之后呢？）
-4. 初华母亲为什么要告诉初华她的所谓“身世”，此类事情应该会瞒着孩子才对。为何不告诉妹妹，只告诉姐姐。（真的有告诉她吗？）
-5. 丰川定治如何就能确定是他的女儿。（真的有做亲子鉴定吗？）
-6. 妹妹发烧，姐姐为何“回过神来”就到了丰川别墅门口。
-7. 短时间内无法同时看到猎户座和天蝎座。（初华真的有和祥子相见吗？）
-8. 初华怎么能够知道清告被踢出家族是她的原因。（是事实还是推测？）
-9. 初华向事务所报上定治的姓名，就相当于宣告了私生女的存在，但无人过问（为何没有对定治造成打击？）
-10. 妹妹怎么会知道姐姐和丰川家的特殊关系？
-
-## 1 已知信息
-
-1. 初华会臆想自己做出出格举动
-2. 初华和祥子都觉得是对方先邀请自己的
-3. 祥子对独角仙印象很深刻，连笔记本都喜欢用独角仙封面，不太可能记错捉虫的事
-4. 初华也喜欢观星
-5. 初华在东京和祥子取得了联系
-6. 定治把初华叫做初音，并且让她回去
-7. 祥子对姐妹的身世完全不知情
-8. 《三角初音的故事》中初华在“谎言/秘密的开端”处有两重声音，并且凭空变出了面具
-9. 祥子与姐妹中至少一人是玩伴
-10. 初华不愿意去别墅
-11. 定治能够认出初华
-12. 祥子印象中初华见过其母亲（那么也可能见过其父亲）
-13. 初华的偶像之路一路顺风
-14. 初华对祥子存在特殊感情，可能掺杂了羡慕、仰慕、怀旧、友情，甚至可能包括建立亲密关系的渴望。已知初华没有对包括真奈在内的其他人抱有这种感情，因此绝对超出童年玩伴的程度。目前为止剧情对初华的其他社交关系涉及得很少。
-15. 祥子和初华同龄
-16. 初华离开了住处，很可能已经离开东京
-17. 为什么Ave Mujica重组这个“明确被上头禁止”的事情，可以由祥子牵头直接重来。
-
-## 2 推断
-
-1. 初华和初音只能存在一个，另一个要么根本不存在，要么已经死亡。否则体型差距很难解释。
-2. 《三角初音的故事》是初华的内心独白。而故事中必然存在推测、记忆偏差和谎言。
-3. 初华和祥子夜晚的观星可能是想象的，祥子从来没有提到观星的事情，初华的记忆也存在矛盾。
-4. 初华关于清告被踢出家族的记忆都是推测
-5. 假如初华离家出走为真，母亲和妹妹一定会做出行动。如果定治对此知情，应该也不会坐视不管，并且也会希望女儿以某种方式留在自己身边。
-6. 按照三幕结构，mujica的剧情已经进入高潮+结局的部分，在已知没有续作的情况下，此时剧情应该要收束而非发散。在前情没有足够暗示的情况下，可能没有足够篇幅突然添加一个长相相近、定位冲突的新人物，并且解决新人物和既有角色之间的矛盾。
-7. 作为商业企划，不可能让乐队最终解散，也不太可能采用开放性结局，因此祥子和初华最终一定会归队。那么剧情就必须快速、戏剧性地解决丰川家族内部的矛盾，包括定治和祥子、定治和初华、定治和清告、祥子和清告的矛盾。因此有能力掌控一切定治必然要做出转变，可能主动、被打动或者被动。主动破局者只有可能是祥子、清告、初华和定治，或者是来自丰川家族上层的压力，因为其他人对此不知情，也无法接触定治。但是没有任何已知信息暗示丰川家族还有上层。
-8. 剧本在此安排一场真假参半的独角戏，必定有其动机。动机就是引导观众从初华视角进行思考。也有可能是为了接续后续情节的发展，给出一些必要信息。《三角初音的故事》要在给出信息的同时，造成误会。
-
-## 3 故事主题
-
-1. 她的秘密（彼女の秘密）
-2. 人偶和阁楼之月
-3. 骰子已经掷下（The die is cast，没有退路，破釜沉舟）
-
-## 4 已知预告
-
-1. 祥子雨天下车
-2. 剪下的玫瑰，和剪刀一起落下至地上的石板
-3. 定治在办公室看雨，身后站着一个戴手套的人
-4. 木桌上的咖啡，初华低头
-5. 祥子雨天奔跑，背景是现代化建筑和天空
-6. 《浪击而不沉》
-
-## 5 可能的走向
-
-### 原委
-
-1. 不存在姐妹二人，初音只是作为悲情女主角的错误记忆，或者是为了靠近祥子而编造的谎言，毕竟定治也许根本不知道女儿是什么样子的，也许没法确定女儿是不是亲生的。初音的记忆错误是由于童年阴影和父亲去世的冲击造成的。清告被引咎辞职也并非初华的原因。
-2. 存在姐妹二人，且妹妹初华后来死亡（在姐姐离家出走之后）。在异乡的初华和家乡没有联系，对此完全不知情。回乡之后得知一切的初音到海边悼念养父。
-3. 存在姐妹二人，且姐姐初音早已死亡。妹妹借姐姐的身份前往东京实现梦想。
-4. 存在姐妹二人，且妹妹初华早已死亡。姐姐初音却总是幻想妹妹还在，替妹妹完成遗愿前往东京。
-5. 可能姐妹二人都没死亡。概率小。妹妹可能早就接受一切，也可能
-
-### 谁是动力
-
-1. 祥子是动力。祥子很难离开家里，但是保留和外界的联系管道。通过和外界的交互、和父亲的交互进行行动。比如借助乐队其他人的力量，在岛上找到初华。祥子需要用某种方式摆脱家族束缚，回到mujica，这样乐队才能完成重建。而家族的矛盾需要找到父亲，或者给外公强烈的刺激，才能解决。
-2. 定治是动力。似乎可能性不大，定治在没有外界影响的情况下很难自己良心发现。
-3. 清告是动力。清告存在动力，但是需要外界催化，最可能的催化剂是祥子，但这样祥子反而才是动力。
-4. 初华是动力。好像很难说得通。
-5. 其他人是动力。任何其他人要成为动力，都必须通过祥子。
-
-只能是祥子或乐队其他人作为动力，祥子起主要作用。
-
-### 可以确定的发展
-
-1. 祥子初华必然归队。
-2. 祥子不可能去瑞士，必然在最后一刻仍有挽回余地前，摆脱家族控制。摆脱的方法可能包括逃离、威胁、谈判。
-3. 落地的玫瑰必然和初华有关，很可能是拿着花的人因为震惊，弄掉了手中的东西。可能是初母见到初音/初华、姐妹相见、初母见到定治、初华见到祥子或乐队其他人。
-4. 乐队其他人必定会有所行动。其他人还没有回收的伏笔有：海铃身上的矛盾、睦的消失。
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
         GLFW输入法的退格问题——Linux混乱不堪的输入法生态
         
         </title>
@@ -1406,138 +1554,6 @@ Linux下输入法问题繁多，很大程度是因为缺少稳定、统一的协
 [^css_xim]: [csslayer关于XIM的议论](https://www.csslayer.info/wordpress/tag/xim/)
 [^ibus_ubuntu]: [早年ubuntu论坛上的讨论](https://forum.ubuntu.org.cn/viewtopic.php?t=460613)
 [^css_wayland]: [csslayer - Chrome/Chromium 今日 Wayland 输入法支持现状](https://www.csslayer.info/wordpress/fcitx-dev/chrome-state-of-input-method-on-wayland/)
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
-        C/C++/Rust动态加载动态链接库
-        
-        </title>
-        <url>////nth233.top/notes/动态链接库.html</url>
-        <search-text>
-        
-        
-            C
-        
-            C++
-        
-            Rust
-        
-            lib
-        
-        
-        
-        C使用`dlopen`系统调用，Rust用libloading这个板条箱
-        
-        
-        ## TL;DR
-
-C使用`dlopen`系统调用，Rust用[libloading](https://crates.io/libloading)这个板条箱。dlopen的用法可以看手册（~~RTFM~~)
-```
-man dlopen
-```
-
-## Example of Rust
-
-示例：
-
-```rust
-use std::env;
-use libloading::{Library, Symbol};
-use std::ffi::CString;
-use std::os::raw::c_char;
-
-type AddFunc = unsafe fn(i32, i32) -&gt; i32;
-type MsgFunc = unsafe fn(*const c_char, *mut *mut c_char);
-
-fn main() {
-    let library_path = env::args().nth(1).expect(&quot;USAGE: loading &lt;LIB&gt;&quot;);
-    unsafe {
-        let lib = Library::new(library_path).unwrap();
-        let func: Symbol&lt;AddFunc&gt; = lib.get(b&quot;add&quot;).unwrap();
-        let answer = func(1, 2);
-        println!(&quot;1 + 2 = {}&quot;, answer);
-
-        let func2: Symbol&lt;MsgFunc&gt; = lib.get(b&quot;echo2&quot;).unwrap();
-        let message = CString::new(&quot;helloworld&quot;).unwrap();
-        let mut message2: *mut c_char = 0x0 as *mut c_char;
-        func2(message.as_ptr(), &amp;mut message2);
-        print!(&quot;{} =&gt; {}&quot;, message.to_str().unwrap(), CString::from_raw(message2).to_str().unwrap());
-    }
-}
-```
-
-C代码
-
-```c
-#include &lt;stdlib.h&gt;
-#include &lt;string.h&gt;
-#include &lt;ctype.h&gt;
-int add(int a, int b) {
-    return a + b;
-}
-
-void echo(const char* input, char** output) {
-    int len = strlen(input);
-    *output = (char*)malloc(len + 1);
-    for (int i = 0; i &lt; len; i++) {
-        (*output)[i] = input[i] + 1;
-    }
-    (*output)[len] = &#39;\0&#39;;
-}
-
-void echo2(const char* input, char** output) {
-    int len = strlen(input);
-    *output = (char*)malloc(len + 1);
-    for (int i = 0; i &lt; len; i++) {
-        (*output)[i] = toupper(input[i]);
-    }
-    (*output)[len] = &#39;\0&#39;;
-}
-```
-
-把C代码编译成动态链接库，其中`-fPIC`表示位置无关，`-shared`表示动态链接库
-
-```
-gcc -c -fPIC adder.c -o libadder.o
-gcc -shared libadder.o -o libadder2.so
-```
-
-最后运行程序，得到结果如下
-
-```
-1 + 2 = 3
-helloworld =&gt; HELLOWORLD
-```
-
----
-
-实际上rust代码之间也可以这样动态互调
-
-```
-#[no_mangle]
-pub extern &quot;C&quot; fn add(a: isize, b: isize) -&gt; isize {
-    a + b
-}
-```
-
-编译，`cdynlib`表示使用C ABI的动态链接库
-
-```
-rustc --crate-type cdylib adder.rs
-```
-
-## Ref
-- https://www.michaelfbryan.com/rust-ffi-guide/dynamic_loading.html
-- https://github.com/nagisa/rust_libloading
-- https://man7.org/linux/man-pages/man3/dlopen.3.html
-- https://eli.thegreenplace.net/2012/08/24/plugins-in-c
 
         
         </search-text>
@@ -1736,6 +1752,138 @@ java -jar mod-uploader.jar upload -w my-mod
 &gt; 说完，面具男拔出刀竖立在面前，把刀面当做镜子一动不动地端详着自己脸上的面具，他的目光闪烁着。他的名字，他的脸，还有他此时此刻的想法，都埋葬在了这冰冷的，早已失去光泽的金属面具后面。他的一切，早就在那一天全都卖给了那个恶魔，甚至被尼奥复活的痛苦，不知道何时起也无法撼动他麻木的心，如果，自己胸口跳动的，还是心脏的话。
 &gt; 
 &gt; 如今，唯一能让他还感觉自己活着的，只剩下身旁的少年了。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        C/C++/Rust动态加载动态链接库
+        
+        </title>
+        <url>////nth233.top/notes/动态链接库.html</url>
+        <search-text>
+        
+        
+            C
+        
+            C++
+        
+            Rust
+        
+            lib
+        
+        
+        
+        C使用`dlopen`系统调用，Rust用libloading这个板条箱
+        
+        
+        ## TL;DR
+
+C使用`dlopen`系统调用，Rust用[libloading](https://crates.io/libloading)这个板条箱。dlopen的用法可以看手册（~~RTFM~~)
+```
+man dlopen
+```
+
+## Example of Rust
+
+示例：
+
+```rust
+use std::env;
+use libloading::{Library, Symbol};
+use std::ffi::CString;
+use std::os::raw::c_char;
+
+type AddFunc = unsafe fn(i32, i32) -&gt; i32;
+type MsgFunc = unsafe fn(*const c_char, *mut *mut c_char);
+
+fn main() {
+    let library_path = env::args().nth(1).expect(&quot;USAGE: loading &lt;LIB&gt;&quot;);
+    unsafe {
+        let lib = Library::new(library_path).unwrap();
+        let func: Symbol&lt;AddFunc&gt; = lib.get(b&quot;add&quot;).unwrap();
+        let answer = func(1, 2);
+        println!(&quot;1 + 2 = {}&quot;, answer);
+
+        let func2: Symbol&lt;MsgFunc&gt; = lib.get(b&quot;echo2&quot;).unwrap();
+        let message = CString::new(&quot;helloworld&quot;).unwrap();
+        let mut message2: *mut c_char = 0x0 as *mut c_char;
+        func2(message.as_ptr(), &amp;mut message2);
+        print!(&quot;{} =&gt; {}&quot;, message.to_str().unwrap(), CString::from_raw(message2).to_str().unwrap());
+    }
+}
+```
+
+C代码
+
+```c
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+#include &lt;ctype.h&gt;
+int add(int a, int b) {
+    return a + b;
+}
+
+void echo(const char* input, char** output) {
+    int len = strlen(input);
+    *output = (char*)malloc(len + 1);
+    for (int i = 0; i &lt; len; i++) {
+        (*output)[i] = input[i] + 1;
+    }
+    (*output)[len] = &#39;\0&#39;;
+}
+
+void echo2(const char* input, char** output) {
+    int len = strlen(input);
+    *output = (char*)malloc(len + 1);
+    for (int i = 0; i &lt; len; i++) {
+        (*output)[i] = toupper(input[i]);
+    }
+    (*output)[len] = &#39;\0&#39;;
+}
+```
+
+把C代码编译成动态链接库，其中`-fPIC`表示位置无关，`-shared`表示动态链接库
+
+```
+gcc -c -fPIC adder.c -o libadder.o
+gcc -shared libadder.o -o libadder2.so
+```
+
+最后运行程序，得到结果如下
+
+```
+1 + 2 = 3
+helloworld =&gt; HELLOWORLD
+```
+
+---
+
+实际上rust代码之间也可以这样动态互调
+
+```
+#[no_mangle]
+pub extern &quot;C&quot; fn add(a: isize, b: isize) -&gt; isize {
+    a + b
+}
+```
+
+编译，`cdynlib`表示使用C ABI的动态链接库
+
+```
+rustc --crate-type cdylib adder.rs
+```
+
+## Ref
+- https://www.michaelfbryan.com/rust-ffi-guide/dynamic_loading.html
+- https://github.com/nagisa/rust_libloading
+- https://man7.org/linux/man-pages/man3/dlopen.3.html
+- https://eli.thegreenplace.net/2012/08/24/plugins-in-c
 
         
         </search-text>
@@ -9463,106 +9611,6 @@ Blog的迁移之路，终于到了一个终点……
     <page>
         <title>
         
-        About
-        
-        </title>
-        <url>////nth233.top/README.html</url>
-        <search-text>
-        
-        
-            about
-        
-            friends
-        
-        
-        
-        
-        
-我是nth233（又fpg2012），在这里写些无用的东西。
-
-四处辗转，几番折腾，用了hugo、jekyll，最后竟然自己写了一个[生成器](https://github.com/fpg2012/sushi)。
-
-若要联系我，请发送邮件至我的邮箱[fpg2012@yeah.net](mailto:fpg2012@yeah.net)。
-
-是为about，以上。
-
----
-
-开坑计划可以在此查看：[开坑计划](//nth233.top/plan)
-
-欢迎在本页面催更。
-
----
-
-本站文章大部分没有经过特别仔细的校对，可能存在很多狗屁不通之处——要么是忘了修正，要么是还没发现。
-
-我会尽量及时勘误，也欢迎读者在评论区多多挑刺。
-
----
-
-## Friends
-
-- [Chipen&#39;s Blog](https://zsiothsu.github.io)
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
-        About
-        
-        </title>
-        <url>////nth233.top/about/index.html</url>
-        <search-text>
-        
-        
-            about
-        
-            friends
-        
-        
-        
-        
-        
-我是nth233（又fpg2012），在这里写些无用的东西。
-
-四处辗转，几番折腾，用了hugo、jekyll，最后竟然自己写了一个[生成器](https://github.com/fpg2012/sushi)。
-
-若要联系我，请发送邮件至我的邮箱[fpg2012@yeah.net](mailto:fpg2012@yeah.net)。
-
-是为about，以上。
-
----
-
-开坑计划可以在此查看：[开坑计划](//nth233.top/plan)
-
-欢迎在本页面催更。
-
----
-
-本站文章大部分没有经过特别仔细的校对，可能存在很多狗屁不通之处——要么是忘了修正，要么是还没发现。
-
-我会尽量及时勘误，也欢迎读者在评论区多多挑刺。
-
----
-
-## Friends
-
-- [Chipen&#39;s Blog](https://zsiothsu.github.io)
-
-        
-        </search-text>
-    </page>
-    
-    
-    
-    <page>
-        <title>
-        
         来一局线上卡卡颂！——抽牌器+共享画板
         
         </title>
@@ -9675,6 +9723,106 @@ drawpile和抽牌器都准备就绪之后，就可以打起语音电话开始游
 
 &lt;iframe src=&quot;//player.bilibili.com/player.html?aid=425317475&amp;bvid=BV1g3411H7Ys&amp;cid=566006509&amp;page=1&quot; scrolling=&quot;no&quot; border=&quot;0&quot; frameborder=&quot;no&quot; framespacing=&quot;0&quot; allowfullscreen=&quot;true&quot; style=&quot;width: 100%;aspect-ratio: 9/6;&quot;&gt; &lt;/iframe&gt;
 
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        About
+        
+        </title>
+        <url>////nth233.top/about/index.html</url>
+        <search-text>
+        
+        
+            about
+        
+            friends
+        
+        
+        
+        
+        
+我是nth233（又fpg2012），在这里写些无用的东西。
+
+四处辗转，几番折腾，用了hugo、jekyll，最后竟然自己写了一个[生成器](https://github.com/fpg2012/sushi)。
+
+若要联系我，请发送邮件至我的邮箱[fpg2012@yeah.net](mailto:fpg2012@yeah.net)。
+
+是为about，以上。
+
+---
+
+开坑计划可以在此查看：[开坑计划](//nth233.top/plan)
+
+欢迎在本页面催更。
+
+---
+
+本站文章大部分没有经过特别仔细的校对，可能存在很多狗屁不通之处——要么是忘了修正，要么是还没发现。
+
+我会尽量及时勘误，也欢迎读者在评论区多多挑刺。
+
+---
+
+## Friends
+
+- [Chipen&#39;s Blog](https://zsiothsu.github.io)
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
+        About
+        
+        </title>
+        <url>////nth233.top/README.html</url>
+        <search-text>
+        
+        
+            about
+        
+            friends
+        
+        
+        
+        
+        
+我是nth233（又fpg2012），在这里写些无用的东西。
+
+四处辗转，几番折腾，用了hugo、jekyll，最后竟然自己写了一个[生成器](https://github.com/fpg2012/sushi)。
+
+若要联系我，请发送邮件至我的邮箱[fpg2012@yeah.net](mailto:fpg2012@yeah.net)。
+
+是为about，以上。
+
+---
+
+开坑计划可以在此查看：[开坑计划](//nth233.top/plan)
+
+欢迎在本页面催更。
+
+---
+
+本站文章大部分没有经过特别仔细的校对，可能存在很多狗屁不通之处——要么是忘了修正，要么是还没发现。
+
+我会尽量及时勘误，也欢迎读者在评论区多多挑刺。
+
+---
+
+## Friends
+
+- [Chipen&#39;s Blog](https://zsiothsu.github.io)
 
         
         </search-text>

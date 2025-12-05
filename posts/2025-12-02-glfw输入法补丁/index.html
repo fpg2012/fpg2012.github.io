@@ -3,17 +3,17 @@
 <html>
     <head>
         
-        <title>Empty Space - macOS下rdp客户端方案</title>
+        <title>Empty Space - 针对Minecraft/glfw退格问题的补丁</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="macOS下rdp客户端方案">
+        <meta name="description" content="给Minecraft实现“正确”的输入法处理逻辑">
         
 
         
-        <meta name="keywords" content="rdp,远程桌面">
+        <meta name="keywords" content="glfw,输入法,minecraft">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -79,27 +79,29 @@
 </div>
 
 <div class='right-side-bar post-menu'>
-    <div class='menu-title'>macOS下rdp客户端方案</div>
+    <div class='menu-title'>针对Minecraft/glfw退格问题的补丁</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>macOS下rdp客户端方案</h1>
+    <h1>针对Minecraft/glfw退格问题的补丁</h1>
     
     <div class="date-bar">
-        <span class="date">2025-08-07</span>
+        <span class="date">2025-12-02</span>
     </div>
     <div class="category-bar">
     
-        <span class="category">〔note〕</span>
+        <span class="category">〔dev〕</span>
     
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#rdp</span>
+        <span class="tag">#glfw</span>
     
-        <span class="tag">#远程桌面</span>
+        <span class="tag">#输入法</span>
+    
+        <span class="tag">#minecraft</span>
     
     </div>
 </div>
@@ -129,21 +131,73 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    <p>最近逐渐习惯了使用macOS本身，但是对于它的生态还是不太适应，总是想着用Linux下习惯的开源方案来解决问题。最近人在外地，偶尔需要要用rdp连接家里的台式机。我习惯于使用remmina（个人非常喜欢这个客户端），然而macOS毕竟不是linux，用不了。</p>
-<p>于是开源方案似乎只剩下freerdp一个选择了。</p>
-<h2 id="安装">安装</h2>
-<p>首先安装freerdp</p>
-<div class="highlight"><pre><span></span>brew install freerdp
-</pre></div>
-
-<p>应该会下载老半天……然后获得了<code>xfreerdp</code>这个命令。这个东西要正常运行，还需要有个xserver。这里用<code>xquartz</code></p>
-<div class="highlight"><pre><span></span>brew install xquartz
-</pre></div>
-
-<h2 id="使用">使用</h2>
-<p>使用xfreerdp前，先启动xquartz。然后在命令行连接，比如：</p>
-<div class="highlight"><pre><span></span>xfreerdp /v:[地址，如localhost] /u:[远程机器的用户名] /size:1920x1080
-</pre></div>
+    <h2 id="背景">背景</h2>
+<p>今年上半年我写过一篇blog（<a
+href="/posts/2025-03-10-glfw输入法问题的临时解决办法/">glfw输入法问题的临时解决办法</a>），吐槽了一下glfw下退格键被输入法和应用程序同时触发两次的问题。由于退格键这个信号同时被传给了输入法和glfw，导致我删除预编辑文本的时候，会把已经输入的文本也删掉，导致输入体验非常糟糕。</p>
+<p>最常见的例子就是Minecraft。除了MC之外，所有使用Dear
+ImGui的程序也都会碰到一模一样的问题。</p>
+<p>我本以为这是Linux特有的问题，没想下半年用了mac之后，又碰到了一模一样的问题，于是干脆fork了一下glfw，做了点微小的修改（详见<a
+href="https://github.com/fpg2012/glfw-ime-fix">glfw-ime-fix</a>）……</p>
+<p>上次的blog更多是在吐槽glfw的错误处理方式和Linux的输入法生态，对于解决方案描述得很简略。这次会尽量详细地说明解决方案。</p>
+<blockquote>
+<p>没错，这就是我把同样的主题拿出来再水一遍的原因。</p>
+</blockquote>
+<h2 id="解决方案">解决方案</h2>
+<p>我fork了glfw
+3.4，然后做了几个微小的改动，在预编辑文本的时候把多余的键盘事件过滤掉了。</p>
+<blockquote>
+<p>参考<a
+href="https://github.com/fpg2012/glfw-ime-fix">README</a>。这里面有更详细的步骤说明。</p>
+</blockquote>
+<p>这里只做概念上的描述。</p>
+<p>首先clone下<a
+href="https://github.com/fpg2012/glfw-ime-fix">glfw-ime-fix</a>，然后编译出所需的动态链接库：</p>
+<ul>
+<li>对于Linux：<code>libglfw.3.4.so</code></li>
+<li>对于MacOS： <code>libglfw.3.4.dylib</code></li>
+</ul>
+<p>然后用这个动态链接库去替换Minecraft依赖项中的libglfw。</p>
+<h3 id="针对minecraft的问题">针对Minecraft的问题。</h3>
+<p>MC是java写的，要调用glfw，需要用到lwjgl。</p>
+<p>在lwjgl的jar包里有个libglfw.so或者libglfw.dylib。把这个动态链接库换成我们修改过的glfw，就能解决输入法问题。（另外也要更新一下checksum，否则校验jar包的时候会不通过）</p>
+<h2 id="问题原因">问题原因</h2>
+<p>最核心的原因就在于退格键被触发两次。</p>
+<p>一开始，系统告诉glfw：“用户按下了退格键”。glfw同时做了两个处理：</p>
+<ol type="1">
+<li>通过<code>_glfwInputKey</code>告诉应用：“用户按下了退格键”</li>
+<li>通过输入法协议告诉输入法：“用户按下了退格键，你需要删掉预编辑文本”</li>
+</ol>
+<p>不管是MC还是Dear
+ImGui，核心的开发人员都不需要使用比较复杂的输入法（不需要按多次键盘来输入一个字符），因此他们最简单、最直接的想法，就是自己实现输入的处理：<strong>“当用户按下退格键的时候，我删掉文本框里的一个字”</strong>。他们没有意识到，“退格”不一定是一个独立的输入，很可能是输入<strong>一个字</strong>的中间步骤。</p>
+<blockquote>
+<p>这也不完全是开发者的责任。处理<strong>平台相关</strong>的输入逻辑，应该是glfw的事情！开发者本身也不容易拿到输入法的状态，何况他们选择用glfw，可能本身也是为了方便跨平台。</p>
+</blockquote>
+<p>这就导致了同时删除预编辑文本和已输入文本的问题。</p>
+<p>因此，要解决这个问题，就必须过滤掉一部分glfwInputKey事件。具体来说，当输入法有预编辑文本的时候，只把消息告诉输入法，不告诉应用。</p>
+<h3 id="两个核心函数">两个核心函数</h3>
+<p>对于glfw的用户来说，glfw分别提供了提供了键盘事件和字符输入事件的<a
+href="https://www.glfw.org/docs/latest/group__input.html#ga1caf18159767e761185e49a3be019f8d">接口</a>。</p>
+<ul>
+<li><code>glfwSetKeyCallback</code></li>
+<li><code>glfwSetCharCallback</code></li>
+</ul>
+<p>设置好这两个回调函数，glfw就会在获得事件的时候，调用这两个回调函数。更具体地说，在<code>input.c</code>里面，glfw定义了两个函数。</p>
+<ul>
+<li><code>_glfwInputKey</code>，这个函数会调用key callback</li>
+<li><code>_glfwInputChar</code>，这个函数会调用char
+callback，这个函数直接和输入法相关</li>
+</ul>
+<p>在底层具体平台的实现中（<code>x11_window.c</code>或者<code>cocoa_window.m</code>），glfw从系统获取键盘事件和输入法事件，并且调用上述两个函数告知应用程序。</p>
+<h3 id="具体解决方案">具体解决方案</h3>
+<p>X11下，可以通过<code>XFilterEvent</code>函数过滤掉多余的事件（包括比如在使用XIM时，关掉预编辑时的退格事件）。glfw本身也调用了这个函数，但总会放行<code>_glfwInputKey</code>，导致这个过滤形同虚设。只要把过滤逻辑加回去就行了。</p>
+<p>Mac上的解决方案也很简单。TextInput接口提供了一个函数，可以检测当前是否有预编辑文本<code>hasMarkedText</code>，只要监测到有预编辑文本，就不调用<code>_glfwInputKey</code>。</p>
+<p>这种简单的处理逻辑应该能够适用于大部分情况（包括Minecraft和基于Dear
+ImGUI的一大堆应用）。</p>
+<h3 id="wayland问题">Wayland问题</h3>
+<p>Wayland下不存在上面提到的重复退格问题——因为根本就没法用输入法。</p>
+<p>glfw目前没有实现wayland的text-input-v3协议（令人难绷的是，这个协议从2018年提出到现在，一直处于“unstable”状态。即便wayland下输入法协议的主流就是它，但很多人根本不愿意去适配，宁可等一个“stable”的协议出来）。</p>
+<p>很难说glfw和wayland谁是一坨💩，总之把这俩放到一块之后，对需要输入法的人来说，没有一个正常图形界面该有的体验。</p>
+<p>我暂时没有搞明白wayland的输入法协议该怎么用，等之后搞清楚了以后再考虑给glfw打个text-input-v3的补丁。</p>
 
 </div>
 
@@ -167,18 +221,12 @@
 
 <div class="sibling-pages">
     
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/2025-11阅读笔记.html">〈</a></div>
-    <div class="sibling-page sibling-page-next">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/2025-11阅读笔记.html">2025-11阅读...</a></div>
-        <div class="sibling-page-date">2025-12-02</div>
-    </div>
-    
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/notes/2025-06阅读笔记.html">2025-06阅读...</a></div>
-        <div class="sibling-page-date">2025-06-25</div>
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2025-06-09-扩散模型笔记集合/index.html">Langevin方...</a></div>
+        <div class="sibling-page-date">2025-06-09</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/notes/2025-06阅读笔记.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2025-06-09-扩散模型笔记集合/index.html">〉</a></div>
     
 </div>
 
