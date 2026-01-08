@@ -11,14 +11,40 @@
     
     
     
-    <copyright>Copyright nth233 2025</copyright>
+    <copyright>Copyright nth233 2026</copyright>
     
     
     
-    <pubDate>Fri, 05 Dec 2025 12:00:40 GMT</pubDate>
-    <lastBuildDate>Fri, 05 Dec 2025 12:00:40 GMT</lastBuildDate>
+    <pubDate>Thu, 08 Jan 2026 15:31:57 GMT</pubDate>
+    <lastBuildDate>Thu, 08 Jan 2026 15:31:57 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>MacOS上游玩Windows游戏</title>
+      <link>https://nth233.top/posts/2026-01-08-MacOS上游玩windows游戏/index.html</link>
+      
+      <description>官方虽然给了GPTK，但是要用起来，还是得借助第三方软件体验才好</description>
+      
+      <pubDate>2026-01-08</pubDate>
+      <guid>9647718990265497228</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>macos</category>
+        
+          <category>wine</category>
+        
+          <category>steam</category>
+        
+      
+    </item>
     
     
     
