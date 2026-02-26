@@ -160,7 +160,6 @@ $$
 <div>
 <details>
 从概念上看，前向是$x_0 \rightarrow x_1 \rightarrow \dots \rightarrow x_T$，反向则是反过来。如果不看第一次扩散，变成从$x_1$出发，前向是$x_1 \rightarrow x_2 \rightarrow \dots \rightarrow x_T$，这是可看作另一个扩散过程，起点是$x_1$。如果我们递归地进行思考，照理说上面的ELBO应该可以继续拆分。并且，参考VAE的ELBO，也应该有重构项$\mathbb E_q[p(x_0|x_1)]$。
-
 我们应该可以任意地把整个过程的链条从中间某个位置拆开，切开的位置是显变量，右边是隐变量，左边是条件。但是推了半天，还是得从答案出发硬凑出一个结果，推导好像不是特别直观。
 </details>
 </div>
