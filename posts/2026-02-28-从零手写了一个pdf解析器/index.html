@@ -3,17 +3,17 @@
 <html>
     <head>
         
-        <title>Empty Space - MacOS上游玩Windows游戏</title>
+        <title>Empty Space - 从零手写了个PDF解析器</title>
         
         <meta charset="UTF-8">
         <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
 
         
-        <meta name="description" content="官方虽然给了GPTK，但是要用起来，还是得借助第三方软件体验才好">
+        <meta name="description" content="从零手写了个PDF解析器">
         
 
         
-        <meta name="keywords" content="macos,wine,steam">
+        <meta name="keywords" content="dev,pdf">
         
 
         <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
@@ -79,16 +79,16 @@
 </div>
 
 <div class='right-side-bar post-menu'>
-    <div class='menu-title'>MacOS上游玩Windows游戏</div>
+    <div class='menu-title'>从零手写了个PDF解析器</div>
     <hr>
 </div> 
 <div class="post-area">
 <div class="post-front-matter">
     
-    <h1>MacOS上游玩Windows游戏</h1>
+    <h1>从零手写了个PDF解析器</h1>
     
     <div class="date-bar">
-        <span class="date">2026-01-08</span>
+        <span class="date">2026-02-28</span>
     </div>
     <div class="category-bar">
     
@@ -97,11 +97,9 @@
     </div>
     <div class="tag-bar">
     
-        <span class="tag">#macos</span>
+        <span class="tag">#dev</span>
     
-        <span class="tag">#wine</span>
-    
-        <span class="tag">#steam</span>
+        <span class="tag">#pdf</span>
     
     </div>
 </div>
@@ -131,44 +129,114 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    <p>我几个月前才把日用系统从Linux改成MacOS。总体上，mac是个精致、统一且易用的系统。但还是有不少雷点：</p>
+    <p>这两个月花了点时间，写了一个pdf解析器和pdf目录（outline）的编辑器，算是部分解决了我编辑pdf目录的需求。</p>
+<p>以前我屯了很多扫描版pdf。这些pdf制作不是很精良，经常没有目录，很难检索。当时我没找到合适的开源软件来做这个事情。几个月前重新看了一下pdf的spec，简单评估之后，我认为我可以一周把这个东西做出来（实际上前前后后做了两个月……）。</p>
+<p>这里说一下啥是outline。outline有些地方直接叫做“书签”，有些地方叫“目录”，有些地方叫“概览”。总之就是打开pdf之后，显示在侧边栏里面的目录，点击里面的项可以跳转到对应的地方，就是下图框起来的区域：</p>
+<figure>
+<img src="截屏2026-02-28%2015.45.27大.png"
+alt="框起来的区域就是outline" />
+<figcaption aria-hidden="true">框起来的区域就是outline</figcaption>
+</figure>
+<h2 id="底层解析库">底层解析库</h2>
+<p>底层解析库我起名为libpindf。随便乱取的，就是在「pdf」中间插入一个「in」。</p>
+<h3 id="如何解析一个pdf">如何解析一个PDF？</h3>
+<p>一个初次创建的PDF主要包括几个部分：</p>
 <ol type="1">
-<li>些许有些不同的命令行生态（这个我勉强能自适应，但显然Linux要顺手得多）</li>
-<li>文件系统支持（无解……这方面mac被Linux完爆。为了日用，我不得不把移动硬盘从btrfs转回exFAT）</li>
-<li>远程桌面（xfreerdp + xquartz勉强解决了我的rdp需求）</li>
-<li><strong>steam上能玩的游戏少得可怜，甚至不如Linux</strong></li>
+<li>版本号注释（文件的开头类似<code>%%PDF-1.5</code>的一行）</li>
+<li>PDF主要内容，主要是一大堆的indirect object</li>
+<li>xref表。一个速查表，可以根据object的标号，速查对应的indirect
+object在文件中的哪个位置。</li>
+<li>trailer。一个字典，指出Catalog对象的位置</li>
+<li>startxref。这一行后面给出了xref表在文件中的位置</li>
+<li>最后以<code>%%EOF</code>结束</li>
 </ol>
-<p>针对第四点，现在终于找到了一个能用的解法。</p>
-<h2 id="mac上的wine和gptk">mac上的wine和GPTK</h2>
-<p>对于近几年的Apple
-Silicon设备来说，虽然仍然可以通过rosetta跑wine，体验很差，对于游戏来说基本上不可用，主要是因为没有Vulkan的支持。几年前Apple端出GPTK，才总算是有个游戏能用的兼容层。</p>
-<p>但是我看了GPTK混乱的文档之后，还是不知道怎么配，折腾半天还是搞不定。本来这方面有个体验很不错的开源软件，可以帮助用户用GPTK装上能用的steam，但不知道什么原因，Whisky目前停止维护了，文档的开头劝用户“去买CrossOver”。</p>
-<p>反正我不会买。因此退而求其次，在V社把proton端上arm
-mac之前，先折腾其他的开源方案。</p>
-<p>目前唯一相对方便的方案应该是<a
-href="https://github.com/Sikarugir-App/Sikarugir">Sikarugir</a>（如果还有别的方案我不知道，请在评论区踢我一下）。Sikarugir的文档藏在discord频道上，查看起来还是不够方便。</p>
-<h2 id="sikarugir的安装和配置">Sikarugir的安装和配置</h2>
-<p>用brew安装</p>
-<div class="highlight"><pre><span></span>brew install --cask Sikarugir-App/sikarugir/sikarugir
+<p>PDF的主要内容由一大堆indirect
+object组成。所谓object，就是整数、浮点数、null、名字、字典、数组、字符串、流的统称。流比较特殊，主要用来放一些连续的二进制数据，由一个字典和一串原始二进制数据组成。</p>
+<p>间接对象（indirect
+object）则是带编号的对象。根据编号，可以在字典、数组这种复合对象里面引用它们。trailer当中会引用Catalog对象这个对象。Catalog当中有页面树、目录树、名字树等等东西。PDF的所有内容都用这棵树组织起来。</p>
+<p>是不是听起来很简单？我一开是也这么觉得，但是实际做起来发现，<strong>PDF标准充满各种历史包袱</strong>，相同的功能可能可以用不同的方式来实现。因此要支持大部分的PDF，还是需要花很多时间研读标准。</p>
+<blockquote>
+<p>举个例子，我原本不打算实现流对象的解析，但后期的PDF标准为了进一步缩小体积，会把对象放到流的二进制数据里面，用特殊的格式压缩。这就迫使我不得不去解析各种流，硬控了我一周的时间。xref表也有流的版本。</p>
+</blockquote>
+<h3 id="如何修改pdf">如何修改PDF</h3>
+<p>PDF支持追加式的修改。所谓追加，就是指可以在上述完整的文件结构后面，再接上一个完整的文件结构。新的xref表格会覆盖原始xref表的对应部分——这意味着我们可以添加新的indirect
+object，并且通过修改xref表，替换掉原先相同对象号的object。最后，需要再trailer当中加上<code>/Prev</code>这个属性，指出老的xref表的位置。</p>
+<p>这种追加式修改可以叠加无数层，在流传的PDF当中非常普遍。但PDF的这种设计，导致解析器必须从文件末端开始解析，先找到startxref，然后解析trailer，然后接写xref表，一层一层地解析回去，直到找到最初的那个trailer和xref表，做起来还是挺麻烦的。这种结构也对浏览器不友好（比如传了完整文件才能开始阅读），所以PDF还支持对文档做“线性化”，线性化后的PDF只有一个xref和一个trailer，1号对象放在最前面，就是catalog对象，对浏览器比较友好。</p>
+<h3 id="为啥要自己造轮子">为啥要自己造轮子？</h3>
+<p>为了爽。</p>
+<p>我原本想要直接用现成的库，比如mupdf之类的。但这些库的文档感觉不是特别完善，并且一般都是read-only或者create-only，于是就一直搁置。直到某一天，我弄丢了手机，断网了一晚上，无事可做，于是乎决定纯手工写个纯C的解析器。靠着manual和手边的几个离线文档手工起了项目，从此一发不可收拾。尤其是在AI时代，沉下心来纯手工做这个东西是真爽。</p>
+<p>写lexer差不多只用了一天，parser一周做到了85%的完成度。然后因为纯C的种种麻烦点，剩下的10%用了我两周的时间……目前我只感说做到了（95%）的完成度。大部分pdf都是可以处理的，除非是加密的pdf/用了奇怪filter的pdf。</p>
+<p>接下来就是编辑pdf。PDF支持追加式的编辑，所以理论上我只需要一个read-only搭配一个create-only的库，就能实现我原本想做的编辑操作。但我意识到这点的时候已经太晚，parser都已经快写完了。</p>
+<h3 id="复盘">复盘</h3>
+<p>不应该用纯C来写，手工管理内存和所有权实在是太麻烦，如果改用rust，甚至哪怕是C++，应该真的一周就能搞定。</p>
+<h2 id="outline编辑器">Outline编辑器</h2>
+<p>在libpindf的基础上，编辑outline相对简单。只要找到目录树（outline树），然后把它替换掉，即可实现修改outline。</p>
+<h3 id="如何编辑">如何编辑？</h3>
+<p>由于懒得写图形界面，我打算采用JSON作为一个中间格式。先把outline提取出来，翻译成json，人工编辑json之后，再翻译成一系列indirect
+object，替换到原先的outline树，就能实现编辑。</p>
+<h3 id="具体实现">具体实现</h3>
+<p>理论简单，但具体实践起来，又花了我好几天时间。</p>
+<p>一个点是，PDF的目录有好几种实现方法。outline树中的节点，可以指向某个Destination对象，也可以指向某个Action对象。Action对象有非常多种，除了跳转外，“打开网页”、“播放声音”甚至“播放视频”之类的都有……因此理论上点击pdf目录项还可以播视频……</p>
+<p>跳转Action的内部会引用一个Destination，因此殊途同归。Destination会引用它要跳转的那个Page，可以指定跳转到页面的那个位置（写坐标）……甚至还能制定跳转之后的缩放。</p>
+<p>我目前不支持用Action。可以选择填Destination，或者填页码。</p>
+<p>示例JSON如下：</p>
+<div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;chd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;前言&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;作者题词&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">10</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;目录&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">11</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;牡丹亭&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;destination&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;chd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;第一齣 標目&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">14</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;第二齣 言懷&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">17</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;第三齣 訓女&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">21</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;附录&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">323</span><span class="p">,</span>
+<span class="w">            </span><span class="nt">&quot;chd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;附录一 关于版本的说明&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">323</span>
+<span class="w">                </span><span class="p">},</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;附录二 杜丽娘慕色还魂画本&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;page&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">326</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
 </pre></div>
-
-<p>装好之后应该会有sikarugir creator这个应用。</p>
-<p>打开之后，点下面的“+”添加engine，选WS12WineSikarugir10.0_2</p>
-<figure>
-<img src="image-1.png" alt="添加engine" />
-<figcaption aria-hidden="true">添加engine</figcaption>
-</figure>
-<p>装好后engine后，点最下面的Create New Blank
-Wrapper，随便起个名（假设叫做steam.app）。选D3DMetal，并且<strong>在winetricks当中安装steam和中文字体</strong>（这点比较坑，不看文档根本不知道要这样搞），不建议自己手动安装steam。</p>
-<figure>
-<img src="截屏2026-01-08%2023.18.50.png" alt="配置" />
-<figcaption aria-hidden="true">配置</figcaption>
-</figure>
-<p>如果之后要改配置，或者用winetricks装别的东西，可以打开下面这个文件，就可以回到这个界面。</p>
-<div class="highlight"><pre><span></span>~/Applications/Sikarugir/steam.app/Configure.app
-</pre></div>
-
-<p>至此，steam就装好了，直接打开steam.app即可使用windows版本的steam。</p>
 
 </div>
 
@@ -192,18 +260,12 @@ Wrapper，随便起个名（假设叫做steam.app）。选D3DMetal，并且<stro
 
 <div class="sibling-pages">
     
-    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2026-02-28-从零手写了一个pdf解析器/index.html">〈</a></div>
-    <div class="sibling-page sibling-page-next">
-        <div class="sibling-page-title"><a href="//nth233.top/posts/2026-02-28-从零手写了一个pdf解析器/index.html">从零手写了个PDF...</a></div>
-        <div class="sibling-page-date">2026-02-28</div>
-    </div>
-    
     
     <div class="sibling-page sibling-page-last">
-        <div class="sibling-page-title"><a href="//nth233.top/posts/2025-12-02-glfw输入法补丁/index.html">针对Minecra...</a></div>
-        <div class="sibling-page-date">2025-12-02</div>
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2026-01-08-MacOS上游玩windows游戏/index.html">MacOS上游玩W...</a></div>
+        <div class="sibling-page-date">2026-01-08</div>
     </div>
-    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2025-12-02-glfw输入法补丁/index.html">〉</a></div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2026-01-08-MacOS上游玩windows游戏/index.html">〉</a></div>
     
 </div>
 
