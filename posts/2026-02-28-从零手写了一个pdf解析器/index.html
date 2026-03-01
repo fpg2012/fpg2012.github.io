@@ -129,8 +129,17 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    <p>这两个月花了点时间，写了一个pdf解析器和pdf目录（outline）的编辑器，算是部分解决了我编辑pdf目录的需求。</p>
-<p>以前我屯了很多扫描版pdf。这些pdf制作不是很精良，经常没有目录，很难检索。当时我没找到合适的开源软件来做这个事情。几个月前重新看了一下pdf的spec，简单评估之后，我认为我可以一周把这个东西做出来（实际上前前后后做了两个月……）。</p>
+    <p>这两个月花了点时间，写了一个pdf解析器和pdf目录（outline）的编辑器，算是部分解决了我编辑pdf目录的需求。关于两个库的编译和使用，可以参考各自的README和文档。</p>
+<blockquote>
+<p>GitHub Repo：</p>
+<ul>
+<li><a href="https://github.com/fpg2012/pdf-outline">pdf-outline</a>
+基于JSON的pdf目录编辑工具，依赖pindf、libicu</li>
+<li><a href="https://github.com/fpg2012/pindf">pindf</a>
+底层pdf文档解析库（非常low-level），基本上只依赖zlib</li>
+</ul>
+</blockquote>
+<p>以前我囤了很多扫描版pdf。这些pdf制作不是很精良，往往目录，很难检索。当时我没找到合适的开源软件来做这件事。几个月前重新看了一下pdf的spec，简单评估之后，我认为我可以一周把这个东西做出来（实际上前前后后做了两个月……）。</p>
 <p>这里说一下啥是outline。outline有些地方直接叫做“书签”，有些地方叫“目录”，有些地方叫“概览”。总之就是打开pdf之后，显示在侧边栏里面的目录，点击里面的项可以跳转到对应的地方，就是下图框起来的区域：</p>
 <figure>
 <img src="截屏2026-02-28%2015.45.27大.png"
@@ -154,18 +163,18 @@ object在文件中的哪个位置。</li>
 object组成。所谓object，就是整数、浮点数、null、名字、字典、数组、字符串、流的统称。流比较特殊，主要用来放一些连续的二进制数据，由一个字典和一串原始二进制数据组成。</p>
 <p>间接对象（indirect
 object）则是带编号的对象。根据编号，可以在字典、数组这种复合对象里面引用它们。trailer当中会引用Catalog对象这个对象。Catalog当中有页面树、目录树、名字树等等东西。PDF的所有内容都用这棵树组织起来。</p>
-<p>是不是听起来很简单？我一开是也这么觉得，但是实际做起来发现，<strong>PDF标准充满各种历史包袱</strong>，相同的功能可能可以用不同的方式来实现。因此要支持大部分的PDF，还是需要花很多时间研读标准。</p>
+<p>是不是听起来很简单？我一开始也这么觉得，但是实际做起来发现，<strong>PDF标准充满各种历史包袱</strong>，相同的功能可能可以用不同的方式来实现。因此要支持大部分的PDF，还是需要花很多时间研读标准。</p>
 <blockquote>
 <p>举个例子，我原本不打算实现流对象的解析，但后期的PDF标准为了进一步缩小体积，会把对象放到流的二进制数据里面，用特殊的格式压缩。这就迫使我不得不去解析各种流，硬控了我一周的时间。xref表也有流的版本。</p>
 </blockquote>
 <h3 id="如何修改pdf">如何修改PDF</h3>
 <p>PDF支持追加式的修改。所谓追加，就是指可以在上述完整的文件结构后面，再接上一个完整的文件结构。新的xref表格会覆盖原始xref表的对应部分——这意味着我们可以添加新的indirect
 object，并且通过修改xref表，替换掉原先相同对象号的object。最后，需要再trailer当中加上<code>/Prev</code>这个属性，指出老的xref表的位置。</p>
-<p>这种追加式修改可以叠加无数层，在流传的PDF当中非常普遍。但PDF的这种设计，导致解析器必须从文件末端开始解析，先找到startxref，然后解析trailer，然后接写xref表，一层一层地解析回去，直到找到最初的那个trailer和xref表，做起来还是挺麻烦的。这种结构也对浏览器不友好（比如传了完整文件才能开始阅读），所以PDF还支持对文档做“线性化”，线性化后的PDF只有一个xref和一个trailer，1号对象放在最前面，就是catalog对象，对浏览器比较友好。</p>
+<p>这种追加式修改可以叠加无数层，在流传的PDF当中非常普遍。但PDF的这种设计，导致解析器必须从文件末端开始解析，先找到startxref，然后解析trailer，然后解析xref表，一层一层地解析回去，直到找到最初的那个trailer和xref表，做起来还是挺麻烦的。这种结构也对浏览器不友好（比如传了完整文件才能开始阅读），所以PDF还支持对文档做“线性化”，线性化后的PDF只有一个xref和一个trailer，1号对象放在最前面，就是catalog对象，对浏览器比较友好。</p>
 <h3 id="为啥要自己造轮子">为啥要自己造轮子？</h3>
 <p>为了爽。</p>
 <p>我原本想要直接用现成的库，比如mupdf之类的。但这些库的文档感觉不是特别完善，并且一般都是read-only或者create-only，于是就一直搁置。直到某一天，我弄丢了手机，断网了一晚上，无事可做，于是乎决定纯手工写个纯C的解析器。靠着manual和手边的几个离线文档手工起了项目，从此一发不可收拾。尤其是在AI时代，沉下心来纯手工做这个东西是真爽。</p>
-<p>写lexer差不多只用了一天，parser一周做到了85%的完成度。然后因为纯C的种种麻烦点，剩下的10%用了我两周的时间……目前我只感说做到了（95%）的完成度。大部分pdf都是可以处理的，除非是加密的pdf/用了奇怪filter的pdf。</p>
+<p>写lexer差不多只用了一天，parser一周做到了85%的完成度。然后因为纯C的种种麻烦之处，剩下的10%用了我两周的时间……目前我只感说做到了（95%）的完成度。大部分pdf都是可以处理的，除非是加密的pdf/用了奇怪filter的pdf。</p>
 <p>接下来就是编辑pdf。PDF支持追加式的编辑，所以理论上我只需要一个read-only搭配一个create-only的库，就能实现我原本想做的编辑操作。但我意识到这点的时候已经太晚，parser都已经快写完了。</p>
 <h3 id="复盘">复盘</h3>
 <p>不应该用纯C来写，手工管理内存和所有权实在是太麻烦，如果改用rust，甚至哪怕是C++，应该真的一周就能搞定。</p>
@@ -176,10 +185,24 @@ object，并且通过修改xref表，替换掉原先相同对象号的object。�
 object，替换到原先的outline树，就能实现编辑。</p>
 <h3 id="具体实现">具体实现</h3>
 <p>理论简单，但具体实践起来，又花了我好几天时间。</p>
-<p>一个点是，PDF的目录有好几种实现方法。outline树中的节点，可以指向某个Destination对象，也可以指向某个Action对象。Action对象有非常多种，除了跳转外，“打开网页”、“播放声音”甚至“播放视频”之类的都有……因此理论上点击pdf目录项还可以播视频……</p>
-<p>跳转Action的内部会引用一个Destination，因此殊途同归。Destination会引用它要跳转的那个Page，可以指定跳转到页面的那个位置（写坐标）……甚至还能制定跳转之后的缩放。</p>
-<p>我目前不支持用Action。可以选择填Destination，或者填页码。</p>
-<p>示例JSON如下：</p>
+<p>一个点是，PDF的目录有好几种实现方法。outline树中的节点需要有两个信息，</p>
+<ul>
+<li><p>标题，决定了怎么显示这个节点</p></li>
+<li><p>跳转目的地：可以指向某个Destination对象，也可以指向某个Action对象。</p></li>
+</ul>
+<p>这两个要素各自有若干种写法，支持起来很烦人</p>
+<h4 id="标题的两种写法">标题的两种写法</h4>
+<p>title有两种编码方式，默认使用所谓的“pdf
+encoding”，基本上就是诡异版的unicode，欧元符号之类的东西用特殊的编码，历史包袱很重。如果以某两个特殊字节开始，表示使用大端序的UTF-16。</p>
+<p>用现在的眼光看来非常莫名其妙。个人不太喜欢大端序，写代码的时候总要专门去反转顺序……但偏偏PDF标准就是喜欢用大端序，在各种各样的地方都选择大端序。</p>
+<h4 id="目的地的n种写法">目的地的n种写法</h4>
+<p>Action对象有非常多种，除了跳转外，“打开网页”、“播放声音”甚至“播放视频”之类的都有……因此理论上点击pdf目录项还可以播视频……</p>
+<p>跳转Action的内部会引用一个Destination，因此殊途同归。Destination会引用它要跳转的那个Page，或者是对应位置的name，还可以指定跳转到页面的那个位置（写坐标）……甚至能规定跳转之后采用哪种缩放方式。如果跳转目的地写name，还需要去name
+tree里面检索对应的真实page object是哪个，极度麻烦。</p>
+<p>我目前不支持用Action。可以选择填Destination（需要按照pdf的语法自己写destination
+object），或者填页码。推荐填页码，心智负担最小。</p>
+<h4 id="示例json">示例JSON</h4>
+<p>示例JSON如下（只写页码）：</p>
 <div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;chd&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
 <span class="w">        </span><span class="p">{</span>
@@ -237,6 +260,19 @@ object，替换到原先的outline树，就能实现编辑。</p>
 <span class="w">    </span><span class="p">]</span>
 <span class="p">}</span>
 </pre></div>
+
+<h2 id="下一步">下一步？</h2>
+<p>手工做目录还是太麻烦了，下一步看看能不能借助现在的VLM模型/OCR模型，半自动地把目录标出来。</p>
+<p>上半年有时间的话做个工作流来试试看。大体的想法是，先找到书籍的目录，然后借助现有的目录，让VLM/OCR模型精读前几章，总结一下经验，然后跳读整本书。</p>
+<h2 id="ref">Ref</h2>
+<ul>
+<li><a
+href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/pdfreference1.7old.pdf">Adobe
+PDF 1.7 标准文档</a></li>
+<li><a href="https://github.com/fpg2012/pdf-outline">pdf-outline -
+GitHub</a></li>
+<li><a href="https://github.com/fpg2012/pindf">pindf - GitHub</a></li>
+</ul>
 
 </div>
 
