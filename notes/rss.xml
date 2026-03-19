@@ -15,8 +15,8 @@
     
     
     
-    <pubDate>Thu, 19 Mar 2026 08:09:48 GMT</pubDate>
-    <lastBuildDate>Thu, 19 Mar 2026 08:09:48 GMT</lastBuildDate>
+    <pubDate>Thu, 19 Mar 2026 08:32:17 GMT</pubDate>
+    <lastBuildDate>Thu, 19 Mar 2026 08:32:17 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
@@ -72,6 +72,32 @@
           <category>adam</category>
         
           <category>ai</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>rope笔记</title>
+      <link>https://nth233.top/notes/rope.html</link>
+      
+      <description>rope笔记</description>
+      
+      <pubDate>2026-03-10</pubDate>
+      <guid>3164759053710509879</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>ai</category>
+        
+          <category>RoPE</category>
         
       
     </item>
