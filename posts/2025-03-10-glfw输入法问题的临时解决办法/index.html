@@ -143,7 +143,90 @@
     <div class="post-menu"></div>
 </details>
 <div class="post-content">
-    
+    <h2 id="诡异的退格键">0 诡异的退格键</h2>
+<p>最近在用glfw和dear imgui写一个简单的deepseek<a
+href="https://github.com/fpg2012/ds-cpp">客户端</a>，又遇到了“喜闻乐见”的输入法问题。最令人恼火的就是退格键不能被正确处理。就像下面这个视频展示的，预编辑的时候，按下退格键不仅会删除预编辑的内容，还会删除已经输入的内容，体验稀烂。</p>
+<div style="width: 100; display: flex; justify-content: center">
+<video controls width="400">
+<source src="输入法问题.webm" type="video/webm" />
+Download the <a href="输入法问题.webm">webm</a>
+</video>
+</div>
+<blockquote>
+<p>在Linux版本的Minecraft上也会有这样的问题，问题的根源同样是glfw<a
+href="#fn1" class="footnote-ref" id="fnref1"
+role="doc-noteref"><sup>1</sup></a>。</p>
+</blockquote>
+<p>另外，在Wayland下，因为没有实现wayland的输入法协议，glfw直接用不了输入法。</p>
+<h2 id="临时解决办法">1 临时解决办法</h2>
+<h3 id="强制使用x11">强制使用X11</h3>
+<p>目前Wayland下面的输入法问题可以说是一团糟，一切都处于过渡状态。解决输入法用不了的最好办法，就是不要用Wayland。在glfwInit()之前，强制glfw选定X11平台。</p>
+<div class="highlight"><pre><span></span><span class="cp">#ifdef __linux__</span>
+<span class="w">    </span><span class="n">glfwInitHint</span><span class="p">(</span><span class="n">GLFW_PLATFORM</span><span class="p">,</span><span class="w"> </span><span class="n">GLFW_PLATFORM_X11</span><span class="p">);</span>
+<span class="cp">#endif</span>
+</pre></div>
+
+<h3 id="给glfw打补丁">给glfw打补丁</h3>
+<p>GLFW处理XIM协议<a href="#fn2" class="footnote-ref" id="fnref2"
+role="doc-noteref"><sup>2</sup></a>的方法不太正确，没有正确过滤掉部分键盘事件（比如输入时的退格键）。下载这个<a
+href="https://github.com/fpg2012/ds-cpp/blob/main/glfw_x11_ime.patch">补丁</a>，用<code>patch</code>命令打到glfw
+3.4的源代码上。这个补丁的改动很小，就是让glfw无视被过滤掉的事件。类似的解决方案早有人在MC的bug
+report里给出，不知为何glfw至今未改正。</p>
+<div class="highlight"><pre><span></span>@@ -1242,6 +1245,9 @@ static void processEvent(XEvent *event)
+ 
+         case KeyPress:
+         {
++            if (filtered) {
++                return;
++            }
+             const int key = translateKey(keycode);
+             const int mods = translateState(event-&gt;xkey.state);
+             const int plain = !(mods &amp; (GLFW_MOD_CONTROL | GLFW_MOD_ALT));
+</pre></div>
+
+<h2 id="linux混乱不堪的输入法">2 Linux混乱不堪的输入法</h2>
+<p>Linux下输入法问题繁多，很大程度是因为缺少稳定、统一的协议。其次，主要开发者中，中国人和日本人少，大部分开发者不用输入法，对这个问题不太重视。最早X11制定了XIM协议，Tedyin的博客<a
+href="#fn3" class="footnote-ref" id="fnref3"
+role="doc-noteref"><sup>3</sup></a>给出了一个很好的例子解释这个协议，建议阅读。XIM协议看起来简洁明了，而且也能用，但据说在特定条件下会导致程序卡死<a
+href="#fn4" class="footnote-ref" id="fnref4"
+role="doc-noteref"><sup>4</sup></a>。社区后来不知出于什么原因，没有进一步改进XIM协议，而是由GTK和Qt分别开发自己的IM
+Module——从此天下大乱，装个输入法都要手动配几个莫名其妙的环境变量。GLFW既不是GTK，也不是Qt，就更麻烦。</p>
+<p>再后来，为了方便输入法开发，又出现了ibus和fcitx。ibus据说在非GNOME环境下表现不佳（但是我没查到具体的问题），且其GNOME下的拼音输入也有不少bug<a
+href="#fn5" class="footnote-ref" id="fnref5"
+role="doc-noteref"><sup>5</sup></a>。在国内社区持续的推广下，现在fcitx是中文输入的主流。</p>
+<p>与此同时，Wayland正在逐步取代X11。很遗憾的是，Wayland的出现非但没有缓解输入法问题，反而将其进一步恶化了。Wayland自己另起炉灶，搞了v1-v4一系列协议<a
+href="#fn6" class="footnote-ref" id="fnref6"
+role="doc-noteref"><sup>6</sup></a>，具体兼容情况各不相同。应用开发者的反应没有协议更新的速度快，通常也不会把IME支持放在比较优先的位置，就导致过渡阶段💩一样的体验。</p>
+<p>总之，在2025年的今天，Linux的输入法问题成了最混乱、最糟糕、最劝退的问题之一，上Arch中文论坛搜“Wayland+输入法”，能搜出来一整页的帖子。主要开发者长期忽视IME，造成社区不断分裂、造新的轮子，旧的问题刚刚解决，新的问题又产生了。就结果而言，如今哪怕是处理一个很常见的输入法问题，都需要很多无关的底层知识。<strong>Linux的输入法完全不应该这么复杂</strong>，本来应该和Windows一样简单才对。</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document"
+role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a
+href="https://report.bugs.mojang.com/servicedesk/customer/portal/2/MC-258708">MC-258708
+Deleting candidate CJK words in IME also deletes text already
+entered</a><a href="#fnref1" class="footnote-back"
+role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p><a
+href="https://www.x.org/releases/X11R7.6/doc/libX11/specs/XIM/xim.html">XIM协议</a><a
+href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a
+href="https://tedyin.com/posts/a-brief-intro-to-linux-input-method-framework/">Tedyin
+- A Brief Intro to Input Method Framework, Linux IME, and XIM</a><a
+href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn4"><p><a
+href="https://www.csslayer.info/wordpress/tag/xim/">csslayer关于XIM的议论</a><a
+href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn5"><p><a
+href="https://forum.ubuntu.org.cn/viewtopic.php?t=460613">早年ubuntu论坛上的讨论</a><a
+href="#fnref5" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn6"><p><a
+href="https://www.csslayer.info/wordpress/fcitx-dev/chrome-state-of-input-method-on-wayland/">csslayer
+- Chrome/Chromium 今日 Wayland 输入法支持现状</a><a href="#fnref6"
+class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
 </div>
 
 

@@ -15,10 +15,66 @@
     
     
     
-    <pubDate>Tue, 03 Mar 2026 05:04:21 GMT</pubDate>
-    <lastBuildDate>Tue, 03 Mar 2026 05:04:21 GMT</lastBuildDate>
+    <pubDate>Thu, 19 Mar 2026 08:09:48 GMT</pubDate>
+    <lastBuildDate>Thu, 19 Mar 2026 08:09:48 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>Muon优化器笔记</title>
+      <link>https://nth233.top/notes/Muon优化器.html</link>
+      
+      <description>Muon优化器笔记</description>
+      
+      <pubDate>2026-03-18</pubDate>
+      <guid>16276516631254228790</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>note</category>
+        
+          <category>optimizer</category>
+        
+          <category>muon</category>
+        
+          <category>ai</category>
+        
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Adam优化器</title>
+      <link>https://nth233.top/notes/Adam优化器.html</link>
+      
+      <description>Adam优化器</description>
+      
+      <pubDate>2026-03-17</pubDate>
+      <guid>14390511737951154921</guid>
+      
+        
+          <category>note</category>
+        
+      
+      
+        
+          <category>论文笔记</category>
+        
+          <category>optimizer</category>
+        
+          <category>adam</category>
+        
+          <category>ai</category>
+        
+      
+    </item>
     
     
     
@@ -380,30 +436,6 @@
           <category>Rust</category>
         
           <category>lib</category>
-        
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>sushi v0.2.10“支持”typst了</title>
-      <link>https://nth233.top/notes/hello-typst.pdf</link>
-      
-      <description>刚刚更新的#link("https://github.com/fpg2012/sushi")[sushi v0.2.10]静态页面生成器现在可以处理typst文件了。</description>
-      
-      <pubDate>2025-01-19</pubDate>
-      <guid>7803502595919360685</guid>
-      
-        
-          <category>dev</category>
-        
-      
-      
-        
-          <category>typst</category>
-        
-          <category>sushi</category>
         
       
     </item>
