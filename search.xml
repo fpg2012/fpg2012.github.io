@@ -60,6 +60,85 @@
     <page>
         <title>
         
+        解决kindle在mac上无法识别的问题
+        
+        </title>
+        <url>////nth233.top/notes/kindle-on-mac.html</url>
+        <search-text>
+        
+        
+            note
+        
+            macos
+        
+            kindle
+        
+        
+        
+        其实可以识别，但是需要手动挂载
+        
+        
+        
+我的kindle kpw5连接m2 macbook air的时候，一般都没法被系统/calibre识别，导书的时候每次都要折腾半天。
+
+&gt; “能用一条USB线解决的事情，就不要用无线的方法”
+
+于是排查了一下问题的原因。运行
+
+```
+system_profiler SPUSBDataType
+```
+
+发现有一段输出如下
+
+```
+USB:
+
+    USB 3.1 Bus:
+
+      Host Controller Driver: AppleT8112USBXHCI
+
+        Internal Storage:
+
+          Product ID: 0x0324
+          Vendor ID: 0x1949  (Lab126)
+          Version: 4.09
+          Serial Number: G001PX11222501M9
+          Speed: Up to 480 Mb/s
+          Location ID: 0x00100000 / 1
+          Current Available (mA): 500
+          Current Required (mA): 500
+          Extra Operating Current (mA): 0
+          Media:
+            Internal Storage:
+              Capacity: 6.7 GB (6,702,472,704 bytes)
+              Removable Media: Yes
+              BSD Name: disk4
+              Logical Unit: 0
+              Partition Map Type: Unknown
+              S.M.A.R.T. status: Verified
+              USB Interface: 0
+```
+
+这个来自Lab126的InternalStorage设备，就是我的kindle。因此，**mac实际上识别到了kindle**，只是不知道为什么，没有主动挂载上来。
+
+接下来手动挂载一下即可解决问题。根据上面的输出，我这个设备的BSD Name是disk4：
+
+```
+diskutil mount /dev/disk4
+```
+
+这条命令执行完，应该就能看到kindle出现在访达里面了。过后calibre应该也能正确识别设备。
+
+        
+        </search-text>
+    </page>
+    
+    
+    
+    <page>
+        <title>
+        
         Muon优化器笔记
         
         </title>
@@ -172,7 +251,7 @@ $$
 \mathrm{s.t.\ } &amp; \|\Delta W\|_\mathrm{RMS\to RMS} \le \eta&#39;
 \end{aligned}
 $$
-然后这一步我暂时不理解怎么证明。但是可以直观感受到，把$\nabla_W\mathcal L$每个特征向量方向都取$-\eta&#39;$即可，让他在可控范围内尽量负。或者说，每个特征向量的方向都均等地更新，不因梯度的贡献量而偏袒某个方向。由于梯度不一定是方阵，所以用SVD而不是特征值分解。
+但是可以直观感受到，把$\nabla_W\mathcal L$每个特征向量方向都取$-\eta&#39;$即可，让他在可控范围内尽量负。或者说，每个特征向量的方向都均等地更新，不因梯度的贡献量而偏袒某个方向。由于梯度不一定是方阵，所以用SVD而不是特征值分解。
 $$
 \Delta W = -\eta&#39; \sqrt{\frac{d_x}{d_y}} \cdot UV^T
 $$
@@ -204,6 +283,10 @@ $$
 ### 超参设置
 
 根据苏剑林的说法，如果用Adam迁移到Muon，需要将学习率放大$0.2\sqrt{d}$倍，一般大约是10倍。所以他们做的moonlight版Muon还在根号前面多乘了$0.2$，而且为了方便把根号下的内容改成了fan-in和fan-out中的较大值。
+
+### 这个多项式是怎么来的
+
+
 
 ## ref
 
