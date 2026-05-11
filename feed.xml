@@ -15,10 +15,34 @@
     
     
     
-    <pubDate>Fri, 17 Apr 2026 15:28:36 GMT</pubDate>
-    <lastBuildDate>Fri, 17 Apr 2026 15:28:36 GMT</lastBuildDate>
+    <pubDate>Mon, 11 May 2026 13:56:04 GMT</pubDate>
+    <lastBuildDate>Mon, 11 May 2026 13:56:04 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
+    
+    
+    
+    <item>
+      <title>risc-v裸机程序和中断处理</title>
+      <link>https://nth233.top/posts/2026-04-31-risc-v裸机程序和中断处理/index.html</link>
+      
+      <description>写OS是以前的念想。</description>
+      
+      <pubDate>2026-04-31</pubDate>
+      <guid>5422644007138836394</guid>
+      
+        
+          <category>dev</category>
+        
+      
+      
+        
+          <category>OS</category>
+        
+          <category>risc-v</category>
+        
+      
+    </item>
     
     
     

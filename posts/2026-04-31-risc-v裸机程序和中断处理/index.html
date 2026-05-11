@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - risc-v裸机程序和中断处理</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="写OS是以前的念想。">
+        
+
+        
+        <meta name="keywords" content="OS,risc-v">
+        
+
+        <link rel="stylesheet" href="//nth233.top/assets/style/main.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//nth233.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//nth233.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//nth233.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//nth233.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//nth233.top/assets/img/404.png"></img>
+    <a href="//nth233.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//nth233.top/notes/">Notes</a>
+    <a href="//nth233.top/about/">About</a>
+    <a href="//nth233.top/feed.xml">RSS</a>
+    <!--<a href="//nth233.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//nth233.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//nth233.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>risc-v裸机程序和中断处理</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>risc-v裸机程序和中断处理</h1>
+    
+    <div class="date-bar">
+        <span class="date">2026-04-31</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#OS</span>
+    
+        <span class="tag">#risc-v</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <blockquote>
+<p>写OS是以前的念想。我不可能沿着这条路走下去，也不可能在这种方向找到工作，但还是想尝试一些没有做过的事情——哪怕没有什么“意义”。</p>
+</blockquote>
+<p>主要记录一下这两天折腾riscv裸机程序。也许以后有时间可以继续把bare
+bone扩写成OS（但概率很低了，时间精力越来越不支持我做这些无法变现的东西）。</p>
+<p>环境</p>
+<ul>
+<li>qemu 11.0</li>
+<li>u-boot 2026.04</li>
+<li>opensbi v1.8.1</li>
+<li>riscv64-linux-gnu-系列，gcc、gdb、binutils之类的</li>
+</ul>
+<p>本来想在starfive visionfive
+2的板子上试试，但是S-mode没玩明白，还是算了。</p>
+<h2 id="exp1-s-mode程序">Exp1 S-mode程序</h2>
+<p>尝试使用opensbi + uboot在S-mode引导我的程序。</p>
+<p>编译opensbi：</p>
+<div class="highlight"><pre><span></span>make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- PLATFORM=generic FW_OPTIONS=0 
+</pre></div>
+
+<p>编译uboot（注意替换opensbi firmware的路径）：</p>
+<p>改配置</p>
+<div class="highlight"><pre><span></span>make menuconfig
+</pre></div>
+
+<p>编译</p>
+<div class="highlight"><pre><span></span>make ARCH=riscv CROSS_COMPILE=riscv64-linux-gnu- OPENSBI=${PATH_TO_OPENSBI}/build/platform/generic/firmware/fw_dynamic.bin -j8
+</pre></div>
+
+<h3 id="概念">概念</h3>
+<h4 id="机器">机器</h4>
+<p>qemu
+virt这个机器上电的时候，pc初始化为<code>0x80000000</code>，从这个地方开始执行所有的代码。</p>
+<p>在riscv架构下，特权层大概分为三层：</p>
+<ul>
+<li>M-mode，机器模式，权限最高的模式，可以执行所有指令。opensbi运行在这个模式。</li>
+<li>S-mode，supervisor模式，操作系统运行在这个模式。S-mode的程序通过SBI，使用M-mode下opensbi提供的服务。实际上也是用ecall之类的指令触发软中断。</li>
+<li>U-mode，用户模式。也就是用户态。用户态程序通过ABI使用OS提供的接口（也是用ecall指令）。</li>
+</ul>
+<p>OpenSBI是一个广泛使用的SBI实现。SBI提供的服务包括开关机、输出字符之类的，类似UEFI的地位。</p>
+<p>从底层高权限到高层低权限，实际上就是设置某些CSR（控制状态寄存器）的特权位。后续再想回到M-mode，只能靠trap陷入了。</p>
+<p>使用uboot编译产生一个固件（这里是SPL），CPU上电之后，先进入M-mode，此时入口地址正好是uboot的M-mode程序。uboot启动opensbi之后，再调用自己的S-mode部分。</p>
+<p>我们可以使用uboot加载自己的程序到内存中，比如<code>load</code>系列命令，加载完之后，直接一句<code>go</code>指令就可以跳转过去。当然对于使用linux内核格式的程序/elf程序，还可以使用<code>boot</code>系列命令。</p>
+<h4 id="risc-v汇编快速复习">RISC-V汇编快速复习</h4>
+<p>总体上比较简单。一般以<code>i</code>结尾表示涉及到立即数，否则就是操作寄存器。以<code>a</code>结尾表示涉及地址。<code>l</code>表示load，<code>s</code>表示save。第一个操作数就是目标寄存器。结尾的<code>b</code>、<code>w</code>表示byte、word。如：</p>
+<ul>
+<li><code>li</code>：加载立即数</li>
+<li><code>la</code>：加载地址</li>
+<li><code>add</code>：加法</li>
+<li><code>sb</code>：写一个byte到对应的地址</li>
+<li><code>bne</code>：不等则跳转</li>
+<li><code>auipc</code>：往PC上加个数</li>
+</ul>
+<p>读写CSR可用<code>csr</code>系列的指令</p>
+<ul>
+<li><code>csrr</code>：从某个csr读到某个寄存器</li>
+<li><code>csrw</code>：写某个csr</li>
+<li><code>csrs</code>：置位某个csr（csr和某个寄存器OR一下，然后写回csr上）</li>
+</ul>
+<h4 id="编译和链接">编译和链接</h4>
+<p>C语言的程序要能运行，至少需要一个东西：栈。栈的初始化必须使用汇编来完成。另外全局变量一部分是定义在bss段的，也顺便定义一下。bss段要求初始化为0。</p>
+<p>链接脚本告诉链接器每个段应该放到哪个位置，重定位之后，所有的指令都能有正确的地址。</p>
+<h4 id="外设">外设</h4>
+<p>UART串口是机器debug的时候，最常用的通信方式。根据virt这个机器的内存映射定义（github上能找到），UART_BASE的地址是<code>0x10000000</code>。往这个地址写字符就是输出到UART。</p>
+<h3 id="程序">程序</h3>
+<p>链接脚本，指定了某些段应该放在什么位置。我们的程序入口放在<code>0x80400000</code>。</p>
+<div class="highlight"><pre><span></span>OUTPUT_ARCH(riscv)
+ENTRY(_start)
+SECTIONS
+{
+    . = 0x80400000;
+    .text : { *(.text.init) *(.text) }
+    . = 0x80600000;
+    .rodata : { *(.rodata) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}
+</pre></div>
+
+<p>汇编</p>
+<div class="highlight"><pre><span></span>.section .text
+.globl _start
+
+_start:
+    # 清空 .bss 段
+    la t0, __bss_start
+    la t1, __bss_end
+    sub t1, t1, t0
+    li t2, 0
+1:  sb t2, 0(t0)
+    addi t0, t0, 1
+    addi t1, t1, -1
+    bnez t1, 1b
+    # 设置栈指针（需 16 字节对齐）
+    la sp, _stack_end
+     # 跳转到 C 的 main 函数
+    call main
+
+loop:
+    nop
+    j loop
+
+.section .data
+.align 4
+_stack_start:
+    .skip 1024
+_stack_end:
+
+.section .bss
+.align 4
+__bss_start:
+    .skip 1024
+__bss_end:
+</pre></div>
+
+<p>C语言程序</p>
+<div class="highlight"><pre><span></span><span class="cp">#define UART0_BASE 0x10000000</span>
+<span class="cp">#define UART_RBR 0</span>
+<span class="cp">#define UART_THR 0</span>
+<span class="cp">#define UART_IER 1</span>
+<span class="cp">#define UART_LSR 5</span>
+<span class="cp">#define UART_LSR_THRE (1 &lt;&lt; 5)</span>
+<span class="cp">#define UART_IER_RDI (1 &lt;&lt; 0)</span>
+
+<span class="cp">#define UART_IRQ 10</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">put_char</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_THR</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">put_char</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="o">++</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Hello, RISC-V!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>可以把最后的死循环改成调用SBI关机。这块可以参考SBI的文档。</p>
+<div class="highlight"><pre><span></span># shutdown (call sbi srst extension)
+li a0, 0
+li a7, 0x53525354
+li a6, 0
+ecall
+</pre></div>
+
+<p>就和系统调用感觉上差不多。a7寄存器放SBI扩展ID，a6寄存器放函数ID。</p>
+<p>这里用到的SBI接口是：</p>
+<figure>
+<img src="image-20260428182900723.png" alt="image-20260428182900723" />
+<figcaption aria-hidden="true">image-20260428182900723</figcaption>
+</figure>
+<p>所以a0设为0，表示关机、a7设为<code>0x53525354</code>表示system
+reset扩展，a6设为0表示system reset函数。</p>
+<h3 id="编译运行">编译运行</h3>
+<div class="highlight"><pre><span></span>riscv64-elf-as -march=rv64imac_zicsr -mabi=lp64 -o boot.o boot.S
+riscv64-elf-gcc -march=rv64imac -mabi=lp64 -mcmodel=medany -c -o main.o main.c
+riscv64-elf-ld -T link.ld -o start.elf boot.o main.o
+riscv64-elf-objcopy -O binary start.elf start.bin
+</pre></div>
+
+<p>启动虚拟机</p>
+<div class="highlight"><pre><span></span>qemu-system-riscv64 -nographic -machine virt \
+    -bios uboot/spl/u-boot-spl \
+    -device loader,file=uboot/u-boot.itb,addr=0x80200000 \
+    -device loader,file=start.bin,addr=0x80400000
+</pre></div>
+
+<p>我们的程序会被加载到<code>0x80400000</code>。进入uboot之后，敲命令</p>
+<div class="highlight"><pre><span></span>go 0x80400000
+</pre></div>
+
+<p>即可跳转到我们的程序了。</p>
+<h2 id="exp2-m-mode程序和中断处理">Exp2 M-mode程序和中断处理</h2>
+<p>涉及中断的时候，感觉一切都变复杂了，所以先回退到M-mode。我暂时不指望这部分代码能直接拿到真实的板子上跑。</p>
+<h3 id="概念-1">概念</h3>
+<h4 id="risc-v的中断模式">risc-v的中断模式</h4>
+<p>riscv-privilege的文档手册非常的琐碎难读，不过幸好这年头有AI。</p>
+<p>有4个CSR对M-mode的中断非常关键：</p>
+<ol type="1">
+<li><code>mtvec</code></li>
+<li><code>mstatus</code></li>
+<li><code>mie</code></li>
+<li><code>mcause</code></li>
+</ol>
+<p>当有中断发生的时候，CPU会直接把PC设置为<code>mtvec</code>，即直接跳转过去（这点不同于传统的中断向量，后者直接把中断向量当作是服务程序的地址）。因此我们要把中断服务程序的首地址写到<code>mtvec</code>里面）</p>
+<p>跳转后，中断服务程序可以读取<code>mcause</code>寄存器，里面存着中断的类型（异常/软中断/外部中断），根据具体的类型，进一步跳转到实际的中断处理程序。</p>
+<p>只有启用了中断之后，才能收到中断信号。这里有两个地方要设置：</p>
+<ol type="1">
+<li><code>mstatus.MIE</code>这个bit要置1，这个是个全局的开关，如果不开，永远收不到中断</li>
+<li><code>mie.MEIE</code>要置1，这个是外部中断的开关</li>
+</ol>
+<p>中断服务程序首先要保护现场，处理结束之后再恢复现场。最后<code>mret</code>实现中断返回。</p>
+<blockquote>
+<p>如果是S-mode，需要把<code>mtvec</code>换成<code>stvec</code>，以此类推。</p>
+</blockquote>
+<h4 id="plic">PLIC</h4>
+<p>具体到处理外部中断，还需要涉及PLIC（platform-level-interrupt-controller，平台级中断控制器），用来管理中断优先级之类的东西。</p>
+<p>查看virt的内存映射之后，可以找到PLIC_BASE对应的内存地址是<code>0x0c000000</code>。从<code>0x0c000000 + 0x2000</code>开始是PLIC使能区域blabla等等。</p>
+<div class="highlight"><pre><span></span><span class="cp">#define PLIC_BASE 0xc000000</span>
+<span class="cp">#define PLIC_ENABLE_OFFSET 0x2000</span>
+<span class="cp">#define PLIC_PENDING_OFFSET 0x1000</span>
+<span class="cp">#define PLIC_THRESHOLD_OFFSET 0x200000</span>
+<span class="cp">#define PLIC_CLAIM_OFFSET 0x200004</span>
+</pre></div>
+
+<p>具体可以查看PLIC文档memory map的部分。</p>
+<p>要让UART中断能发生，PLIC这边需要：</p>
+<ol type="1">
+<li>启用这个中断</li>
+<li>中断优先级大于我们设置的阈值</li>
+</ol>
+<p>具体处理中断的时候，我们需要CLAIM/COMPLETE。假设前面机器中断的部分已经进入了中断服务程序，并且知道了mcause就是外部中断，此时CLAIM就是从PLIC的CLAIM_OFFSET取出当前优先级最高的中断号。读取这个内存地址，同时也是告诉PLIC，“看看现在有什么中断要我处理”。COMPLETE就是把在中断处理完了之后，把中断号写回去，告诉PLIC（我处理完了，把这个中断从队列里面去掉）。</p>
+<p><img src="image-20260428180551853.png" alt="image-20260428180551853" style="zoom:50%;" /></p>
+<h4 id="uart">UART</h4>
+<p>在virt机器上，UART对应的PLIC中断号是0xA，也就是10。UART自己也有个启用和关闭中断的开关，需要打开。</p>
+<div class="highlight"><pre><span></span><span class="cp">#define UART0_BASE 0x10000000</span>
+<span class="cp">#define UART_RBR 0</span>
+<span class="cp">#define UART_THR 0</span>
+<span class="cp">#define UART_IER 1</span>
+<span class="cp">#define UART_LSR 5</span>
+<span class="cp">#define UART_LSR_THRE (1 &lt;&lt; 5)</span>
+<span class="cp">#define UART_IER_RDI (1 &lt;&lt; 0)</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">init_uart</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Enable receive-data-available interrupts in the 16550 UART.</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_IER</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UART_IER_RDI</span><span class="p">;</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_RBR</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>来了中断之后，需要把UART缓冲区的字符读掉，才能清掉UART的状态。</p>
+<p>这块具体得参考16550的手册。</p>
+<h3 id="程序-1">程序</h3>
+<p>链接脚本</p>
+<div class="highlight"><pre><span></span>OUTPUT_ARCH(riscv)
+ENTRY(_start)
+SECTIONS
+{
+    . = 0x80000000;
+    .text : { *(.text.init) *(.text) }
+    . = 0x80200000;
+    .rodata : { *(.rodata) }
+    .data : { *(.data) }
+    .bss : { *(.bss) }
+}
+</pre></div>
+
+<p>汇编</p>
+<div class="highlight"><pre><span></span>.section .text
+.globl _start
+
+_start:
+    # 清空 .bss 段
+    la t0, __bss_start
+    la t1, __bss_end
+    sub t1, t1, t0
+    li t2, 0
+1:  sb t2, 0(t0)
+    addi t0, t0, 1
+    addi t1, t1, -1
+    bnez t1, 1b
+
+    # 设置栈指针
+    la sp, _stack_end
+
+    # 设置中断向量
+    la t0, int_vec
+    csrw mtvec, t0
+    
+    # 使能机器模式外部中断（MEIE）
+    li t0, (1 &lt;&lt; 11)
+    csrs mie, t0
+    
+    # 使能全局中断
+    csrsi mstatus, 8   # 设置 MIE 位
+    
+    # 跳转到 main
+    call main
+
+loop:
+    wfi # wait for new interrupt
+    j loop
+
+int_vec:
+    addi sp, sp, -80
+    sd ra, 0(sp)
+    sd t0, 8(sp)
+    sd t1, 16(sp)
+    sd t2, 24(sp)
+    sd t3, 32(sp)
+    sd a0, 40(sp)
+    sd a1, 48(sp)
+    sd a2, 56(sp)
+    sd a3, 64(sp)
+    sd a4, 72(sp)
+
+    csrr t0, mcause
+    bgez t0, int_done          # 最高位为 0 表示异常，不是中断
+    slli t0, t0, 1
+    srli t0, t0, 1
+    li t1, 11                  # Machine external interrupt
+    bne t0, t1, int_done
+
+    li t0, 0x0c200004          # PLIC claim/complete, hart 0 M-mode
+    lw t1, 0(t0)               # claim IRQ id
+    li t2, 10                  # UART0 IRQ on QEMU virt
+    bne t1, t2, plic_complete
+
+    li t3, 0x10000000          # UART0 base
+    lb a0, 0(t3)               # 读取 RBR，清掉 RX pending
+    sb a0, 0(t3)               # 回显收到的字符
+
+plic_complete:
+    sw t1, 0(t0)               # complete IRQ
+
+int_done:
+    ld ra, 0(sp)
+    ld t0, 8(sp)
+    ld t1, 16(sp)
+    ld t2, 24(sp)
+    ld t3, 32(sp)
+    ld a0, 40(sp)
+    ld a1, 48(sp)
+    ld a2, 56(sp)
+    ld a3, 64(sp)
+    ld a4, 72(sp)
+    addi sp, sp, 80
+    mret
+
+.section .data
+.align 4
+_stack_start:
+    .skip 1024
+_stack_end:
+
+.section .bss
+.align 4
+__bss_start:
+    .skip 1024
+__bss_end:
+</pre></div>
+
+<p>C语言部分</p>
+<div class="highlight"><pre><span></span><span class="cp">#define UART0_BASE 0x10000000</span>
+<span class="cp">#define UART_RBR 0</span>
+<span class="cp">#define UART_THR 0</span>
+<span class="cp">#define UART_IER 1</span>
+<span class="cp">#define UART_LSR 5</span>
+<span class="cp">#define UART_LSR_THRE (1 &lt;&lt; 5)</span>
+<span class="cp">#define UART_IER_RDI (1 &lt;&lt; 0)</span>
+
+<span class="cp">#define PLIC_BASE 0xc000000</span>
+<span class="cp">#define PLIC_ENABLE_OFFSET 0x2000</span>
+<span class="cp">#define PLIC_PENDING_OFFSET 0x1000</span>
+<span class="cp">#define PLIC_THRESHOLD_OFFSET 0x200000</span>
+<span class="cp">#define PLIC_CLAIM_OFFSET 0x200004</span>
+
+<span class="cp">#define UART_IRQ 10</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">put_char</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="n">ch</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_LSR</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">UART_LSR_THRE</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_THR</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ch</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">print</span><span class="p">(</span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">put_char</span><span class="p">(</span><span class="o">*</span><span class="n">str</span><span class="o">++</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">init_plic</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Enable UART interrupt</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">PLIC_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">PLIC_ENABLE_OFFSET</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">UART_IRQ</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">32</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">|=</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">UART_IRQ</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">32</span><span class="p">));</span>
+<span class="w">    </span><span class="c1">// Set priority for UART interrupt</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">PLIC_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">(</span><span class="n">UART_IRQ</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">4</span><span class="p">))</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Set threshold to 0 to allow all interrupts</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">PLIC_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">PLIC_THRESHOLD_OFFSET</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">init_uart</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Enable receive-data-available interrupts in the 16550 UART.</span>
+<span class="w">    </span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_IER</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">UART_IER_RDI</span><span class="p">;</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="k">volatile</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="p">)(</span><span class="n">UART0_BASE</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">UART_RBR</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">init_uart</span><span class="p">();</span>
+<span class="w">    </span><span class="n">init_plic</span><span class="p">();</span>
+<span class="w">    </span><span class="n">print</span><span class="p">(</span><span class="s">&quot;Hello, RISC-V!</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2 id="ref">Ref</h2>
+<ul>
+<li><a
+href="https://www.ti.com/lit/ug/sprugp1/sprugp1.pdf?ts=1777326944780">UART
+Ref</a></li>
+<li><a href="https://github.com/riscv/riscv-plic-spec">RISC-V PLIC
+Spec</a></li>
+<li><a
+href="https://docs.riscv.org/reference/isa/priv/priv-intro.html">RISC-V
+Privilege</a></li>
+<li><a href="https://wiki.osdev.org/Linker_Scripts">linker scripts -
+osdev wiki</a></li>
+<li><a href="https://github.com/riscv-non-isa/riscv-sbi-doc">risc-v sbi
+doc</a></li>
+</ul>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//nth233.top/posts/2026-02-28-从零手写了一个pdf解析器/index.html">从零手写了个PDF...</a></div>
+        <div class="sibling-page-date">2026-02-28</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//nth233.top/posts/2026-02-28-从零手写了一个pdf解析器/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//nth233.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//nth233.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//nth233.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//nth233.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
