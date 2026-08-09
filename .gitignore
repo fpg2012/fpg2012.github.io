@@ -2,3 +2,4 @@ _gen/
 _test_gen/
 _test_gen_win/
 .DS_Store
+uv.lock
