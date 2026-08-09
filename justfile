@@ -1,33 +1,34 @@
+set shell := ["zsh", "-cu"]
+
+venv := "source .venv/bin/activate"
+
 all:
-	ssushi build -A
+	{{venv}} && ssushi build -A
 
 inc:
-	ssushi build
+	{{venv}} && ssushi build
 
 test:
-	ssushi build -c _test.yml
-	sfz -r _test_gen
+	{{venv}} && ssushi build -c _test.yml
+	{{venv}} && { sfz --bind 127.0.0.1 -r _test_gen & sfz --bind '[::1]' -r _test_gen & wait; }
 
 test-all:
-	ssushi build -A -c _test.yml
-	sfz -r _test_gen
+	{{venv}} && ssushi build -A -c _test.yml
+	{{venv}} && { sfz --bind 127.0.0.1 -r _test_gen & sfz --bind '[::1]' -r _test_gen & wait; }
 
 test-debug-all:
-	ssushi --debug build -A -c _test.yml
-	sfz -r _test_gen
+	{{venv}} && ssushi --debug build -A -c _test.yml
+	{{venv}} && { sfz --bind 127.0.0.1 -r _test_gen & sfz --bind '[::1]' -r _test_gen & wait; }
 
 test-debug:
-	ssushi --debug build -c _test.yml
-	sfz -r _test_gen
+	{{venv}} && ssushi --debug build -c _test.yml
+	{{venv}} && { sfz --bind 127.0.0.1 -r _test_gen & sfz --bind '[::1]' -r _test_gen & wait; }
 
 clean-gen:
-	cd _gen
-	rm -rf *
-	cd ..
+	{{venv}} && cd _gen && rm -rf *
 
 new-post:
-	mkdir -p "posts/`date -I`-newpost"
-	cp _model/post.md "posts/`date -I`-newpost/index.md"
+	{{venv}} && mkdir -p "posts/`date -I`-newpost" && cp _model/post.md "posts/`date -I`-newpost/index.md"
 
 new-note:
-	cp _model/note.md "notes/`date -I`-newnote.md"
+	{{venv}} && cp _model/note.md "notes/`date -I`-newnote.md"
