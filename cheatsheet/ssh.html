@@ -1,0 +1,234 @@
+<h1 id="ssh使用速查表">ssh使用速查表</h1>
+
+<section class="card">
+<h3 id="连接与登录"><strong>1. 连接与登录</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssh &lt;user&gt;@&lt;host&gt;</code></td>
+<td>登录远程主机</td>
+</tr>
+<tr>
+<td><code>ssh -p &lt;port&gt; &lt;user&gt;@&lt;host&gt;</code></td>
+<td>指定端口登录</td>
+</tr>
+<tr>
+<td><code>ssh &lt;host&gt; &lt;cmd&gt;</code></td>
+<td>登录后执行一条命令</td>
+</tr>
+<tr>
+<td><code>ssh -i &lt;key&gt; &lt;user&gt;@&lt;host&gt;</code></td>
+<td>指定私钥</td>
+</tr>
+<tr>
+<td><code>ssh -t &lt;host&gt; &lt;cmd&gt;</code></td>
+<td>强制分配伪终端（如远端 <code>sudo</code>）</td>
+</tr>
+<tr>
+<td><code>ssh -N &lt;host&gt;</code></td>
+<td>不执行命令，仅建立连接（常用于隧道）</td>
+</tr>
+<tr>
+<td><code>ssh -v &lt;host&gt;</code></td>
+<td>调试连接过程（<code>-vvv</code> 更详细）</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="密钥管理"><strong>2. 密钥管理</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssh-keygen -t ed25519 -C "&lt;comment&gt;"</code></td>
+<td>生成 ed25519 密钥</td>
+</tr>
+<tr>
+<td><code>ssh-keygen -t rsa -b 4096</code></td>
+<td>生成 4096 位 RSA 密钥</td>
+</tr>
+<tr>
+<td><code>ssh-keygen -f ~/.ssh/id_foo</code></td>
+<td>指定密钥文件路径</td>
+</tr>
+<tr>
+<td><code>ssh-keygen -p -f &lt;key&gt;</code></td>
+<td>修改私钥口令</td>
+</tr>
+<tr>
+<td><code>ssh-keygen -y -f &lt;key&gt;</code></td>
+<td>从私钥导出公钥</td>
+</tr>
+<tr>
+<td><code>ssh-copy-id &lt;user&gt;@&lt;host&gt;</code></td>
+<td>把公钥追加到远端 <code>authorized_keys</code></td>
+</tr>
+<tr>
+<td><code>eval "$(ssh-agent -s)"</code></td>
+<td>启动 ssh-agent</td>
+</tr>
+<tr>
+<td><code>ssh-add &lt;key&gt;</code></td>
+<td>把私钥加入 agent</td>
+</tr>
+<tr>
+<td><code>ssh-add -l</code></td>
+<td>列出 agent 中的密钥</td>
+</tr>
+<tr>
+<td><code>ssh-add -D</code></td>
+<td>清空 agent 中的密钥</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="端口转发与隧道"><strong>3. 端口转发与隧道</strong></h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ssh -L &lt;lport&gt;:&lt;dst&gt;:&lt;dport&gt; &lt;host&gt;</code></td>
+<td>本地转发：本地端口 → 远端可达地址</td>
+</tr>
+<tr>
+<td><code>ssh -R &lt;rport&gt;:&lt;dst&gt;:&lt;dport&gt; &lt;host&gt;</code></td>
+<td>远程转发：远端端口 → 本地可达地址</td>
+</tr>
+<tr>
+<td><code>ssh -D &lt;port&gt; &lt;host&gt;</code></td>
+<td>动态转发，建立 SOCKS5 代理</td>
+</tr>
+<tr>
+<td><code>ssh -J &lt;jump&gt; &lt;host&gt;</code></td>
+<td>通过跳板机连接</td>
+</tr>
+<tr>
+<td><code>ssh -W &lt;host&gt;:&lt;port&gt; &lt;jump&gt;</code></td>
+<td>经跳板机转发到任意地址</td>
+</tr>
+<tr>
+<td><code>ssh -o ProxyJump=&lt;jump&gt; &lt;host&gt;</code></td>
+<td>ProxyJump 的选项写法</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="文件传输scp-rsync"><strong>4. 文件传输（scp /
+rsync）</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>scp &lt;file&gt; &lt;user&gt;@&lt;host&gt;:&lt;dir&gt;</code></td>
+<td>上传文件</td>
+</tr>
+<tr>
+<td><code>scp -r &lt;dir&gt; &lt;user&gt;@&lt;host&gt;:&lt;dir&gt;</code></td>
+<td>上传目录</td>
+</tr>
+<tr>
+<td><code>scp -P &lt;port&gt; ...</code></td>
+<td>指定端口（注意是大写 <code>-P</code>）</td>
+</tr>
+<tr>
+<td><code>scp &lt;user&gt;@&lt;host&gt;:&lt;file&gt; .</code></td>
+<td>下载文件到当前目录</td>
+</tr>
+<tr>
+<td><code>rsync -avz &lt;dir&gt; &lt;host&gt;:&lt;dir&gt;</code></td>
+<td>增量同步</td>
+</tr>
+<tr>
+<td><code>rsync -avz --delete &lt;src&gt; &lt;dst&gt;</code></td>
+<td>镜像同步（删除目标多余文件）</td>
+</tr>
+<tr>
+<td><code>rsync -avz -e "ssh -p &lt;port&gt;" ...</code></td>
+<td>rsync 指定 SSH 端口</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="sshconfig-示例"><strong>5. ~/.ssh/config 示例</strong></h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode ini"><code class="sourceCode ini"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">Host foo</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">    HostName foo.example.com</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">    User nth233</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">    Port 22</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">    IdentityFile ~/.ssh/id_ed25519</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">    ServerAliveInterval 60</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">Host jump</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="dt">    HostName jump.example.com</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="dt">    User nth233</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="dt">Host bar</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="dt">    HostName 10.0.0.5</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="dt">    User root</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="dt">    ProxyJump jump</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="常用工作流recipe"><strong>6. 常用工作流（recipe）</strong></h3>
+<p><strong>配置免密登录</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh-keygen</span> <span class="at">-t</span> ed25519</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ssh-copy-id</span> user@host</span></code></pre></div>
+<p><strong>把本地 8080 转发到远端 80</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-L</span> 8080:localhost:80 user@host</span></code></pre></div>
+<p><strong>建立 SOCKS5 代理</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-N</span> <span class="at">-D</span> 1080 user@host</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 之后可设置 ALL_PROXY=socks5://localhost:1080</span></span></code></pre></div>
+<p><strong>通过跳板机连接内网主机</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> <span class="at">-J</span> user@jump user@target</span></code></pre></div>
+<p><strong>把远端目录挂载到本地（sshfs）</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">sshfs</span> user@host:/remote/path /mnt/point</span></code></pre></div>
+</section>
+
+<ul>
+<li>管理操作均在本地执行；<code>ssh-agent</code>
+用于避免重复输入口令。</li>
+<li><code>scp</code> 的端口选项是大写 <code>-P</code>，<code>ssh</code>
+是小写 <code>-p</code>。</li>
+<li><code>authorized_keys</code> 权限应为
+<code>600</code>，<code>~/.ssh</code> 应为 <code>700</code>。</li>
+<li>首次连接会提示确认主机指纹；<code>StrictHostKeyChecking=no</code>
+可跳过但不推荐。</li>
+</ul>
