@@ -1,0 +1,5 @@
+layout: cheatsheet-page
+title: "pacman / apt 命令对照"
+date: "2026-09-17"
+description: "Arch 与 Debian 系包管理器命令对照"
+tag: ["pacman", "apt", "dpkg"]

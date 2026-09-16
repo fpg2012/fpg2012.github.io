@@ -1,0 +1,235 @@
+<h1 id="pacman-apt-命令对照">pacman / apt 命令对照</h1>
+
+<section class="card">
+<h3 id="系统更新"><strong>1. 系统更新</strong></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>pacman（Arch）</th>
+<th>apt / dpkg（Debian）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>更新索引</td>
+<td><code>pacman -Sy</code></td>
+<td><code>apt update</code></td>
+</tr>
+<tr>
+<td>升级全部</td>
+<td><code>pacman -Syu</code></td>
+<td><code>apt full-upgrade</code></td>
+</tr>
+<tr>
+<td>查看可升级</td>
+<td><code>pacman -Qu</code></td>
+<td><code>apt list --upgradable</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="安装与卸载"><strong>2. 安装与卸载</strong></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>pacman</th>
+<th>apt / dpkg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>安装包</td>
+<td><code>pacman -S &lt;pkg&gt;</code></td>
+<td><code>apt install &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>安装本地包</td>
+<td><code>pacman -U foo.pkg.tar.zst</code></td>
+<td><code>apt install ./foo.deb</code></td>
+</tr>
+<tr>
+<td>卸载（保留配置）</td>
+<td><code>pacman -R &lt;pkg&gt;</code></td>
+<td><code>apt remove &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>卸载并清配置</td>
+<td><code>pacman -Rns &lt;pkg&gt;</code></td>
+<td><code>apt purge &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>删除孤立依赖</td>
+<td><code>pacman -Rns $(pacman -Qtdq)</code></td>
+<td><code>apt autoremove</code></td>
+</tr>
+<tr>
+<td>重新安装</td>
+<td><code>pacman -S &lt;pkg&gt;</code></td>
+<td><code>apt reinstall &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>锁定版本</td>
+<td><code>IgnorePkg</code>（pacman.conf）</td>
+<td><code>apt-mark hold &lt;pkg&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="查询与信息"><strong>3. 查询与信息</strong></h3>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>pacman</th>
+<th>apt / dpkg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>搜索仓库</td>
+<td><code>pacman -Ss &lt;kw&gt;</code></td>
+<td><code>apt search &lt;kw&gt;</code></td>
+</tr>
+<tr>
+<td>搜索已安装</td>
+<td><code>pacman -Qs &lt;kw&gt;</code></td>
+<td><code>dpkg -l &lt;pattern&gt;</code></td>
+</tr>
+<tr>
+<td>仓库包信息</td>
+<td><code>pacman -Si &lt;pkg&gt;</code></td>
+<td><code>apt show &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>已安装包信息</td>
+<td><code>pacman -Qi &lt;pkg&gt;</code></td>
+<td><code>dpkg -s &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>列出包内文件</td>
+<td><code>pacman -Ql &lt;pkg&gt;</code></td>
+<td><code>dpkg -L &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>文件属于哪个包</td>
+<td><code>pacman -Qo &lt;file&gt;</code></td>
+<td><code>dpkg -S &lt;file&gt;</code></td>
+</tr>
+<tr>
+<td>列出已安装</td>
+<td><code>pacman -Q</code></td>
+<td><code>dpkg -l</code></td>
+</tr>
+<tr>
+<td>仅显式安装</td>
+<td><code>pacman -Qe</code></td>
+<td><code>apt-mark showmanual</code></td>
+</tr>
+<tr>
+<td>校验包文件</td>
+<td><code>pacman -Qkk &lt;pkg&gt;</code></td>
+<td><code>dpkg -V &lt;pkg&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="清理与维护"><strong>4. 清理与维护</strong></h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>操作</th>
+<th>pacman</th>
+<th>apt / dpkg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>清理旧缓存</td>
+<td><code>pacman -Sc</code> / <code>paccache -r</code></td>
+<td><code>apt autoclean</code></td>
+</tr>
+<tr>
+<td>清空缓存</td>
+<td><code>pacman -Scc</code></td>
+<td><code>apt clean</code></td>
+</tr>
+<tr>
+<td>修复依赖</td>
+<td><code>pacman -Syu</code>（必要时 <code>-S &lt;pkg&gt;</code>
+重装）</td>
+<td><code>apt --fix-broken install</code></td>
+</tr>
+<tr>
+<td>重新配置</td>
+<td>—</td>
+<td><code>dpkg-reconfigure &lt;pkg&gt;</code></td>
+</tr>
+<tr>
+<td>校验整个系统</td>
+<td><code>pacman -Qkk</code></td>
+<td><code>dpkg -V</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="软件源与社区"><strong>5. 软件源与社区</strong></h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>操作</th>
+<th>pacman</th>
+<th>apt / dpkg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>源配置文件</td>
+<td><code>/etc/pacman.conf</code>、<code>/etc/pacman.d/mirrorlist</code></td>
+<td><code>/etc/apt/sources.list</code>、<code>/etc/apt/sources.list.d/</code></td>
+</tr>
+<tr>
+<td>包缓存目录</td>
+<td><code>/var/cache/pacman/pkg/</code></td>
+<td><code>/var/cache/apt/archives/</code></td>
+</tr>
+<tr>
+<td>第三方 / 社区</td>
+<td>AUR（paru / yay）</td>
+<td>PPA / 第三方源</td>
+</tr>
+<tr>
+<td>查询文件（含未安装）</td>
+<td><code>pacman -F &lt;file&gt;</code></td>
+<td><code>apt-file search &lt;file&gt;</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<ul>
+<li>两者都需要 <code>sudo</code> 执行管理操作。</li>
+<li>pacman 的 <code>-Sy</code> 不要单独使用，升级务必用
+<code>-Syu</code>，避免部分升级。</li>
+<li>apt 的孤立依赖要用 <code>autoremove</code> 清理；pacman 用
+<code>pacman -Qtdq</code> 找、<code>-Rns</code> 删。</li>
+</ul>
