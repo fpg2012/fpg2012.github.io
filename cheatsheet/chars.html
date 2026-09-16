@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <link rel="stylesheet" href="//nth233.top/assets/style/katex.min.css">
+  <title>字符表</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+    /* 瀑布流内容布局 */
+    body { max-width: 72em; }
+    .cheatsheet {
+      columns: 20em;
+      column-gap: 2em;
+    }
+    .cheatsheet h1 { column-span: all; }
+    .cheatsheet > section.card {
+      break-inside: avoid;
+      margin: 0 0 1em;
+      padding: 0.5em 0.9em 0.9em;
+      border: 1px solid;
+    }
+    .cheatsheet > section.card > h3:first-child { margin-top: 0.8em; }
+    .cheatsheet > section.card.wide { column-span: all; }
+    .cheatsheet .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 0.2em; }
+    .cheatsheet a:visited { color: inherit; }
+    .cheatsheet .back {
+      column-span: all;
+      margin: 0 0 0.5em;
+      font-size: 85%;
+    }
+
+    /* 夜间模式 */
+    @media (prefers-color-scheme: dark) {
+      html { color: #d8d8d8; background-color: #1a1a1a; }
+      a, a:visited { color: #d8d8d8; }
+      blockquote { color: #a0a0a0; border-left-color: #444; }
+      tbody, th { border-color: #d8d8d8; }
+      code span.al { color: #ff6666; font-weight: bold; }
+      code span.an { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.at { color: #a0c060; }
+      code span.bn { color: #6fcf97; }
+      code span.bu { color: #7fbf7f; }
+      code span.cf { color: #ff8c69; font-weight: bold; }
+      code span.ch { color: #8ab4f8; }
+      code span.cn { color: #d4a0ff; }
+      code span.co { color: #7f9f9f; font-style: italic; }
+      code span.cv { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.do { color: #e06c75; font-style: italic; }
+      code span.dt { color: #ffb86c; }
+      code span.dv { color: #6fcf97; }
+      code span.er { color: #ff6666; font-weight: bold; }
+      code span.fl { color: #6fcf97; }
+      code span.fu { color: #82aaff; }
+      code span.im { color: #7fbf7f; font-weight: bold; }
+      code span.in { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.kw { color: #ff8c69; font-weight: bold; }
+      code span.op { color: #d0d0d0; }
+      code span.ot { color: #7fbf7f; }
+      code span.pp { color: #ffb86c; }
+      code span.sc { color: #8ab4f8; }
+      code span.ss { color: #d4a0ff; }
+      code span.st { color: #98c379; }
+      code span.va { color: #c099ff; }
+      code span.vs { color: #98c379; }
+      code span.wa { color: #7fb3c8; font-weight: bold; font-style: italic; }
+    }
+  </style>
+</head>
+<body>
+<div class="cheatsheet">
+<p class="back"><a href="//nth233.top/cheatsheet/">← 返回速查表</a></p>
+<h1 id="字符表">字符表</h1>
+
+<section class="card">
+<h3 id="ascii-可打印字符"><strong>1. ASCII 可打印字符</strong></h3>
+<pre class="text"><code>     0 1 2 3 4 5 6 7 8 9 A B C D E F
+2_   SP ! &quot; # $ % &amp; &#39; ( ) * + , - . /
+3_   0 1 2 3 4 5 6 7 8 9 : ; &lt; = &gt; ?
+4_   @ A B C D E F G H I J K L M N O
+5_   P Q R S T U V W X Y Z [ \ ] ^ _
+6_   ` a b c d e f g h i j k l m n o
+7_   p q r s t u v w x y z { | } ~ DEL</code></pre>
+</section>
+
+<section class="card">
+<h3 id="ascii-控制字符"><strong>2. ASCII 控制字符</strong></h3>
+<pre class="text"><code>00 NUL 空字符       10 DLE 数据链路转义
+01 SOH 标题开始     11 DC1 设备控制1
+02 STX 正文开始     12 DC2 设备控制2
+03 ETX 正文结束     13 DC3 设备控制3
+04 EOT 传输结束     14 DC4 设备控制4
+05 ENQ 询问         15 NAK 否认
+06 ACK 确认         16 SYN 同步空闲
+07 BEL 响铃         17 ETB 传输块结束
+08 BS  退格         18 CAN 取消
+09 HT  水平制表     19 EM  介质结束
+0A LF  换行         1A SUB 替换
+0B VT  垂直制表     1B ESC 转义
+0C FF  换页         1C FS  文件分隔
+0D CR  回车         1D GS  分组分隔
+0E SO  移出         1E RS  记录分隔
+0F SI  移入         1F US  单元分隔
+                    7F DEL 删除</code></pre>
+</section>
+
+<section class="card">
+<h3 id="法语字母英语没有的"><strong>3.
+法语字母（英语没有的）</strong></h3>
+<pre class="text"><code>小写  à â æ ç é è ê ë î ï ô œ ù û ü ÿ
+大写  À Â Æ Ç É È Ê Ë Î Ï Ô Œ Ù Û Ü Ÿ</code></pre>
+</section>
+
+<section class="card">
+<h3 id="常用数学符号可直接复制"><strong>4.
+常用数学符号（可直接复制）</strong></h3>
+<pre class="text"><code>希腊字母  α β γ δ ε ζ η θ ι κ λ μ ν ξ ο π ρ σ τ υ φ χ ψ ω
+大写      Α Β Γ Δ Ε Ζ Η Θ Ι Κ Λ Μ Ν Ξ Ο Π Ρ Σ Τ Υ Φ Χ Ψ Ω
+运算      ± ∓ × ÷ · ∘ ⊕ ⊗ ⊙
+关系      = ≠ ≈ ≡ ≤ ≥ ≪ ≫ ∝ ∼
+集合      ∈ ∉ ⊂ ⊃ ⊆ ⊇ ∪ ∩ ∅
+逻辑      ∀ ∃ ∄ ¬ ∧ ∨ ⇒ ⇔
+箭头      → ← ↑ ↓ ↔ ⇒ ⇐ ⇔ ↦
+微积分    ∑ ∏ ∫ ∮ ∂ ∇ √ ∞
+排版      ⌈ ⌉ ⌊ ⌋ ⟨ ⟩ ‖</code></pre>
+</section>
+
+<section class="card">
+<h3 id="ipa-元音表"><strong>5. IPA 元音表</strong></h3>
+<table>
+<thead>
+<tr>
+<th>舌位高低  前后</th>
+<th>前</th>
+<th>央</th>
+<th>后</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>闭 Close</td>
+<td>i · y</td>
+<td>ɨ · ʉ</td>
+<td>ɯ · u</td>
+</tr>
+<tr>
+<td>次闭 Near-close</td>
+<td>ɪ · ʏ</td>
+<td></td>
+<td>ʊ</td>
+</tr>
+<tr>
+<td>半闭 Close-mid</td>
+<td>e · ø</td>
+<td>ɘ · ɵ</td>
+<td>ɤ · o</td>
+</tr>
+<tr>
+<td>中 Mid</td>
+<td></td>
+<td>ə</td>
+<td></td>
+</tr>
+<tr>
+<td>半开 Open-mid</td>
+<td>ɛ · œ</td>
+<td>ɜ · ɞ</td>
+<td>ʌ · ɔ</td>
+</tr>
+<tr>
+<td>次开 Near-open</td>
+<td>æ</td>
+<td>ɐ</td>
+<td></td>
+</tr>
+<tr>
+<td>开 Open</td>
+<td>a · ɶ</td>
+<td></td>
+<td>ɑ · ɒ</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="ipa-附加符号"><strong>6. IPA 附加符号</strong></h3>
+<table>
+<thead>
+<tr>
+<th>符号</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ˈ</td>
+<td>主重音，放在重读音节前</td>
+</tr>
+<tr>
+<td>ˌ</td>
+<td>次重音</td>
+</tr>
+<tr>
+<td>ː</td>
+<td>长音</td>
+</tr>
+<tr>
+<td>ˑ</td>
+<td>半长音</td>
+</tr>
+<tr>
+<td>.</td>
+<td>音节分隔</td>
+</tr>
+<tr>
+<td>‿</td>
+<td>连读（无间隔）</td>
+</tr>
+<tr>
+<td>◌̃</td>
+<td>鼻化</td>
+</tr>
+<tr>
+<td>◌̥</td>
+<td>清化</td>
+</tr>
+<tr>
+<td>◌̬</td>
+<td>浊化</td>
+</tr>
+<tr>
+<td>◌̩</td>
+<td>成音节</td>
+</tr>
+<tr>
+<td>◌ʰ</td>
+<td>送气</td>
+</tr>
+<tr>
+<td>◌ʲ</td>
+<td>腭化</td>
+</tr>
+<tr>
+<td>◌ʷ</td>
+<td>唇化</td>
+</tr>
+<tr>
+<td>◌˞</td>
+<td>卷舌化</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="ipa-辅音双唇-齿龈"><strong>7. IPA 辅音：双唇 –
+齿龈</strong></h3>
+<table>
+<thead>
+<tr>
+<th>发音方式</th>
+<th>双唇</th>
+<th>唇齿</th>
+<th>齿</th>
+<th>齿龈</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>鼻音</td>
+<td>m</td>
+<td>ɱ</td>
+<td>n̪</td>
+<td>n</td>
+</tr>
+<tr>
+<td>塞音</td>
+<td>p b</td>
+<td></td>
+<td>t̪ d̪</td>
+<td>t d</td>
+</tr>
+<tr>
+<td>塞擦音</td>
+<td></td>
+<td></td>
+<td></td>
+<td>t͡s d͡z</td>
+</tr>
+<tr>
+<td>擦音</td>
+<td>ɸ β</td>
+<td>f v</td>
+<td>θ ð</td>
+<td>s z</td>
+</tr>
+<tr>
+<td>近音</td>
+<td></td>
+<td>ʋ</td>
+<td></td>
+<td>ɹ</td>
+</tr>
+<tr>
+<td>颤音</td>
+<td>ʙ</td>
+<td></td>
+<td></td>
+<td>r</td>
+</tr>
+<tr>
+<td>闪音</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ɾ</td>
+</tr>
+<tr>
+<td>边擦音</td>
+<td></td>
+<td></td>
+<td></td>
+<td>ɬ ɮ</td>
+</tr>
+<tr>
+<td>边近音</td>
+<td></td>
+<td></td>
+<td></td>
+<td>l</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="ipa-辅音龈后-软腭"><strong>8. IPA 辅音：龈后 –
+软腭</strong></h3>
+<table>
+<thead>
+<tr>
+<th>发音方式</th>
+<th>龈后</th>
+<th>卷舌</th>
+<th>硬腭</th>
+<th>软腭</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>鼻音</td>
+<td></td>
+<td>ɳ</td>
+<td>ɲ</td>
+<td>ŋ</td>
+</tr>
+<tr>
+<td>塞音</td>
+<td></td>
+<td>ʈ ɖ</td>
+<td>c ɟ</td>
+<td>k ɡ</td>
+</tr>
+<tr>
+<td>塞擦音</td>
+<td>t͡ʃ d͡ʒ</td>
+<td>ʈ͡ʂ ɖ͡ʐ</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>擦音</td>
+<td>ʃ ʒ</td>
+<td>ʂ ʐ</td>
+<td>ç ʝ</td>
+<td>x ɣ</td>
+</tr>
+<tr>
+<td>近音</td>
+<td></td>
+<td>ɻ</td>
+<td>j</td>
+<td>ɰ</td>
+</tr>
+<tr>
+<td>颤音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>闪音</td>
+<td></td>
+<td>ɽ</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>边擦音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>边近音</td>
+<td></td>
+<td>ɭ</td>
+<td>ʎ</td>
+<td>ʟ</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="ipa-辅音小舌-声门"><strong>9. IPA 辅音：小舌 –
+声门</strong></h3>
+<table>
+<thead>
+<tr>
+<th>发音方式</th>
+<th>小舌</th>
+<th>咽</th>
+<th>会厌</th>
+<th>声门</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>鼻音</td>
+<td>ɴ</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>塞音</td>
+<td>q ɢ</td>
+<td></td>
+<td>ʡ</td>
+<td>ʔ</td>
+</tr>
+<tr>
+<td>塞擦音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>擦音</td>
+<td>χ ʁ</td>
+<td>ħ ʕ</td>
+<td>ʜ ʢ</td>
+<td>h ɦ</td>
+</tr>
+<tr>
+<td>近音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>颤音</td>
+<td>ʀ</td>
+<td></td>
+<td>ʢ</td>
+<td></td>
+</tr>
+<tr>
+<td>闪音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>边擦音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>边近音</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="声调-附加符号"><strong>10. 声调 / 附加符号</strong></h3>
+<pre class="text"><code>汉语拼音  ā á ǎ à   ē é ě è   ī í ǐ ì   ō ó ǒ ò   ū ú ǔ ù   ǖ ǘ ǚ ǜ
+台罗拼音  á à â ā a̍
+法语      é è ê ë à â î ï ô ù û ü ÿ ç œ æ
+组合符号  ◌̄ ◌́ ◌̌ ◌̀ ◌̂ ◌̈ ◌̍ ◌̧ ◌̇</code></pre>
+</section>
+
+<ul>
+<li>ASCII 表按十六进制行/列索引：行首 <code>2_</code> 表示高四位为
+2。</li>
+<li>IPA
+元音表格中每格“左为不圆唇、右为圆唇”；辅音表每格“左清右浊”。</li>
+</ul>
+
+</div>
+</body>
+</html>
