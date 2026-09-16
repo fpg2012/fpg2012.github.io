@@ -27,6 +27,9 @@ test-debug:
 clean-gen:
 	{{venv}} && cd _gen && rm -rf *
 
+cheatsheet:
+	{{venv}} && ssushi build -c _test.yml -s cheatsheet
+
 new-post:
 	{{venv}} && mkdir -p "posts/`date -I`-newpost" && cp _model/post.md "posts/`date -I`-newpost/index.md"
 

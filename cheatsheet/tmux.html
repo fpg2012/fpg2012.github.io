@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="generator" content="pandoc" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>tmux使用速查表</title>
+  <title>tmux 使用速查表</title>
   <style>
     html {
       color: #1a1a1a;
@@ -231,10 +231,71 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+    /* 瀑布流内容布局 */
+    body { max-width: 72em; }
+    .cheatsheet {
+      columns: 20em;
+      column-gap: 2em;
+    }
+    .cheatsheet h1 { column-span: all; }
+    .cheatsheet > section.card {
+      break-inside: avoid;
+      margin: 0 0 1em;
+      padding: 0.5em 0.9em 0.9em;
+      border: 1px solid;
+    }
+    .cheatsheet > section.card > h3:first-child { margin-top: 0.8em; }
+    .cheatsheet a:visited { color: inherit; }
+    .cheatsheet .back {
+      column-span: all;
+      margin: 0 0 0.5em;
+      font-size: 85%;
+    }
+
+    /* 夜间模式 */
+    @media (prefers-color-scheme: dark) {
+      html { color: #d8d8d8; background-color: #1a1a1a; }
+      a, a:visited { color: #d8d8d8; }
+      blockquote { color: #a0a0a0; border-left-color: #444; }
+      tbody, th { border-color: #d8d8d8; }
+      code span.al { color: #ff6666; font-weight: bold; }
+      code span.an { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.at { color: #a0c060; }
+      code span.bn { color: #6fcf97; }
+      code span.bu { color: #7fbf7f; }
+      code span.cf { color: #ff8c69; font-weight: bold; }
+      code span.ch { color: #8ab4f8; }
+      code span.cn { color: #d4a0ff; }
+      code span.co { color: #7f9f9f; font-style: italic; }
+      code span.cv { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.do { color: #e06c75; font-style: italic; }
+      code span.dt { color: #ffb86c; }
+      code span.dv { color: #6fcf97; }
+      code span.er { color: #ff6666; font-weight: bold; }
+      code span.fl { color: #6fcf97; }
+      code span.fu { color: #82aaff; }
+      code span.im { color: #7fbf7f; font-weight: bold; }
+      code span.in { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.kw { color: #ff8c69; font-weight: bold; }
+      code span.op { color: #d0d0d0; }
+      code span.ot { color: #7fbf7f; }
+      code span.pp { color: #ffb86c; }
+      code span.sc { color: #8ab4f8; }
+      code span.ss { color: #d4a0ff; }
+      code span.st { color: #98c379; }
+      code span.va { color: #c099ff; }
+      code span.vs { color: #98c379; }
+      code span.wa { color: #7fb3c8; font-weight: bold; font-style: italic; }
+    }
   </style>
 </head>
 <body>
+<div class="cheatsheet">
+<p class="back"><a href="//nth233.top/cheatsheet/">← 返回速查表</a></p>
 <h1 id="tmux使用速查表">tmux使用速查表</h1>
+
+<section class="card">
 <h3 id="会话管理"><strong>1. 会话管理</strong></h3>
 <table>
 <thead>
@@ -274,6 +335,9 @@
 </tr>
 </tbody>
 </table>
+</section>
+
+<section class="card">
 <h3 id="窗口操作"><strong>2. 窗口操作</strong></h3>
 <table>
 <thead>
@@ -313,6 +377,9 @@
 </tr>
 </tbody>
 </table>
+</section>
+
+<section class="card">
 <h3 id="面板pane操作"><strong>3. 面板（Pane）操作</strong></h3>
 <table>
 <thead>
@@ -356,6 +423,9 @@
 </tr>
 </tbody>
 </table>
+</section>
+
+<section class="card">
 <h3 id="复制模式类似vim"><strong>4. 复制模式（类似vim）</strong></h3>
 <table>
 <thead>
@@ -387,7 +457,9 @@
 </tr>
 </tbody>
 </table>
-<hr />
+</section>
+
+<section class="card">
 <h3 id="其他实用操作"><strong>5. 其他实用操作</strong></h3>
 <table>
 <colgroup>
@@ -419,6 +491,9 @@
 </tr>
 </tbody>
 </table>
+</section>
+
+<section class="card">
 <h3 id="配置文件.tmux.conf示例"><strong>6.
 配置文件（~/.tmux.conf）示例</strong></h3>
 <div class="sourceCode" id="cb1"><pre
@@ -436,11 +511,15 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 启用256色支持</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> default-terminal <span class="st">&quot;screen-256color&quot;</span></span></code></pre></div>
+</section>
+
 <ul class="incremental">
 <li>所有快捷键基于默认前缀键
 <strong><code>Ctrl+b</code></strong>（先按<code>Ctrl+b</code>，再按后续键）。</li>
 <li>修改配置后需重启tmux或执行
 <code>tmux source-file ~/.tmux.conf</code>。</li>
 </ul>
+
+</div>
 </body>
 </html>
