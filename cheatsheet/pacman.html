@@ -1,0 +1,199 @@
+<h1 id="pacman使用速查表">pacman使用速查表</h1>
+
+<section class="card">
+<h3 id="安装与卸载"><strong>1. 安装与卸载</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo pacman -S &lt;pkg&gt;</code></td>
+<td>安装软件包</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Syu</code></td>
+<td>同步源并升级整个系统</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Sy</code></td>
+<td>只同步源（不要单独用，易致部分升级）</td>
+</tr>
+<tr>
+<td><code>sudo pacman -R &lt;pkg&gt;</code></td>
+<td>卸载</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Rs &lt;pkg&gt;</code></td>
+<td>卸载并删除不再需要的依赖</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Rns &lt;pkg&gt;</code></td>
+<td>卸载、删依赖并删除配置文件</td>
+</tr>
+<tr>
+<td><code>sudo pacman -U &lt;file&gt;</code></td>
+<td>安装本地包</td>
+</tr>
+<tr>
+<td><code>sudo pacman -U --needed &lt;file&gt;</code></td>
+<td>已安装则跳过，不重复安装</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="查询与搜索"><strong>2. 查询与搜索</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pacman -Ss &lt;kw&gt;</code></td>
+<td>搜索仓库中的包</td>
+</tr>
+<tr>
+<td><code>pacman -Qs &lt;kw&gt;</code></td>
+<td>搜索已安装的包</td>
+</tr>
+<tr>
+<td><code>pacman -Si &lt;pkg&gt;</code></td>
+<td>查看仓库包信息</td>
+</tr>
+<tr>
+<td><code>pacman -Qi &lt;pkg&gt;</code></td>
+<td>查看已安装包信息</td>
+</tr>
+<tr>
+<td><code>pacman -Ql &lt;pkg&gt;</code></td>
+<td>列出包内的文件</td>
+</tr>
+<tr>
+<td><code>pacman -Qo &lt;file&gt;</code></td>
+<td>查询文件属于哪个包</td>
+</tr>
+<tr>
+<td><code>pacman -Q</code></td>
+<td>列出所有已安装包</td>
+</tr>
+<tr>
+<td><code>pacman -Qe</code></td>
+<td>仅列出显式安装的包</td>
+</tr>
+<tr>
+<td><code>pacman -Qdt</code></td>
+<td>列出孤立包</td>
+</tr>
+<tr>
+<td><code>pacman -Qkk &lt;pkg&gt;</code></td>
+<td>校验包内文件</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="清理与维护"><strong>3. 清理与维护</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo pacman -Sc</code></td>
+<td>清理旧版本包缓存</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Scc</code></td>
+<td>清空全部包缓存</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Rns $(pacman -Qtdq)</code></td>
+<td>删除全部孤立包</td>
+</tr>
+<tr>
+<td><code>sudo pacman -Fy</code></td>
+<td>更新文件数据库</td>
+</tr>
+<tr>
+<td><code>pacman -Fs &lt;file&gt;</code></td>
+<td>在文件数据库中查询文件</td>
+</tr>
+<tr>
+<td><code>sudo pacman-key --init</code></td>
+<td>初始化密钥环</td>
+</tr>
+<tr>
+<td><code>sudo pacman-key --populate archlinux</code></td>
+<td>导入官方密钥</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="更新系统"><strong>4. 更新系统</strong></h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-Syu</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="安装本地包"><strong>5. 安装本地包</strong></h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-U</span> <span class="at">--needed</span> ./foo.pkg.tar.zst</span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="删除孤立包"><strong>6. 删除孤立包</strong></h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-Rns</span> <span class="va">$(</span><span class="ex">pacman</span> <span class="at">-Qtdq</span><span class="va">)</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="查询文件属于哪个包"><strong>7. 查询文件属于哪个包</strong></h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pacman</span> <span class="at">-Qo</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">which</span> foo<span class="va">)</span><span class="st">&quot;</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="降级-回滚软件包"><strong>8. 降级 / 回滚软件包</strong></h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-U</span> /var/cache/pacman/pkg/foo-1.2.3-1-x86_64.pkg.tar.zst</span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="使用-aur"><strong>9. 使用 AUR</strong></h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">paru</span> <span class="at">-S</span> <span class="op">&lt;</span>pkg<span class="op">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">paru</span> <span class="at">-Syu</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="清理包缓存保留最新"><strong>10.
+清理包缓存（保留最新）</strong></h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> pacman <span class="at">-Sc</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 或安装 pacman-contrib 后只保留最近几个版本</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">paccache</span> <span class="at">-r</span></span></code></pre></div>
+</section>
+
+<ul>
+<li>命令中的 <code>&lt;...&gt;</code>
+为占位符，使用时替换为实际内容。</li>
+<li>不要单独使用 <code>pacman -Sy</code>
+后直接装包，容易造成部分升级；升级始终用 <code>-Syu</code>。</li>
+<li>卸载前先用 <code>pacman -Qi &lt;pkg&gt;</code>
+看清依赖，避免误删。</li>
+<li>AUR 需要 paru / yay 等助手，且不受官方支持。</li>
+</ul>
