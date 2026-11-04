@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     env:
       SITE_CONFIG: _site_soulsand.yml
       GEN_DIR: _gen_soulsand
