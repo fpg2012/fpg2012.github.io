@@ -21,405 +21,288 @@ pre code {
   line-height: inherit;
 }
 
-/* ===== InspiredGitHub ===== */
-pre code {
+/* ===== InspiredGitHub ===== */html:not(.dark-theme) pre code {
 color: #323232;
-}
-pre code .comment {
+}html:not(.dark-theme) pre code .comment {
 color: #969896;
 font-style: italic;
-}
-pre code .string {
+}html:not(.dark-theme) pre code .string {
 color: #183691;
-}
-pre code .regexp-operator {
+}html:not(.dark-theme) pre code .regexp-operator {
 color: #a71d5d;
-}
-pre code .string.regexp.characterclass .punctuation.definition.string.begin, pre code .string.regexp.characterclass .punctuation.definition.string.end {
+}html:not(.dark-theme) pre code .string.regexp.characterclass .punctuation.definition.string.begin, html:not(.dark-theme) pre code .string.regexp.characterclass .punctuation.definition.string.end {
 color: #a71d5d;
-}
-pre code .constant.numeric {
+}html:not(.dark-theme) pre code .constant.numeric {
 color: #0086b3;
-}
-pre code .constant.language {
+}html:not(.dark-theme) pre code .constant.language {
 color: #0086b3;
-}
-pre code .constant.character, pre code .constant.other, pre code .variable.other.constant {
+}html:not(.dark-theme) pre code .constant.character, html:not(.dark-theme) pre code .constant.other, html:not(.dark-theme) pre code .variable.other.constant {
 color: #0086b3;
-}
-pre code .variable {
+}html:not(.dark-theme) pre code .variable {
 color: #323232;
-}
-pre code .keyword {
+}html:not(.dark-theme) pre code .keyword {
 color: #a71d5d;
 font-weight: bold;
-}
-pre code .bitwise-operator {
+}html:not(.dark-theme) pre code .bitwise-operator {
 color: #a71d5d;
 font-weight: bold;
-}
-pre code .storage {
+}html:not(.dark-theme) pre code .storage {
 color: #a71d5d;
 font-weight: bold;
-}
-pre code .storage.type {
+}html:not(.dark-theme) pre code .storage.type {
 color: #a71d5d;
 font-weight: bold;
-}
-pre code .entity.name.class {
+}html:not(.dark-theme) pre code .entity.name.class {
 color: #0086b3;
-}
-pre code .entity.other.inherited-class {
+}html:not(.dark-theme) pre code .entity.other.inherited-class {
 color: #0086b3;
-}
-pre code .entity.name.function {
+}html:not(.dark-theme) pre code .entity.name.function {
 color: #795da3;
 font-weight: bold;
-}
-pre code .variable.parameter {
+}html:not(.dark-theme) pre code .variable.parameter {
 color: #323232;
-}
-pre code .entity.name.tag {
+}html:not(.dark-theme) pre code .entity.name.tag {
 color: #63a35c;
-}
-pre code .entity.other.attribute-name {
+}html:not(.dark-theme) pre code .entity.other.attribute-name {
 color: #795da3;
-}
-pre code .support.function {
+}html:not(.dark-theme) pre code .support.function {
 color: #62a35c;
-}
-pre code .support.constant {
+}html:not(.dark-theme) pre code .support.constant {
 color: #0086b3;
-}
-pre code .support.type, pre code .support.class {
+}html:not(.dark-theme) pre code .support.type, html:not(.dark-theme) pre code .support.class {
 color: #0086b3;
-}
-pre code .support.other.variable {
+}html:not(.dark-theme) pre code .support.other.variable {
 color: #323232;
-}
-pre code .invalid, pre code .invalid.illegal, pre code .invalid.deprecated {
+}html:not(.dark-theme) pre code .invalid, html:not(.dark-theme) pre code .invalid.illegal, html:not(.dark-theme) pre code .invalid.deprecated {
 color: #b52a1d;
  background-color: #f5f5f5;
 font-weight: bold;
-}
-pre code .entity.name.filename.find-in-files {
+}html:not(.dark-theme) pre code .entity.name.filename.find-in-files {
 color: #323232;
 font-weight: bold;
-}
-pre code .constant.numeric.line-number.find-in-files, pre code .constant.numeric.line-number.match.find-in-files {
+}html:not(.dark-theme) pre code .constant.numeric.line-number.find-in-files, html:not(.dark-theme) pre code .constant.numeric.line-number.match.find-in-files {
 color: #b3b3b3;
-}
-pre code .meta.diff.header {
+}html:not(.dark-theme) pre code .meta.diff.header {
 color: #969896;
  background-color: #ffffff;
 font-style: italic;
-}
-pre code .meta.diff.header .punctuation.definition.from-file.diff {
+}html:not(.dark-theme) pre code .meta.diff.header .punctuation.definition.from-file.diff {
 color: #bd2c00;
  background-color: #ffecec;
 font-weight: bold;
 font-style: italic;
-}
-pre code .meta.diff.header .punctuation.definition.to-file.diff {
+}html:not(.dark-theme) pre code .meta.diff.header .punctuation.definition.to-file.diff {
 color: #55a532;
  background-color: #eaffea;
 font-weight: bold;
 font-style: italic;
-}
-pre code .meta.diff.range {
+}html:not(.dark-theme) pre code .meta.diff.range {
 color: #969896;
 font-weight: bold;
 font-style: italic;
-}
-pre code .markup.deleted {
+}html:not(.dark-theme) pre code .markup.deleted {
 background-color: #ffecec;
-}
-pre code .markup.deleted .punctuation.definition.inserted {
+}html:not(.dark-theme) pre code .markup.deleted .punctuation.definition.inserted {
 color: #bd2c00;
 font-weight: bold;
-}
-pre code .markup.inserted {
+}html:not(.dark-theme) pre code .markup.inserted {
 background-color: #eaffea;
-}
-pre code .markup.inserted .punctuation.definition.inserted {
+}html:not(.dark-theme) pre code .markup.inserted .punctuation.definition.inserted {
 color: #55a532;
 font-weight: bold;
-}
-pre code .markup.deleted.git_gutter {
+}html:not(.dark-theme) pre code .markup.deleted.git_gutter {
 color: #bd2c00;
-}
-pre code .markup.inserted.git_gutter {
+}html:not(.dark-theme) pre code .markup.inserted.git_gutter {
 color: #55a532;
-}
-pre code .markup.changed.git_gutter {
+}html:not(.dark-theme) pre code .markup.changed.git_gutter {
 color: #0086b3;
-}
-pre code .markup.ignored.git_gutter {
+}html:not(.dark-theme) pre code .markup.ignored.git_gutter {
 color: #b3b3b3;
-}
-pre code .markup.untracked.git_gutter {
+}html:not(.dark-theme) pre code .markup.untracked.git_gutter {
 color: #b3b3b3;
-}
-pre code .source.css .punctuation.definition.entity {
+}html:not(.dark-theme) pre code .source.css .punctuation.definition.entity {
 color: #323232;
-}
-pre code .source.css .entity.other.attribute-name.pseudo-class, pre code .source.css .entity.other.attribute-name.pseudo-element {
+}html:not(.dark-theme) pre code .source.css .entity.other.attribute-name.pseudo-class, html:not(.dark-theme) pre code .source.css .entity.other.attribute-name.pseudo-element {
 color: #a71d5d;
-}
-pre code .source.css .meta.value, pre code .source.css .support.constant, pre code .source.css .support.function {
+}html:not(.dark-theme) pre code .source.css .meta.value, html:not(.dark-theme) pre code .source.css .support.constant, html:not(.dark-theme) pre code .source.css .support.function {
 color: #323232;
-}
-pre code .source.css .constant.other.color {
+}html:not(.dark-theme) pre code .source.css .constant.other.color {
 color: #ed6a43;
-}
-pre code .source.scss .punctuation.definition.entity {
+}html:not(.dark-theme) pre code .source.scss .punctuation.definition.entity {
 color: #323232;
-}
-pre code .source.scss .entity.other.attribute-name.pseudo-class, pre code .source.scss .entity.other.attribute-name.pseudo-element {
+}html:not(.dark-theme) pre code .source.scss .entity.other.attribute-name.pseudo-class, html:not(.dark-theme) pre code .source.scss .entity.other.attribute-name.pseudo-element {
 color: #a71d5d;
-}
-pre code .source.scss .support.constant.property-value, pre code .source.scss .support.function {
+}html:not(.dark-theme) pre code .source.scss .support.constant.property-value, html:not(.dark-theme) pre code .source.scss .support.function {
 color: #323232;
-}
-pre code .source.scss .variable {
+}html:not(.dark-theme) pre code .source.scss .variable {
 color: #a71d5d;
-}
-pre code .variable.language.this.js {
+}html:not(.dark-theme) pre code .variable.language.this.js {
 color: #ed6a43;
-}
-pre code .source.js .entity.name.function {
+}html:not(.dark-theme) pre code .source.js .entity.name.function {
 color: #323232;
-}
-pre code .source.js .meta.function .entity.name.function, pre code .source.js .entity.name.function .meta.function {
+}html:not(.dark-theme) pre code .source.js .meta.function .entity.name.function, html:not(.dark-theme) pre code .source.js .entity.name.function .meta.function {
 color: #795da3;
 font-weight: bold;
-}
-pre code .entity.name.type.new.js {
+}html:not(.dark-theme) pre code .entity.name.type.new.js {
 color: #795da3;
-}
-pre code .variable.language.prototype.js {
+}html:not(.dark-theme) pre code .variable.language.prototype.js {
 color: #0086b3;
-}
-pre code .source.js .support.function {
+}html:not(.dark-theme) pre code .source.js .support.function {
 color: #0086b3;
-}
-pre code .support.type.object.console.js {
+}html:not(.dark-theme) pre code .support.type.object.console.js {
 color: #795da3;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .meta.structure.dictionary.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta.structure.dictionary.json .string.quoted.double.json {
 color: #183691;
 font-weight: bold;
-}
-pre code .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
+}html:not(.dark-theme) pre code .meta.structure.dictionary.json .meta.structure.dictionary.value.json .string.quoted.double.json {
 color: #323232;
-}
-pre code .source.python .keyword {
+}html:not(.dark-theme) pre code .source.python .keyword {
 font-weight: bold;
-}
-pre code .source.python .storage {
+}html:not(.dark-theme) pre code .source.python .storage {
 font-weight: bold;
-}
-pre code .source.python .storage.type {
+}html:not(.dark-theme) pre code .source.python .storage.type {
 font-weight: bold;
-}
-pre code .source.python .entity.name.function {
+}html:not(.dark-theme) pre code .source.python .entity.name.function {
 color: #323232;
 font-weight: bold;
-}
-pre code .source.php .entity.name.type.class {
+}html:not(.dark-theme) pre code .source.php .entity.name.type.class {
 color: #323232;
 font-weight: bold;
-}
-pre code .variable.language.ruby {
+}html:not(.dark-theme) pre code .variable.language.ruby {
 color: #ed6a43;
-}
-pre code .entity.name.type.module.ruby {
+}html:not(.dark-theme) pre code .entity.name.type.module.ruby {
 color: #795da3;
 font-weight: bold;
-}
-pre code .entity.name.type.class.ruby {
+}html:not(.dark-theme) pre code .entity.name.type.class.ruby {
 color: #795da3;
 font-weight: bold;
-}
-pre code .entity.other.inherited-class.ruby {
+}html:not(.dark-theme) pre code .entity.other.inherited-class.ruby {
 color: #795da3;
 font-weight: bold;
-}
-pre code .text.html.markdown .punctuation.definition {
+}html:not(.dark-theme) pre code .text.html.markdown .punctuation.definition {
 color: #a71d5d;
-}
-pre code .text.html.markdown .meta.separator {
+}html:not(.dark-theme) pre code .text.html.markdown .meta.separator {
 color: #b3b3b3;
-}
-pre code .text.html.markdown .markup.heading {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.heading {
 font-weight: bold;
-}
-pre code .text.html.markdown .markup.raw.block {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.raw.block {
 color: #323232;
-}
-pre code .text.html.markdown .markup.raw.inline {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.raw.inline {
 color: #323232;
-}
-pre code .text.html.markdown .meta.link, pre code .text.html.markdown .meta.image {
+}html:not(.dark-theme) pre code .text.html.markdown .meta.link, html:not(.dark-theme) pre code .text.html.markdown .meta.image {
 color: #4183c4;
-}
-pre code .text.html.markdown .markup.underline.link, pre code .text.html.markdown .constant.other.reference {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.underline.link, html:not(.dark-theme) pre code .text.html.markdown .constant.other.reference {
 font-style: italic;
-}
-pre code .text.html.markdown .markup.list {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.list {
 color: #ed6a43;
-}
-pre code .text.html.markdown .markup.bold {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.bold {
 font-weight: bold;
-}
-pre code .text.html.markdown .markup.italic {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.italic {
 font-style: italic;
-}
-pre code .text.html.markdown .markup.bold .markup.italic {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.bold .markup.italic {
 font-weight: bold;
 font-style: italic;
-}
-pre code .text.html.markdown .markup.italic .markup.bold {
+}html:not(.dark-theme) pre code .text.html.markdown .markup.italic .markup.bold {
 font-weight: bold;
 font-style: italic;
 }
