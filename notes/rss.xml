@@ -15,8 +15,8 @@
     
     
     
-    <pubDate>Wed, 04 Nov 2026 17:32:28 GMT</pubDate>
-    <lastBuildDate>Wed, 04 Nov 2026 17:32:28 GMT</lastBuildDate>
+    <pubDate>Wed, 04 Nov 2026 17:36:11 GMT</pubDate>
+    <lastBuildDate>Wed, 04 Nov 2026 17:36:11 GMT</lastBuildDate>
     
     <generator>sushi-gen, https://github.com/fpg2012/sushi</generator>
     
@@ -1061,13 +1061,13 @@
     
     
     <item>
-      <title>为什么我积出来和答案不一样？——关于arcsin的积分</title>
-      <link>https://soulsand.top/notes/mathproblem2/index.html</link>
+      <title>一道积分：利用分部积分和三角换元</title>
+      <link>https://soulsand.top/notes/mathproblem1.html</link>
       
-      <description>arcsin的神奇性质</description>
+      <description>利用分部积分和三角换元，也许是硬算</description>
       
       <pubDate>2022-04-16</pubDate>
-      <guid>101961859825377780</guid>
+      <guid>717937274241401548</guid>
       
         
           <category>other</category>
@@ -1085,13 +1085,13 @@
     
     
     <item>
-      <title>一道积分：利用分部积分和三角换元</title>
-      <link>https://soulsand.top/notes/mathproblem1.html</link>
+      <title>为什么我积出来和答案不一样？——关于arcsin的积分</title>
+      <link>https://soulsand.top/notes/mathproblem2/index.html</link>
       
-      <description>利用分部积分和三角换元，也许是硬算</description>
+      <description>arcsin的神奇性质</description>
       
       <pubDate>2022-04-16</pubDate>
-      <guid>717937274241401548</guid>
+      <guid>101961859825377780</guid>
       
         
           <category>other</category>
