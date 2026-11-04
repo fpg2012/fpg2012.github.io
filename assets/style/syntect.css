@@ -2,6 +2,25 @@
  * Generated from the InspiredGitHub (light) and Solarized (dark) themes.
  * Scoped to pre > code so it cannot affect normal page markup. */
 
+/* The internal converter emits <pre><code>...</code></pre>, while Pandoc
+ * emits <pre><span>...</span></pre>. main.css styles the inline <code>
+ * element with a border, padding, background and word-break; undo that
+ * for block code so it looks like the Pandoc output. */
+pre code {
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  word-break: normal;
+  overflow-wrap: normal;
+  white-space: pre;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
 /* ===== InspiredGitHub ===== */
 pre code {
 color: #323232;
