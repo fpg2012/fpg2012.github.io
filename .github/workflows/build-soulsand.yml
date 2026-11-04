@@ -1,0 +1,67 @@
+name: build-soulsand
+
+on:
+  push:
+    branches: [sushi-gen]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-soulsand
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    env:
+      SITE_CONFIG: _site_soulsand.yml
+      GEN_DIR: _gen_soulsand
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: false
+
+      # .gitmodules uses git@github.com: for the theme. Do not edit the
+      # original file; rewrite the URL only inside this CI runner.
+      - name: Checkout submodules over HTTPS
+        run: |
+          git config --global url."https://github.com/".insteadOf "git@github.com:"
+          git submodule update --init --recursive
+
+      - uses: dtolnay/rust-toolchain@stable
+      - name: Put cargo bin on PATH
+        run: echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - name: Cache ssushi
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin/ssushi
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: ssushi-0.2.12-${{ runner.os }}-v1
+
+      - name: Install ssushi
+        run: |
+          if ! command -v ssushi >/dev/null 2>&1; then
+            # --locked is required: without it cargo picks newest deps,
+            # some of which need a much newer Rust than the crate expects.
+            cargo install sushi-gen --version 0.2.12 --locked
+          fi
+          ssushi --version
+
+      - name: Build
+        run: ssushi build -A -c "$SITE_CONFIG"
+
+      - name: Publish soulsand-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./${{ env.GEN_DIR }}
+          publish_branch: soulsand-pages
+          enable_jekyll: false
+          commit_message: "deploy soulsand: ${{ github.sha }}"
