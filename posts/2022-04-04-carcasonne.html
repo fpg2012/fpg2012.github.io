@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 来一局线上卡卡颂！——抽牌器+共享画板</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="上个月某日，某人在某群里提到想要在线上玩卡卡颂〔Carcasonne〕。然而卡卡颂官方电子版在steam上价格不低，我又不想上某宝买steam上的桌游模拟器，于是想着不如用点低级的方法「组装」出一个卡卡颂来。游玩卡卡颂时，大概只有四种动作是必要的：抽取土地块，摆放土地块，收放随从，计分。只要有了牌，后三种都可以借由在线画板／白板实现，比方说drawpile。因此关键的问题就在于如何抽牌。">
+        
+
+        
+        <meta name="keywords" content="Carcasonne,桌游,联机,drawpile,共享画板,卡卡颂">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>来一局线上卡卡颂！——抽牌器+共享画板</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>来一局线上卡卡颂！——抽牌器+共享画板</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-04-03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#Carcasonne</span>
+    
+        <span class="tag">#桌游</span>
+    
+        <span class="tag">#联机</span>
+    
+        <span class="tag">#drawpile</span>
+    
+        <span class="tag">#共享画板</span>
+    
+        <span class="tag">#卡卡颂</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <h2>TL;DR</h2>
+<h3>配置Drawpile</h3>
+到<a href="https://drawpile.net/">drawpile官网</a>下载并安装最新的drawpile。<del>然后联系我开服</del>。</p>
+开服之后选择菜单中的<code>Session</code>，选择<code>Join</code>，在最下方输入服务端地址，然后连接。</p>
+<h3>抽牌器的使用</h3>
+访问<a href="https://carcasonne.herokuapp.com">抽牌器页面</a>。（不要过度使用，免费版的heroku有时长限制）</p>
+<ol>
+<li>输入名字和游戏创建者给的<code>game code</code>加入游戏。如果<code>game code</code>放空，将建立新游戏</p>
+</li>
+<li>点击加入或创建之后，最下方的在线列表将显示所有在线的玩家（~~如果显示「offline」，请联系我修bug~~~）</p>
+</li>
+<li>如果你是创建者，<code>draw code</code>框中应该有一份<code>draw code</code>，你可以在初始土地块摆放好之后立即抽牌。如果你不是创建者，等轮到你的时候向上家讨要<code>draw code</code>。抽完牌之后记得把<code>draw code</code>告诉下家。</p>
+</li>
+</ol>
+具体的界面如下：</p>
+<figure><img src='/assets/img/post/carcasonne_.png' alt='界面' id='' title='' /><figcaption>界面</figcaption></figure>
+<ol>
+<li>玩家名，允许重名（<del>但是你不觉得重名会很麻烦吗</del>）</li>
+<li><code>game code</code>，一般是6位十六进制数，也就是只包含<code>0~9</code>、<code>A~F</code>这几个字符。如果在<code>game code</code>前面添加一个<code>:</code>字符，那么将进入调试模式，WebSocket连接将不使用SSL（便于本地调试）。</li>
+<li>如果<code>game code</code>为空，那么按钮内容是<code>New</code>，否则是<code>Join</code>。前者代表将新建游戏。</li>
+<li>土地块代码。遵循「上-右-下-左-备注」的顺序进行编码，<code>F</code>表示草地，<code>R</code>表示道路，<code>C</code>表示城市，<code>K</code>表示修道院。备注表明土地块四边中的哪几个边内容是相联通的。如果备注是<code>K</code>，那么表示中间是修道院。如果备注以<code>a</code>，结尾，说明城市带有盾牌。</li>
+<li>上一个抽牌的人和剩余牌数。「base」代表「没人抽牌，现在这张牌是初始块」</li>
+<li>土地块图片。图片加载可能比较缓慢，因此需要时刻检查图片和代码是否匹配。</li>
+<li><code>draw code</code>，一般是4位十六进制数</li>
+<li>为什么没有8？</li>
+<li>抽牌按钮</li>
+<li>在线玩家列表</li>
+</ol>
+<blockquote>
+Tip：如果忘了上一张牌是什么，可以按F12，然后打开浏览器的Console查看。</p>
+</blockquote>
+所有人离开之后，游戏将被清除掉。</p>
+<h3>进行游戏</h3>
+drawpile和抽牌器都准备就绪之后，就可以打起语音电话开始游戏了。具体方法就是把抽牌器抽出的牌复制到drawpile里面摆放，简单粗暴，<del>但是有效</del>。</p>
+<h2>前因后果</h2>
+上个月某日，某人在某群里提到想要在线上玩卡卡颂〔Carcasonne〕。然而卡卡颂官方电子版在steam上价格不低，我又不想上某宝买steam上的桌游模拟器，于是想着不如用点低级的方法「组装」出一个卡卡颂来。</p>
+游玩卡卡颂时，大概只有四种动作是必要的：抽取土地块，摆放土地块，收放随从，计分。只要有了牌，后三种都可以借由在线画板／白板实现，比方说drawpile。因此关键的问题就在于如何抽牌。</p>
+<h3>如何抽牌？</h3>
+抽牌不仅得有序，抽牌结果还得同步到所有客户端，并且抽牌得是随机的。drawpile的确勉勉强强可以实现，但是体验会很差（提前把所有牌有序摆放到一个图层，然后再建一个图层盖住，所有玩家各自生成随机数进行抽取），手撸一个抽牌器几乎是不可避免的。</p>
+抽牌器不仅仅只是一个多端共享的随机数生成器，我还要求它有以下功能：</p>
+<ol>
+<li>支持多局游戏同时在服务端上进行</p>
+</li>
+<li>尽可能确保抽牌有序，减小误操作的影响</p>
+</li>
+<li>掉线可以重连，可以看到有那些人在线</p>
+</li>
+<li>界面不丑</p>
+</li>
+<li>引用的外部依赖越少越好，页面加载越快越好</p>
+</li>
+<li>代码简短</p>
+</li>
+</ol>
+最后我用tornado写了一个几百行的服务端，并且除了tornado之外，没有任何其他依赖。因为要支持多个游戏同时进行，就需要有一个游戏的唯一标识，所以引入了<code>game code</code>。为了保证抽牌有序，我决定阻止一个人连续抽两张牌，以防止网络延迟高的时候玩家狂点抽牌按钮，带来意想不到的结果。另外还引入<code>draw code</code>，每次抽牌都需要凭证，刚刚抽完牌的人不能再抽牌，但是手上会获得一个<code>draw code</code>，他需要把这个<code>draw code</code>发给下一个行动的玩家，这样就最大限度地确保抽牌有序。</p>
+为了精简页面，只用了原生的HTML+CSS+JS来写前端，目前拖慢页面加载速度的是两个webfont（为了美观，我最终还是用了webfont）。</p>
+抽牌程序<a href="https://github.com/fpg2012/kks-draw">已经挂上github了</a>。</p>
+把服务端挂到heroku上，抽牌器就算是完成了（当然，还是有些bug要修）。</p>
+<h3>Drawpile</h3>
+确保已经安装了<code>drawpile-srv</code>。执行<code>drawpile-srv</code>，如果使用默认配置，它就会开始监听本地的27750端口，把这个端口用frp转发出去，外界就可以正常访问了。</p>
+也可以选择在服务器上直接部署drawpile服务器，可以参考<a href="https://drawpile.net/help/server-howto/">drawpile的文档</a>。但是因为我服务器上的系统是远古版本的CentOS（服务商的锅），搞起来有点麻烦，所以我最后还是选择比较简单的内网穿透。</p>
+<h3>开发插曲</h3>
+一开始我打算把抽牌器部署到腾讯云服务器上，但是因为我没有备案，所以腾讯会限制IP访问（最后变成只有我能连接）。我原以为只有HTTP协议会受到限制，但是实测WebSocket也会（可能是因为WebSocket连接也是从HTTP请求开始的）。把服务端改挂到heroku上就完美解决了，为了这个小东西备案实在是不值得。</p>
+转到heroku上之后，发现还是无法抽牌，这导致我们<a href="https://www.bilibili.com/video/BV1g3411H7Ys">第一次游戏</a>只能由我抽牌，然后由我把牌复制到drawpile里面，其他玩家再进行移动。排查原因，发现是连接被heroku切断了，55秒没有数据交互，heroku就认为连接被限制，然后掐断连接，但偏偏实践中两次抽牌间隔往往要超过55秒。查了一下tornado的文档，设置<code>websocket_ping_interval=40</code>之后就解决了这个问题。</p>
+<iframe src="//player.bilibili.com/player.html?aid=425317475&bvid=BV1g3411H7Ys&cid=566006509&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width: 100%;aspect-ratio: 9/6;"> </iframe>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2022-04-08-迁移之路的终点.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2022-04-08-迁移之路的终点.html">Blog迁移之路的...</a></div>
+        <div class="sibling-page-date">2022-04-08</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2022-03-04-rogue.html">「地牢探险指南」—...</a></div>
+        <div class="sibling-page-date">2022-03-04</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2022-03-04-rogue.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

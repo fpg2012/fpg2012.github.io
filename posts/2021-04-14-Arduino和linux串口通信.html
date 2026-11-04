@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - Arduino和linux串口通信</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="手头有一块（伪）Arduino Uno，现在需要把上面测到的电压数据发送到电脑上了。我知道Arduino官方提供了`Serial.write`和`Serial.read`，利用这些函数可以方便地通过串口发数据给电脑，在Arduino IDE提供的串口监视器上显示出来。但我现在需要自己处理数据，需要让Arduino直接和我的程序通信。对此我毫无头绪。一番搜索尝试之后算是找到了办法。">
+        
+
+        
+        <meta name="keywords" content="arduino,串口,posix,linux">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>Arduino和linux串口通信</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>Arduino和linux串口通信</h1>
+    
+    <div class="date-bar">
+        <span class="date">2021-04-18</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#arduino</span>
+    
+        <span class="tag">#串口</span>
+    
+        <span class="tag">#posix</span>
+    
+        <span class="tag">#linux</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <h2>前因</h2>
+手头有一块（伪）Arduino Uno，现在需要把上面测到的电压数据发送到电脑上了。我知道Arduino官方提供了<code>Serial.write</code>和<code>Serial.read</code>，利用这些函数可以方便地通过串口发数据给电脑，在Arduino IDE提供的串口监视器上显示出来。但我现在需要自己处理数据，需要让Arduino直接和我的程序通信。对此我毫无头绪。一番搜索尝试之后算是找到了办法。</p>
+<h2>线</h2>
+我的Arduino UNO和计算机连接的依赖一根USB线，一头是type-B，一头是type-A，通过这个USB提供了虚拟串口，可以假想Arduino和计算机用一条RS-232串行总线连接起来了。利用这个串口，Arduino就可以和计算机通信。</p>
+连接到计算机的Arduino被linux包装成一个文件，我这里是<code>/dev/ttyACM0</code>，只要对这个文件进行响应的读写，就可以实现通信。但是毕竟串口和硬盘上的文件本质上不同，还是得通过系统对其进行终端控制。linux提供了<code>termios.h</code>，里面用一个结构体保存了终端控制的各种属性，属于POSIX标准。很多东西看起来是上一个时代的遗存，从UNIX和电传打字机的时代一直继承到了现在。</p>
+<h2><code>struct termio</code></h2>
+<h3>结构体内容</h3>
+<p><code>struct termio</code>里面保存了终端的各种属性。</p>
+<ol>
+<li><code>c_iflag</code> 设置输入模式，比如要不要流量控制、要不要对输入字节进行特殊处理</li>
+<li><code>c_oflag</code> 设置输出模式，比如要不要对输出字节进行特殊处理</li>
+<li><code>c_cflag</code> 设置控制模式，比如一个字节多宽，有没有奇偶校验位，有几个终止位，要不要进行载波检测，要不要读数据</li>
+<li><code>c_lflag</code> 设置局部模式（我也不知道为什么叫Local Mode），比如要不要回传、要不要使用标准模式（Canonical Mode，似乎是一行一行读）</li>
+<li><code>c_cc</code> 一个数组，包含一些特殊设置，比如一次最少读几个字符</li>
+</ol>
+前面几个flag都是通过位运算进行控制的，把对应的位设为1则启用，否则禁用。</p>
+上面一些设置似乎只和以前的调制解调器有关，比如流量控制、载波监听什么的，对于我们和Arduino通信来说是没什么用的，我们不需要操作系统对我们的数据做太多的处理，因此使用的时候需要禁用掉大多数配置。</p>
+对于<code>c_cc</code>数组，里面<code>c_cc[VMIN]</code>表示一次读写几个字符，如果没有读到这么多字符，<code>read</code>系统调用（前面写了，串口在linux看来是个文件）就会一直阻塞，直到超时为止，最大位255（毕竟无符号的8位能表示的最大整数不过如此）。<code>c_cc[VTIME]</code>保存了超时信息（timeout），也就是多久算超时，单位是十分秒（0.1秒，decisecond）。</p>
+<h3>具体的配置</h3>
+参考网上的资料，对于<code>c_cflag</code>，禁用<code>PARENB</code>、<code>CSTOPB</code>，意思是禁用奇偶校验，只用一个停止位。启用<code>CS8</code>、<code>CREAD</code>和<code>CLOCAL</code>，字节8位长（现在真的还有什么设备字节长度不是8位吗？），可以读写。对于<code>c_lflag</code>，禁用<code>ICANON</code>、<code>ECHO</code>、<code>ECHOE</code>、<code>ECHONL</code>、<code>ISIG</code>，禁用标准模式、任何回传、信号字节。对于<code>c_iflag</code>，禁用<code>IXOFF</code>、<code>IXON</code>、<code>IXANY</code>，不要流量控制；禁用<code>IGNBRK</code>、<code>BRKINT</code>、<code>PARMRK</code>、<code>ISTRIP</code>、<code>INLCR</code>、<code>IGNCR</code>、<code>ICRNL</code>，我们要原始数据，不要特殊处理。对于<code>c_oflag</code>，禁用<code>OPOST</code>、<code>ONLCR</code>，不要特殊处理。</p>
+我这里<code>VMIN</code>设置为2，因为我配置了我的Arduino一次发送两个字节。VTIME我随便设置了一个值。</p>
+波特率也需要设置。使用<code>cfsetispeed</code>和<code>cfsetospeed</code>可以分别设置读写的波特率。我这里全部设为9600Hz，也就是B9600。</p>
+在看了Qt的<code>QSerialPort</code>和rust的<code>serialport</code> crate之后，我发现还是操作系统提供的接口最为详细完备。</p>
+<h3>总体大致流程</h3>
+先<code>open</code>对应的文件（我这里是<code>/dev/ttyACM0</code>），然后利用<code>tcgetattr</code>获得终端控制的结构体，对其进行设置，接下来就和普通的文件一样，可以从里面<code>read</code>数据了。最后再关闭文件。</p>
+<h2>C程序</h2>
+<pre><code class="language-c"><span class="source c"><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>stdio.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>string.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>stdlib.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>stdint.h<span class="punctuation definition string end c">&gt;</span></span>
+</span>
+<span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>fcntl.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>errno.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>termios.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>unistd.h<span class="punctuation definition string end c">&gt;</span></span>
+</span>
+<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> handle memory in different ways
+</span><span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> convert two char into a uint16_t
+</span><span class="meta union c"><span class="storage type c">union</span> <span class="entity name union c">Convert</span> <span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta union c"><span class="meta block c">
+    <span class="storage type c">char</span> buffer<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">2</span><span class="punctuation section brackets end c">]</span></span><span class="punctuation terminator c">;</span>
+    <span class="support type stdint c">uint16_t</span> num<span class="punctuation terminator c">;</span>
+</span></span><span class="meta union c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span><span class="punctuation terminator c">;</span>
+
+<span class="storage type c">int</span> <span class="meta function c"><span class="entity name function c">main</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+    <span class="storage type c">int</span> serial_port <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="variable function c">open</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>/dev/ttyACM0<span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c">,</span> O_RDWR</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="keyword control c">if</span><span class="meta group c"><span class="punctuation section group begin c">(</span>serial_port <span class="keyword operator comparison c">&lt;</span> <span class="constant numeric c">0</span><span class="punctuation section group end c">)</span></span> <span class="meta block c"><span class="punctuation section block begin c">{</span>
+        <span class="meta function-call c"><span class="support function C99 c">printf</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>Error <span class="constant other placeholder c">%i</span> from open: <span class="constant other placeholder c">%s</span><span class="constant character escape c">\n</span><span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c">,</span> errno<span class="punctuation separator c">,</span> <span class="meta function-call c"><span class="support function C99 c">strerror</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">errno</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+        <span class="meta function-call c"><span class="support function C99 c">exit</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="constant numeric c">0</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="punctuation section block end c">}</span></span>
+    <span class="storage type c">struct</span> termios tty<span class="punctuation terminator c">;</span>
+    <span class="keyword control c">if</span><span class="meta group c"><span class="punctuation section group begin c">(</span><span class="meta function-call c"><span class="variable function c">tcgetattr</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">serial_port<span class="punctuation separator c">,</span> <span class="keyword operator c">&amp;</span>tty</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span> <span class="keyword operator comparison c">!=</span> <span class="constant numeric c">0</span><span class="punctuation section group end c">)</span></span> <span class="meta block c"><span class="punctuation section block begin c">{</span>
+        <span class="meta function-call c"><span class="support function C99 c">printf</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>Error <span class="constant other placeholder c">%i</span> from tcgetattr: <span class="constant other placeholder c">%s</span><span class="constant character escape c">\n</span><span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c">,</span> errno<span class="punctuation separator c">,</span> <span class="meta function-call c"><span class="support function C99 c">strerror</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">errno</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="punctuation section block end c">}</span></span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>PARENB<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>CSTOPB<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cflag</span> <span class="keyword operator assignment augmented c">|=</span> CS8<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cflag</span> <span class="keyword operator assignment augmented c">|=</span> CREAD <span class="keyword operator arithmetic c">|</span> CLOCAL<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_lflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ICANON<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_lflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ECHO<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_lflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ECHOE<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_lflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ECHONL<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_lflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ISIG<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_iflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span><span class="meta group c"><span class="punctuation section group begin c">(</span>IXON <span class="keyword operator arithmetic c">|</span> IXOFF <span class="keyword operator arithmetic c">|</span> IXANY<span class="punctuation section group end c">)</span></span><span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_iflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span><span class="meta group c"><span class="punctuation section group begin c">(</span>IGNBRK<span class="keyword operator arithmetic c">|</span>BRKINT<span class="keyword operator arithmetic c">|</span>PARMRK<span class="keyword operator arithmetic c">|</span>ISTRIP<span class="keyword operator arithmetic c">|</span>INLCR<span class="keyword operator arithmetic c">|</span>IGNCR<span class="keyword operator arithmetic c">|</span>ICRNL<span class="punctuation section group end c">)</span></span><span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_oflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>OPOST<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_oflag</span> <span class="keyword operator assignment augmented c">&amp;=</span> <span class="keyword operator arithmetic c">~</span>ONLCR<span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cc</span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>VTIME<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> <span class="constant numeric c">20</span><span class="punctuation terminator c">;</span>
+    tty<span class="punctuation accessor c">.</span><span class="variable other member c">c_cc</span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>VMIN<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> <span class="constant numeric c">2</span><span class="punctuation terminator c">;</span>
+    <span class="meta function-call c"><span class="variable function c">cfsetispeed</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="keyword operator c">&amp;</span>tty<span class="punctuation separator c">,</span> B9600</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="meta function-call c"><span class="variable function c">cfsetospeed</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="keyword operator c">&amp;</span>tty<span class="punctuation separator c">,</span> B9600</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="storage type c">char</span> read_buf<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">20</span><span class="punctuation section brackets end c">]</span></span><span class="punctuation terminator c">;</span> <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> buffer to use
+</span>    <span class="storage type c">union</span> Convert temp<span class="punctuation terminator c">;</span>
+    <span class="keyword control c">while</span><span class="meta group c"><span class="punctuation section group begin c">(</span><span class="constant numeric c">1</span><span class="punctuation section group end c">)</span></span> <span class="meta block c"><span class="punctuation section block begin c">{</span>
+        <span class="storage type c">int</span> n <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="variable function c">read</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">serial_port<span class="punctuation separator c">,</span> <span class="keyword operator c">&amp;</span>read_buf<span class="punctuation separator c">,</span> <span class="keyword operator word c">sizeof</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span><span class="meta group c">read_buf</span><span class="meta group c"><span class="punctuation section group end c">)</span></span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> ! should handle error here
+</span>        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> but in my case, error rarely arises
+</span>        temp<span class="punctuation accessor c">.</span><span class="variable other member c">buffer</span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">0</span><span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> read_buf<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">0</span><span class="punctuation section brackets end c">]</span></span><span class="punctuation terminator c">;</span>
+        temp<span class="punctuation accessor c">.</span><span class="variable other member c">buffer</span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">1</span><span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> read_buf<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">1</span><span class="punctuation section brackets end c">]</span></span><span class="punctuation terminator c">;</span>
+        <span class="meta function-call c"><span class="support function C99 c">printf</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span><span class="constant other placeholder c">%x</span><span class="constant character escape c">\n</span><span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c">,</span> <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="storage type c">int</span><span class="punctuation section group end c">)</span></span>temp<span class="punctuation accessor c">.</span><span class="variable other member c">num</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="punctuation section block end c">}</span></span>
+    <span class="meta function-call c"><span class="variable function c">close</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">serial_port</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+</span></code></pre>
+Arduino方面程序如下。这里要注意，不要用<code>Serial.println</code>，Arduino的库会因此在后面加上<code>\r\n</code>。</p>
+<pre><code class="language-c"><span class="source c"><span class="meta union c"><span class="storage type c">union</span> <span class="entity name union c">Convert</span> <span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta union c"><span class="meta block c">
+  <span class="storage type c">char</span> buffer<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span><span class="constant numeric c">2</span><span class="punctuation section brackets end c">]</span></span><span class="punctuation terminator c">;</span>
+  <span class="support type stdint c">uint16_t</span> num<span class="punctuation terminator c">;</span>
+</span></span><span class="meta union c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span><span class="punctuation terminator c">;</span>
+
+<span class="storage type c">void</span> <span class="meta function c"><span class="entity name function c">setup</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+  Serial<span class="punctuation accessor c">.</span><span class="meta function-call c"><span class="variable function c">begin</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="constant numeric c">9600</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+ 
+<span class="storage type c">void</span> <span class="meta function c"><span class="entity name function c">loop</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+  <span class="meta function-call c"><span class="variable function c">delay</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="constant numeric c">5</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+  Convert temp<span class="punctuation terminator c">;</span>
+  temp<span class="punctuation accessor c">.</span><span class="variable other member c">num</span> <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="variable function c">analogRead</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">A0</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+  Serial<span class="punctuation accessor c">.</span><span class="meta function-call c"><span class="variable function c">write</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">temp<span class="punctuation accessor c">.</span><span class="variable other member c">buffer</span><span class="punctuation separator c">,</span> <span class="constant numeric c">2</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+</span></code></pre>
+经测最终是可以读到数据的，而且速度很快，不会出现速度不匹配的问题。</p>
+<h2>其他方法</h2>
+我还尝试使用了Qt的<code>QSerialPort</code>来读串口，那个用起来比直接调POSIX接口简单多了。但是不知道为什么，有的时候只读了一个字节，有的时候按我要求读了两个字节，但是高字节和低字节反了。用法可以参考Qt文档。</p>
+rust有个crate，<code>serialport</code>，也很不错，对底层的操作进行了封装。我最终的程序就是用了这个crate。（因为rust有很方便的线程库，写起来没有C语言这么累人）</p>
+<h2>参考资料</h2>
+没有这些参考资料我真的写不出这个程序。</p>
+<ol>
+<li><a href="https://www.cmrr.umn.edu/~strupp/serial.html#CONTENTS">Serial Programming Guide for POSIX Operating Systems</a></li>
+<li><a href="https://blog.mbedded.ninja/programming/operating-systems/linux/linux-serial-ports-using-c-cpp/">Linux Serial Ports Using C/C++</a></li>
+<li><a href="https://linux.die.net/man/3/termios">termios(3) - Linux man page</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Computer_terminal#:~:text=A%20computer%20terminal%20is%20an,a%20computer%20screen%20by%20decades.">Computer terminal - Wikipedia</a></li>
+<li><a href="https://docs.rs/serialport/4.0.1/serialport/">Crate serialport</a></li>
+<li><a href="https://doc.qt.io/qt-5/qserialport.html">QSerialPort Class</a>dui</li>
+</ol>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2021-04-20-理由.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2021-04-20-理由.html">理由</a></div>
+        <div class="sibling-page-date">2021-04-20</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2021-04-04-解金字塔魔方.html">解金字塔魔方...</a></div>
+        <div class="sibling-page-date">2021-04-04</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2021-04-04-解金字塔魔方.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

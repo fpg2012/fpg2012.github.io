@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - GLFW输入法的退格问题——Linux混乱不堪的输入法生态</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="">
+        
+
+        
+        <meta name="keywords" content="glfw,输入法,imgui,linux,xim,x_input_method,x11,IME,CJK">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>GLFW输入法的退格问题——Linux混乱不堪的输入法生态</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>GLFW输入法的退格问题——Linux混乱不堪的输入法生态</h1>
+    
+    <div class="date-bar">
+        <span class="date">2025-03-10</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#glfw</span>
+    
+        <span class="tag">#输入法</span>
+    
+        <span class="tag">#imgui</span>
+    
+        <span class="tag">#linux</span>
+    
+        <span class="tag">#xim</span>
+    
+        <span class="tag">#x_input_method</span>
+    
+        <span class="tag">#x11</span>
+    
+        <span class="tag">#IME</span>
+    
+        <span class="tag">#CJK</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <h2>0 诡异的退格键</h2>
+最近在用glfw和dear imgui写一个简单的deepseek<a href="https://github.com/fpg2012/ds-cpp">客户端</a>，又遇到了“喜闻乐见”的输入法问题。最令人恼火的就是退格键不能被正确处理。就像下面这个视频展示的，预编辑的时候，按下退格键不仅会删除预编辑的内容，还会删除已经输入的内容，体验稀烂。</p>
+<div style="width: 100; display: flex; justify-content: center">
+<video controls width="400">
+  <source src="输入法问题.webm" type="video/webm" />
+Download the
+<a href="输入法问题.webm">webm</a>
+</video></p>
+</div>
+<blockquote>
+在Linux版本的Minecraft上也会有这样的问题，问题的根源同样是glfw<sup class="footnote-reference"><a href="#mcbug">1</a></sup>。</p>
+</blockquote>
+另外，在Wayland下，因为没有实现wayland的输入法协议，glfw直接用不了输入法。</p>
+<h2>1 临时解决办法</h2>
+<h3>强制使用X11</h3>
+目前Wayland下面的输入法问题可以说是一团糟，一切都处于过渡状态。解决输入法用不了的最好办法，就是不要用Wayland。在glfwInit()之前，强制glfw选定X11平台。</p>
+<pre><code class="language-c"><span class="source c"><span class="meta preprocessor c"><span class="keyword control import c">#ifdef</span> __linux__
+</span>    <span class="meta function-call c"><span class="variable function c">glfwInitHint</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">GLFW_PLATFORM<span class="punctuation separator c">,</span> GLFW_PLATFORM_X11</span><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+<span class="meta preprocessor c"><span class="keyword control import c">#endif</span></span>
+</span></code></pre>
+<h3>给glfw打补丁</h3>
+GLFW处理XIM协议<sup class="footnote-reference"><a href="#xim">2</a></sup>的方法不太正确，没有正确过滤掉部分键盘事件（比如输入时的退格键）。下载这个<a href="https://github.com/fpg2012/ds-cpp/blob/main/glfw_x11_ime.patch">补丁</a>，用<code>patch</code>命令打到glfw 3.4的源代码上。这个补丁的改动很小，就是让glfw无视被过滤掉的事件。类似的解决方案早有人在MC的bug report里给出，不知为何glfw至今未改正。</p>
+<pre><code>@@ -1242,6 +1245,9 @@ static void processEvent(XEvent *event)
+ 
+         case KeyPress:
+         {
++            if (filtered) {
++                return;
++            }
+             const int key = translateKey(keycode);
+             const int mods = translateState(event-&gt;xkey.state);
+             const int plain = !(mods &amp; (GLFW_MOD_CONTROL | GLFW_MOD_ALT));
+</code></pre>
+<h2>2 Linux混乱不堪的输入法</h2>
+Linux下输入法问题繁多，很大程度是因为缺少稳定、统一的协议。其次，主要开发者中，中国人和日本人少，大部分开发者不用输入法，对这个问题不太重视。最早X11制定了XIM协议，Tedyin的博客<sup class="footnote-reference"><a href="#tedyin">3</a></sup>给出了一个很好的例子解释这个协议，建议阅读。XIM协议看起来简洁明了，而且也能用，但据说在特定条件下会导致程序卡死<sup class="footnote-reference"><a href="#css_xim">4</a></sup>。社区后来不知出于什么原因，没有进一步改进XIM协议，而是由GTK和Qt分别开发自己的IM Module——从此天下大乱，装个输入法都要手动配几个莫名其妙的环境变量。GLFW既不是GTK，也不是Qt，就更麻烦。</p>
+再后来，为了方便输入法开发，又出现了ibus和fcitx。ibus据说在非GNOME环境下表现不佳（但是我没查到具体的问题），且其GNOME下的拼音输入也有不少bug<sup class="footnote-reference"><a href="#ibus_ubuntu">5</a></sup>。在国内社区持续的推广下，现在fcitx是中文输入的主流。</p>
+与此同时，Wayland正在逐步取代X11。很遗憾的是，Wayland的出现非但没有缓解输入法问题，反而将其进一步恶化了。Wayland自己另起炉灶，搞了v1-v4一系列协议<sup class="footnote-reference"><a href="#css_wayland">6</a></sup>，具体兼容情况各不相同。应用开发者的反应没有协议更新的速度快，通常也不会把IME支持放在比较优先的位置，就导致过渡阶段💩一样的体验。</p>
+总之，在2025年的今天，Linux的输入法问题成了最混乱、最糟糕、最劝退的问题之一，上Arch中文论坛搜“Wayland+输入法”，能搜出来一整页的帖子。主要开发者长期忽视IME，造成社区不断分裂、造新的轮子，旧的问题刚刚解决，新的问题又产生了。就结果而言，如今哪怕是处理一个很常见的输入法问题，都需要很多无关的底层知识。<strong>Linux的输入法完全不应该这么复杂</strong>，本来应该和Windows一样简单才对。</p>
+<div class="footnote-definition" id="mcbug"><sup class="footnote-definition-label">1</sup>
+<p><a href="https://report.bugs.mojang.com/servicedesk/customer/portal/2/MC-258708">MC-258708 Deleting candidate CJK words in IME also deletes text already entered</a></p>
+</div>
+<div class="footnote-definition" id="xim"><sup class="footnote-definition-label">2</sup>
+<p><a href="https://www.x.org/releases/X11R7.6/doc/libX11/specs/XIM/xim.html">XIM协议</a></p>
+</div>
+<div class="footnote-definition" id="tedyin"><sup class="footnote-definition-label">3</sup>
+<p><a href="https://tedyin.com/posts/a-brief-intro-to-linux-input-method-framework/">Tedyin - A Brief Intro to Input Method Framework, Linux IME, and XIM</a></p>
+</div>
+<div class="footnote-definition" id="css_xim"><sup class="footnote-definition-label">4</sup>
+<p><a href="https://www.csslayer.info/wordpress/tag/xim/">csslayer关于XIM的议论</a></p>
+</div>
+<div class="footnote-definition" id="ibus_ubuntu"><sup class="footnote-definition-label">5</sup>
+<p><a href="https://forum.ubuntu.org.cn/viewtopic.php?t=460613">早年ubuntu论坛上的讨论</a></p>
+</div>
+<div class="footnote-definition" id="css_wayland"><sup class="footnote-definition-label">6</sup>
+<p><a href="https://www.csslayer.info/wordpress/fcitx-dev/chrome-state-of-input-method-on-wayland/">csslayer - Chrome/Chromium 今日 Wayland 输入法支持现状</a></p>
+</div>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2025-06-09-扩散模型笔记集合/index.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2025-06-09-扩散模型笔记集合/index.html">Langevin方...</a></div>
+        <div class="sibling-page-date">2025-06-09</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2025-01-22-介绍去年做的尖塔mod/index.html">介绍一下去年做的杀...</a></div>
+        <div class="sibling-page-date">2025-01-22</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2025-01-22-介绍去年做的尖塔mod/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

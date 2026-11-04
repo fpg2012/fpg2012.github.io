@@ -1,0 +1,10 @@
+[project]
+name = "empty-space2"
+version = "0.1.0"
+description = "Python dependencies for the Pandoc filters used by this site."
+requires-python = ">=3.9"
+dependencies = [
+    "pandocfilters>=1.5.1",
+    "pygments>=2.18.0",
+]
+

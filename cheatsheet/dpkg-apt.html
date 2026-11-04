@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css">
+  <title>dpkg & apt 使用速查表</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+    /* 瀑布流内容布局 */
+    body { max-width: 72em; }
+    .cheatsheet {
+      columns: 20em;
+      column-gap: 2em;
+    }
+    .cheatsheet h1 { column-span: all; }
+    .cheatsheet > section.card {
+      break-inside: avoid;
+      margin: 0 0 1em;
+      padding: 0.5em 0.9em 0.9em;
+      border: 1px solid;
+    }
+    .cheatsheet > section.card > h3:first-child { margin-top: 0.8em; }
+    .cheatsheet > section.card.wide { column-span: all; }
+    .cheatsheet .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 0.2em; }
+    .cheatsheet a:visited { color: inherit; }
+    .cheatsheet .back {
+      column-span: all;
+      margin: 0 0 0.5em;
+      font-size: 85%;
+    }
+
+    /* 夜间模式 */
+    @media (prefers-color-scheme: dark) {
+      html { color: #d8d8d8; background-color: #1a1a1a; }
+      a, a:visited { color: #d8d8d8; }
+      blockquote { color: #a0a0a0; border-left-color: #444; }
+      tbody, th { border-color: #d8d8d8; }
+      code span.al { color: #ff6666; font-weight: bold; }
+      code span.an { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.at { color: #a0c060; }
+      code span.bn { color: #6fcf97; }
+      code span.bu { color: #7fbf7f; }
+      code span.cf { color: #ff8c69; font-weight: bold; }
+      code span.ch { color: #8ab4f8; }
+      code span.cn { color: #d4a0ff; }
+      code span.co { color: #7f9f9f; font-style: italic; }
+      code span.cv { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.do { color: #e06c75; font-style: italic; }
+      code span.dt { color: #ffb86c; }
+      code span.dv { color: #6fcf97; }
+      code span.er { color: #ff6666; font-weight: bold; }
+      code span.fl { color: #6fcf97; }
+      code span.fu { color: #82aaff; }
+      code span.im { color: #7fbf7f; font-weight: bold; }
+      code span.in { color: #7fb3c8; font-weight: bold; font-style: italic; }
+      code span.kw { color: #ff8c69; font-weight: bold; }
+      code span.op { color: #d0d0d0; }
+      code span.ot { color: #7fbf7f; }
+      code span.pp { color: #ffb86c; }
+      code span.sc { color: #8ab4f8; }
+      code span.ss { color: #d4a0ff; }
+      code span.st { color: #98c379; }
+      code span.va { color: #c099ff; }
+      code span.vs { color: #98c379; }
+      code span.wa { color: #7fb3c8; font-weight: bold; font-style: italic; }
+    }
+  </style>
+</head>
+<body>
+<div class="cheatsheet">
+<p class="back"><a href="//soulsand.top/cheatsheet/">← 返回速查表</a></p>
+<h1 id="dpkg-apt-使用速查表">dpkg &amp; apt 使用速查表</h1>
+
+<section class="card">
+<h3 id="更新与升级"><strong>1. 更新与升级</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo apt update</code></td>
+<td>更新软件包索引</td>
+</tr>
+<tr>
+<td><code>sudo apt upgrade</code></td>
+<td>升级已安装的包（不删除包）</td>
+</tr>
+<tr>
+<td><code>sudo apt full-upgrade</code></td>
+<td>升级并允许为解决依赖而增删包</td>
+</tr>
+<tr>
+<td><code>sudo apt dist-upgrade</code></td>
+<td>同 full-upgrade（旧写法）</td>
+</tr>
+<tr>
+<td><code>sudo apt autoremove</code></td>
+<td>删除不再需要的依赖</td>
+</tr>
+<tr>
+<td><code>sudo apt autoremove --purge</code></td>
+<td>删除依赖并清除其配置</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="安装与卸载"><strong>2. 安装与卸载</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo apt install &lt;pkg&gt;</code></td>
+<td>安装软件包</td>
+</tr>
+<tr>
+<td><code>sudo apt remove &lt;pkg&gt;</code></td>
+<td>卸载但保留配置文件</td>
+</tr>
+<tr>
+<td><code>sudo apt purge &lt;pkg&gt;</code></td>
+<td>卸载并删除配置文件</td>
+</tr>
+<tr>
+<td><code>sudo apt reinstall &lt;pkg&gt;</code></td>
+<td>重新安装</td>
+</tr>
+<tr>
+<td><code>sudo apt install ./foo.deb</code></td>
+<td>安装本地 deb 并自动解决依赖</td>
+</tr>
+<tr>
+<td><code>sudo dpkg -i foo.deb</code></td>
+<td>用 dpkg 安装本地 deb（不自动解决依赖）</td>
+</tr>
+<tr>
+<td><code>sudo dpkg -r &lt;pkg&gt;</code></td>
+<td>用 dpkg 卸载</td>
+</tr>
+<tr>
+<td><code>sudo apt-mark hold &lt;pkg&gt;</code></td>
+<td>锁定版本，阻止升级</td>
+</tr>
+<tr>
+<td><code>sudo apt-mark unhold &lt;pkg&gt;</code></td>
+<td>解除锁定</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="查询与搜索"><strong>3. 查询与搜索</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>apt search &lt;kw&gt;</code></td>
+<td>搜索软件包</td>
+</tr>
+<tr>
+<td><code>apt show &lt;pkg&gt;</code></td>
+<td>查看包信息</td>
+</tr>
+<tr>
+<td><code>apt list --installed</code></td>
+<td>列出已安装的包</td>
+</tr>
+<tr>
+<td><code>apt list --upgradable</code></td>
+<td>列出可升级的包</td>
+</tr>
+<tr>
+<td><code>apt-cache policy &lt;pkg&gt;</code></td>
+<td>查看版本与来源仓库</td>
+</tr>
+<tr>
+<td><code>dpkg -l &lt;pattern&gt;</code></td>
+<td>按名称列出已安装包</td>
+</tr>
+<tr>
+<td><code>dpkg -L &lt;pkg&gt;</code></td>
+<td>列出包内的文件</td>
+</tr>
+<tr>
+<td><code>dpkg -S &lt;file&gt;</code></td>
+<td>查询文件属于哪个包</td>
+</tr>
+<tr>
+<td><code>dpkg -s &lt;pkg&gt;</code></td>
+<td>查看包的详细状态</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="清理与修复"><strong>4. 清理与修复</strong></h3>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo apt clean</code></td>
+<td>清空已下载的包缓存</td>
+</tr>
+<tr>
+<td><code>sudo apt autoclean</code></td>
+<td>只清理过时的包缓存</td>
+</tr>
+<tr>
+<td><code>sudo apt --fix-broken install</code></td>
+<td>修复损坏的依赖</td>
+</tr>
+<tr>
+<td><code>sudo dpkg --configure -a</code></td>
+<td>重新配置未完成的安装</td>
+</tr>
+<tr>
+<td><code>sudo dpkg-reconfigure &lt;pkg&gt;</code></td>
+<td>重新运行包的配置</td>
+</tr>
+<tr>
+<td><code>sudo dpkg -P &lt;pkg&gt;</code></td>
+<td>彻底清除包及其配置</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="仓库与源"><strong>5. 仓库与源</strong></h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>命令</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sudo add-apt-repository ppa:&lt;user&gt;/&lt;ppa&gt;</code></td>
+<td>添加 PPA 源</td>
+</tr>
+<tr>
+<td><code>sudo add-apt-repository --remove ppa:&lt;user&gt;/&lt;ppa&gt;</code></td>
+<td>移除 PPA 源</td>
+</tr>
+<tr>
+<td><code>sudo install -Dm644 foo.asc /etc/apt/keyrings/foo.asc</code></td>
+<td>安装第三方源签名密钥</td>
+</tr>
+<tr>
+<td><code>sudo apt update</code></td>
+<td>改动源后重新刷新索引</td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="card">
+<h3 id="sources.list-示例"><strong>6. sources.list 示例</strong></h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode ini"><code class="sourceCode ini"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">deb https://deb.debian.org/debian bookworm main contrib non-free</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">deb https://deb.debian.org/debian bookworm-updates main contrib non-free</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">deb https://security.debian.org/debian-security bookworm-security main contrib non-free</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 带 signed-by 的第三方源</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">deb </span><span class="kw">[arch=amd64 signed-by=/etc/apt/keyrings/foo.asc]</span><span class="dt"> https://example.com/apt stable main</span></span></code></pre></div>
+</section>
+
+<section class="card">
+<h3 id="常用工作流recipe"><strong>7. 常用工作流（recipe）</strong></h3>
+<p><strong>更新系统</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt update <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt full-upgrade</span></code></pre></div>
+<p><strong>安装本地 deb</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt install ./foo.deb</span></code></pre></div>
+<p><strong>修复损坏的依赖</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt <span class="at">--fix-broken</span> install</span></code></pre></div>
+<p><strong>彻底卸载并清理</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt purge foo <span class="kw">&amp;&amp;</span> <span class="fu">sudo</span> apt autoremove <span class="at">--purge</span></span></code></pre></div>
+</section>
+
+<ul>
+<li>命令中的 <code>&lt;...&gt;</code>
+为占位符，使用时替换为实际内容。</li>
+<li><code>apt</code> 是 <code>apt-get</code> / <code>apt-cache</code>
+面向用户的前端，脚本中可仍用 <code>apt-get</code>。</li>
+<li>优先用 <code>apt install ./foo.deb</code> 而非
+<code>dpkg -i</code>，前者会自动补齐依赖。</li>
+<li>源列表在 <code>/etc/apt/sources.list</code> 和
+<code>/etc/apt/sources.list.d/</code> 中。</li>
+</ul>
+
+</div>
+</body>
+</html>

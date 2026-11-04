@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 2024-05阅读笔记</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="2024-05阅读笔记，《神们自己》《OpenGL编程指南》《计算理论导引》">
+        
+
+        
+        <meta name="keywords" content="读书笔记">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>2024-05阅读笔记</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>2024-05阅读笔记</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-05-22</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔note〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#读书笔记</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <h2>《神们自己》</h2>
+<blockquote>
+作者：阿西莫夫</p>
+来源：图书馆借的</p>
+阅读天数：&lt;一周</p>
+</blockquote>
+一本部头不算太大的小说，情节也相对单纯，构思很有意思。</p>
+在本书设定中，世界存在多个不同的宇宙，各自有不同的自然规律，并且可以通过“电子通道”互相传递物质，获取能量。而这样的无尽能源并非毫无代价，电子通道的运行会导致两个宇宙的自然规律趋同，对人类而言，长期来看太阳会发生爆炸。第一部分便是关于此。</p>
+在另一个宇宙，生物有着完全不同的繁殖模式和社会结构——三性生殖，三性包括理者（左）、情者（中）、抚育者（右）。这些“人”的形态似乎接近气体。理者善思，情者多情，并需要更多能量，有更强的同性社交需求（闺蜜），抚育者则愚钝保守。三性做爱时，会在很长时间里失去意识，条件适当是会按照理者、抚育者、情者的顺序生育。当理者意识到时机合适时，三者会结合而一起“逝去”。由于强作用力更强，这个宇宙聚变更容易发生，恒星不仅稀少，而且冷。如果情者无法获得足够能量，就会导致不容易生出小情者，因此这个宇宙的“人”迫切需要替代能源。三性结合是会，三者以一个长老个体的形式存在，会比原先更加致密。</p>
+在本书设定的年代，月球已经得到开发，并且在移民后代中已经产生的某种分离主义。长期在月球的人难以适应地球生活，地球新移民却可以慢慢适应月球生活。人工受精是月球人类的主要繁育方式。月球的合成食物完全无法与地球的传统食物媲美。在作者的设定中，月球代表着人类新的未来，似乎就好像在大航海时代，新大陆比旧大陆更具活力、更少发生战乱、更具创新精神，也更开发。设定中月球人喜欢裸体。故事还暗示了遗传工程在明令禁止后仍然取得了新进展。本书设定，存在某个与预言能力相关的基因，这个基因可以让人的直觉更加可靠，遗传工程借此来产生预言者。</p>
+月球分离主义者试图利用电子通道将月球整个带走，但这一阴谋最后遭到挫败，在全月公投中，“流浪月球”被否决。</p>
+主要出场人物：</p>
+<ul>
+<li>第一部分：拉蒙特、布罗诺斯基、狄尼森、哈兰姆、巴特议员</p>
+</li>
+<li>第二部分：杜阿、奥登、崔特、长老罗斯腾、（伊斯特伍德）</p>
+</li>
+<li>第三部分：狄尼森、赛琳娜·琳德斯托姆、戈德斯坦、巴伦·内维特</p>
+</li>
+</ul>
+一个被激怒的蠢材可能比漫不经心的天才更容易取得成果。第一部分就是这么展开的。狄尼森不经意间的言语伤到了哈兰姆的自尊心，间接促使哈兰姆探究瓶中钨发生变化的原因。哈兰姆最终在同事的启发下，颠覆性地提出了电子通道理论，然后成为学阀掌控整个学界。拉蒙特在撰写电子通道史的时候，发现了与官方记载不同的文献，指出哈兰姆并非独立发现电子通道。很快，拉蒙特就遭到哈兰姆的迫害，被边缘化。</p>
+被激怒的拉蒙特想要指出电子通道现有理论的漏洞。他找到了，并且推算出太阳实际的爆炸时间可能比现有理论预测的要更早。但是使用的数学工具不够浅显，并未得到重视。他找到布罗诺斯基共同工作，尝试与电子通道另一头的世界进行联系，得到了“通道坏坏坏”的消息，但没有将之公开。拉蒙特找到过巴特议员，但未能说服他采取行动，为他的研究获取必要的资源——月球上的加速器。最后因学阀的迫害，拉蒙特身败名裂。</p>
+在另一个世界，长老伊斯特伍德发现了电子通道，并且打算将之作为主要的能源获取手段。崔特、杜阿、奥登分别是三个特别的抚育者、情者和理者。崔特比一般的抚育者更加大胆，杜阿兼具情者和理者的特性（也因此被其他情者孤立），奥登是理者中的佼佼者。由于童年隐形，杜阿不愿逝去，因此一直不获取足够的能量，避免做爱，进而避免生出小情者，因为她认为小情者的诞生意味着逝去的时候要到了。</p>
+某次机缘巧合，杜阿在长老岩洞中发现了电子通道，并在和奥登的交谈中渐渐意识到对另一个世界的危害。杜阿不愿因本世界的利益损害另一个世界的利益，一次向电子通道另一端发出“通道坏坏坏”的信息。于此同时，崔特冒险找到长老，并且偷回人造食物（用以替代恒星的辐射），最后让杜阿食用了人造食物，得到了足够能量，自然而然做爱并产下小情者。</p>
+由于杜阿、崔特两人造成的危机，罗斯腾不得不暗示奥登逝去的时机。理者奥登最后终于明白了逝去的含义，说服杜阿和崔特，三人最后共同逝去，永远变成了长老伊斯特伍德。</p>
+故事线回到人类世界的月球。狄尼森为了躲避学阀，打算移民月球重新开始。导游赛琳娜对他产生了兴趣，加之伴侣巴伦的指使，不断靠近狄尼森以获取情报。前巴特医院的手下、刚刚履新的月球专员戈德斯坦也对狄尼森产生兴趣，暗示他可以得到他想要的资源，以验证电子通道的危险性。</p>
+在赛琳娜的帮助下和指点下，狄尼森逐渐适应月球生活，也意识到赛琳娜是个预言者。他慢慢证实了电子通道的危害性，并且一并得到了解决方案——开辟到第三个宇宙的电子通道。戈德斯坦最终帮助他发表了调查报告，恢复了拉蒙特的名誉，并把哈兰姆拉下神坛。狄尼森和赛琳娜直接逐渐产生爱情，这让正主巴伦·内维特十分吃醋。巴伦一直利用赛琳娜的预言能力，并且极力对外隐藏。他让赛琳娜接近狄尼森，纯粹是为了在月球开辟电子通道，以便实行他的“流浪月球计划”（书里没有这个名字，但是这样形容比较形象），即带着月球离开地球。当然他没用成功，他不能代表所有月球人，流浪月球最后被公投否决。</p>
+<h2>《OpenGL编程指南》</h2>
+<blockquote>
+原书第9版</p>
+译者：王锐 等</p>
+阅读时长：&gt;一个月</p>
+</blockquote>
+一本介绍OpenGL的大部头，适合OpenGL进阶使用。这一版里面大量使用OpenGL 4.5的特性，如果需要使用OpenGL4.3来复现，那么需要自己替换掉一些函数。</p>
+但是因为部头太大、太全，各种例子不可能都放得非常完整，有时候我甚至觉得不如直接读OpenGL的spec……部分章节翻译稀烂，明显是拿机翻来糊弄读者。而且出版这么多年了，出版社和译者似乎没有没有要勘误的意思。拉黑这个译者了。</p>
+书是好书，但总体上来说不推荐中文版。</p>
+<h2>《计算理论导引》</h2>
+<blockquote>
+阅读时长：&gt;一个月</p>
+</blockquote>
+比较浅显的计算理论导引。大概三个部分，自动机，可计算性理论，复杂度理论。比较重视证明，但是后面有些部分又不给完整证明。</p>
+总体来看是比较有意思的一本书。</p>
+摘录一些比较有意思的结论</p>
+<ol>
+<li>正则文法、NFA、DFA、GNFA之间的等价性</p>
+</li>
+<li>正则语言的性质：泵引理</p>
+</li>
+<li>上下文无关文法和PDA之间的等价性</p>
+</li>
+<li>上下文无关语言的性质：泵引理</p>
+</li>
+<li>DPDA和PDA不等价，句柄，LR(k)</p>
+</li>
+<li>图灵机的定义，可判定性，可识别性</p>
+</li>
+<li>图灵机及其变种（多带图灵机、非确定图灵机等）和枚举器的等价性</p>
+</li>
+<li>希尔伯特第10问不可解，即不存在一个算法可以检测任意多项式是否存在整数根</p>
+</li>
+<li>Church-Turing论题：算法的直观概念相当于图灵机算法</p>
+</li>
+<li>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">M</mi></mrow></msub></mrow><annotation encoding="application/x-tex">A_{\mathrm{TM}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">A</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathrm mtight">TM</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span>不可判定（使用对角化方法证明，和证明<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="double-struck">R</mi></mrow><annotation encoding="application/x-tex">\R</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6889em;"></span><span class="mord mathbb">R</span></span></span></span>不可数很类似）</p>
+</li>
+<li>可判定相当于图灵可识别+补图灵可识别</p>
+</li>
+<li>逻辑理论不一定是可判定的，比如<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">T</mi><mi mathvariant="normal">h</mi></mrow><mo stretchy="false">(</mo><mi mathvariant="double-struck">N</mi><mo separator="true">,</mo><mo>+</mo><mo separator="true">,</mo><mo>×</mo><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathrm{Th}(\N, +,\times)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord"><span class="mord mathrm">Th</span></span><span class="mopen">(</span><span class="mord mathbb">N</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">+</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">×</span><span class="mclose">)</span></span></span></span>. 这部分和和哥德尔不完备似乎有点关系</p>
+</li>
+<li>递归引理，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi></mrow><annotation encoding="application/x-tex">A</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">A</span></span></span></span>可以输出<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">⟨</mo><mi>A</mi><mo stretchy="false">⟩</mo></mrow><annotation encoding="application/x-tex">\langle A \rangle</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">⟨</span><span class="mord mathnormal">A</span><span class="mclose">⟩</span></span></span></span></p>
+</li>
+<li>k带图灵机上<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>，转化为单带图灵机至少需要<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><msup><mi>n</mi><mi>k</mi></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(n^k)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.0991em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.03148em;">k</span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+</li>
+<li>非确定图灵机上<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord mathnormal">n</span><span class="mclose">)</span></span></span></span>，转化为确定图灵机至少需要<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo stretchy="false">(</mo><msup><mn>2</mn><mrow><mi>O</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo><mo stretchy="false">)</mo></mrow></msup><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">t(2^{O(t(n))})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1.138em;vertical-align:-0.25em;"></span><span class="mord mathnormal">t</span><span class="mopen">(</span><span class="mord"><span class="mord">2</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.888em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">O</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">t</span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">n</span><span class="mclose mtight">))</span></span></span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+</li>
+<li>P类问题：能被图灵机多项式时间内判定</p>
+</li>
+<li>NP类问题：能被图灵机多项式时间内<strong>验证</strong>。验证意味着需要一个凭证，或者叫证明。</p>
+</li>
+<li>上下文无关语言属于P类，一般的哈密顿回路属于NP类，子集和问题属于NP类，SAT问题属于NP类</p>
+</li>
+<li>规约和NP完全（NP-C），简单的问题可以规约为更难一点问题。所有NP问题都可以被规约到一类NP问题上，称之为NP完全问题。证明利用了3-SAT问题，所有NP问题都可规约到SAT问题，SAT可以规约为3-SAT。只要证明一个问题和3-SAT问题可以互相规约，就能证明其NP完全性。（这里的“规约”都是指多项式时间规约）</p>
+</li>
+<li>P=NP?是个未解难题。下图假定<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">P</mi><mo>⊂</mo><mrow><mi mathvariant="normal">N</mi><mi mathvariant="normal">P</mi></mrow></mrow><annotation encoding="application/x-tex">\mathrm P\sub \mathrm{NP}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.7224em;vertical-align:-0.0391em;"></span><span class="mord mathrm">P</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">⊂</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord"><span class="mord mathrm">NP</span></span></span></span></span></p>
+</li>
+<li>哈密顿回路、子集和问题、SAT问题、最大团问题、顶点覆盖问题都是NP完全问题</p>
+</li>
+<li>空间复杂度：略</p>
+</li>
+</ol>
+<figure>
+<img title="" src="path1-0.png" alt="" width="308" data-align="center">
+</figure>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/notes/2024-06阅读笔记/index.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/notes/2024-06阅读笔记/index.html">2024-06 阅...</a></div>
+        <div class="sibling-page-date">2024-06-30</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/notes/debian踩坑记录.html">debian踩坑记...</a></div>
+        <div class="sibling-page-date">2024-05-07</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/notes/debian踩坑记录.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

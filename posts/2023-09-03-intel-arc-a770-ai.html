@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 使用Intel Arc A770进行AI画图</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="">
+        
+
+        
+        <meta name="keywords" content="intel,AI画图,stable diffusion,显卡,Arc A770">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>使用Intel Arc A770进行AI画图</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>使用Intel Arc A770进行AI画图</h1>
+    
+    <div class="date-bar">
+        <span class="date">2023-09-03</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#intel</span>
+    
+        <span class="tag">#AI画图</span>
+    
+        <span class="tag">#stable diffusion</span>
+    
+        <span class="tag">#显卡</span>
+    
+        <span class="tag">#Arc A770</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <blockquote>
+本文假设读者对Linux、PyTorch有一定的了解，对AI绘画的原理有一定了解。</p>
+</blockquote>
+<h2>前言</h2>
+网上对<a href="">Intel Arc A770</a>的风评不太好，评论基本上都说这张卡“性能不如同等级的N卡“、“驱动不完善”、“未来可期未来买”。但是综合考虑了一下我的需求，我还是决定无视这糟糕的风评，入手这张卡。这卡有几个优点：</p>
+<ol>
+<li>16GB显存（同级别的N卡基本上显存都没它大）</p>
+</li>
+<li>Linux下驱动支持良好（前提是内核版本6.2+，对比起来，N卡在Linux下用十分痛苦）</p>
+</li>
+<li>没有矿</p>
+</li>
+<li>价格已经初具性价比了，非公版现在只要2000出头，二手应该会更便宜</p>
+</li>
+<li>性能可能确实一般，但是对我而言够用</p>
+</li>
+<li>驱动已经逐渐完善了</p>
+</li>
+<li>AV1编码（虽然PR不支持，但是kdenlive支持）</p>
+</li>
+</ol>
+随着Intel在去年发布了Intel Extensions For Pytorch（IPEX），用A770进行机器学习，也并非不可能。</p>
+故为了充分利用我手上的这张卡，我打算来试试AI绘图、AI音色替换、自己部署ChatGLM之类的玩法。但正如标题，本文只涉及AI绘图。</p>
+<h2>配置基本环境</h2>
+我个人使用的环境如下：</p>
+<pre><code>                   -`                    nth233@lune 
+                  .o+`                   ----------- 
+                 `ooo/                   OS: Arch Linux x86_64 
+                `+oooo:                  Kernel: 6.4.12-arch1-1 
+               `+oooooo:                 Uptime: 32 mins 
+               -+oooooo+:                Packages: 1503 (pacman), 16 (flatpak) 
+             `/:-:++oooo+:               Shell: zsh 5.9 
+            `/++++/+++++++:              Resolution: 2560x1440 
+           `/++++++++++++++:             DE: GNOME 44.4 
+          `/+++ooooooooooooo/`           WM: Mutter 
+         ./ooosssso++osssssso+`          WM Theme: Adwaita 
+        .oossssso-````/ossssss+`         Theme: Adwaita [GTK2/3] 
+       -osssssso.      :ssssssso.        Icons: Adwaita [GTK2/3] 
+      :osssssss/        osssso+++.       Terminal: kgx 
+     /ossssssss/        +ssssooo/-       CPU: AMD Ryzen 5 5600G with Radeon Graphics (12) @ 3.900GHz 
+   `/ossssso+/:-        -:/+osssso+-     GPU: AMD ATI Radeon Vega Series / Radeon Vega Mobile Series 
+  `+sso+:-`                 `.-/+oso:    GPU: Intel DG2 [Arc A770] 
+ `++:.                           `-/+/   Memory: 3503MiB / 15275MiB 
+ .`                                 `/
+</code></pre>
+其中有几个要点：</p>
+<ol>
+<li>用Linux或WSL2。Windows我没有尝试过，因此请参照官方文档。</p>
+</li>
+<li>
+<p><strong>确保内核版本 &gt;= 6.2</strong>（目前Arch Linux的lts内核还只是6.1）</p>
+</li>
+</ol>
+IPEX只支持Ubuntu 22.04，但是实测用Arch Linux应该也没问题。如果求稳，可以用Docker。建议第一次尝试使用Docker，比较省心。</p>
+<blockquote>
+确保内核版本足够高，这点特别重要！</p>
+</blockquote>
+安装intel oneapi相关的工具。</p>
+<pre><code># pacman -S intel-compute-runtime-bin intel-oneapi-basekit intel_gpu_tools
+</code></pre>
+<p><code>intel_gpu_tools</code>提供了<code>intel_gpu_top</code>这类工具，可以比较方便地查看显卡的占用情况。</p>
+似乎安装以上的包就已经足够了。但为了以防万一，确保读者可以复现，我这里列出我安装的所有和intel有关的包。</p>
+<pre><code>$ pacman -Qs intel
+
+local/intel-compute-runtime-bin 23.22.26516.18-1
+    Intel Graphics Compute Runtime for oneAPI Level Zero and OpenCL Driver (pre-compiled binaries)
+local/intel-gpu-tools 1.27-2
+    Tools for development and testing of the Intel DRM driver
+local/intel-graphics-compiler-bin 1:1.0.14062.11-1
+    Intel Graphics Compiler for OpenCL (pre-compiled binaries)
+local/intel-media-driver 23.3.1-1
+    Intel Media Driver for VAAPI — Broadwell+ iGPUs
+local/intel-oneapi-basekit 2023.2.0.49397-1
+    Intel oneAPI Base Toolkit for Linux
+local/libmfx 23.2.2-2
+    Intel Media SDK dispatcher library
+local/libva-utils 2.19.0-1
+    Intel VA-API Media Applications and Scripts for libva
+local/onetbb 2021.9.0-1
+    High level abstract threading library (oneAPI Threading Building Blocks)
+local/openimagedenoise 1.4.3-1
+    Intel(R) Open Image Denoise library
+local/openpgl 0.5.0-5
+    Intel Open Path Guiding Library
+local/vulkan-intel 1:23.1.6-4
+    Intel's Vulkan mesa driver
+</code></pre>
+<h3>使用Docker</h3>
+首先，安装Docker，并且启用docker服务。</p>
+<pre><code># pacman -S docker
+# sudo systemctl start docker
+</code></pre>
+拉取Intel官方的docker映像（image）</p>
+<pre><code># docker pull intel/intel-extension-for-pytorch:xpu-flex-2.0.110-xpu
+</code></pre>
+运行映像。</p>
+<pre><code># docker run --rm -it --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</code></pre>
+然后检查一下是否能跑。在docker里运行以下代码，看能否正确输出IPEX的版本、显卡设备的信息。</p>
+<pre><code>$ python -c "import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
+</code></pre>
+到此为止，环境就配好了。</p>
+<h3>不使用Docker</h3>
+确保安装了Python 3.11和对应的<code>python-pip</code>。</p>
+<p><code>cd</code>到一个合适的地方，然后创建Python虚拟环境，随后启用虚拟环境。</p>
+<pre><code>$ cd ~/workspace/intel_draw
+$ python -m venv venv
+$ source ./venv/bin/activate
+</code></pre>
+到下载Python 3.11对应版本的PyTorch、torchvison和IPEX的whl文件。截至9月3日，是下面这三个。</p>
+<pre><code>torch-2.0.1a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+torchvision-0.15.2a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+intel_extension_for_pytorch-2.0.110+xpu-cp311-cp311-linux_x86_64.whl
+</code></pre>
+然后一一使用<code>pip</code>装到虚拟环境中。</p>
+<pre><code>$ pip install torch-2.0.1a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+$ pip install torchvision-0.15.2a0+cxx11.abi-cp311-cp311-linux_x86_64.whl
+$ pip install intel_extension_for_pytorch-2.0.110+xpu-cp311-cp311-linux_x86_64.whl
+</code></pre>
+然后，配置必要的环境变量。Intel提供了一个脚本，我这里是在<code>/opt/intel/oneapi</code>下面，执行这一脚本即可。之后每次使用IPEX前，都要先执行这一脚本。</p>
+<pre><code>$ source /opt/intel/oneapi/setvars.sh
+</code></pre>
+然后运行以下代码，看能否正确输出IPEX的版本、显卡设备的信息。</p>
+<pre><code>$ python -c "import torch; import intel_extension_for_pytorch as ipex; print(torch.__version__); print(ipex.__version__); [print(f'[{i}]: {torch.xpu.get_device_properties(i)}') for i in range(torch.xpu.device_count())];"
+</code></pre>
+<blockquote>
+如果需要使用Python 3.10或者更老的版本，可以conda创建虚拟环境，同时环境时指定Python版本。</p>
+<pre><code>conda create -n intel_draw python==3.10.13
+</code></pre>
+启用这个刚刚创建的<code>intel_draw</code>环境，然后再从头开始配置环境。注意Python 3.10对应的<code>whl</code>文件和3.11不同，注意检查。</p>
+</blockquote>
+到此为止，基本的环境就配好了。</p>
+<h2>配置ComfyUI</h2>
+Stable Diffusion WebUI虽然是最流行的WebUI，但它的没有直接支持Intel独显。虽有几个fork支持Intel独显，但是更新不如原项目勤快。所以我还是选择把intel独显支持整合进主分支的ComfyUI。</p>
+<blockquote>
+其实也可以不使用任何的WebUI，直接自己手动调用模型，可能还更简单一些。</p>
+</blockquote>
+把comfyui的仓库克隆到本地。这里是放在<code>~/workspace/ComfyUI</code></p>
+<pre><code>$ git clone https://github.com/comfyanonymous/ComfyUI
+</code></pre>
+然后启用刚才配置好的基本环境。</p>
+<blockquote>
+如果使用的是docker，启动容器的命令要添加几个选项。如下（注意根据自己的实际情况进行改动）：</p>
+<pre><code># docker run --rm -it -v /home/nth233/workspace/ComfyUI:/opt/sd -p 8188:8188 --privileged --device=/dev/dri --ipc=host &lt;image_name&gt;:&lt;tag&gt; bash
+</code></pre>
+<p><code>-v</code>是把我们刚刚克隆下来的ComfyUI的代码映射到docker容器中。<code>-p</code>是为了之后能够访问容器中运行的ComfyUI服务端，进行端口映射。</p>
+</blockquote>
+安装ComfyUI所需的基本依赖，在<code>~/workspace/ComfyUI</code>（如果使用docker，按照上面的命令启动，那么是<code>/opt/sd</code>）下，执行：</p>
+<pre><code>$ pip install -r requirements.txt
+</code></pre>
+然后就可以启动ComfyUI了。</p>
+<pre><code>$ python main.py --listen 0.0.0.0 --use-split-cross-attention
+</code></pre>
+然后可在浏览器中打开<code>localhost:8188</code>，即可看到ComfyUI。</p>
+<h2>下载模型</h2>
+目前比较流行的是Stable Diffusion 1.5，因此我们以此为例。</p>
+从<a href="https://huggingface.co/runwayml/stable-diffusion-v1-5">huggingface</a>上下载Stable Diffusion 1.5的checkpoint（如图）。下载完之后，放到<code>ComfyUI/models/checkpoints</code>下。</p>
+<figure><img src='/assets/img/post/sd-ckpt.png' alt='Stable Diffusion 1.5 safetensors' id='' title='' /><figcaption>Stable Diffusion 1.5 safetensors</figcaption></figure>读者还可以根据需要，下载其他模型的checkpoint放进来选用。如果有需要，还可以上civitai上下载各种各样的LoRA模型，放到<code>lora</code>文件夹下面。ControlNet同理</p>
+然后，参考ComfyUI的文档和示例，就可以开始画图了。</p>
+<h2>结果</h2>
+结果还行。但是似乎画图速度不算太快。但是不知是什么原因，intel这卡没法长宽太大的图，如果需要生成大图，可以考虑先生成小图，然后其他的模型超分辨率到高清大图。</p>
+<iframe src="//player.bilibili.com/player.html?aid=787658335&bvid=BV1214y1171Z&cid=1246931591&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width: 100%;aspect-ratio: 1920/1080;"> </iframe>
+<h2>参考</h2>
+<p><a href="https://intel.github.io/intel-extension-for-pytorch/xpu/latest/tutorials/installations/linux.html">IPEX文档</a></p>
+<p><a href="https://kwaa.dev/stable-diffusion">I 卡也要炼！本地运行 Stable Diffusion &amp; ComfyUI</a></p>
+<p><a href="https://github.com/comfyanonymous/ComfyUI">ComfyUI</a></p>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2024-02-08-使用esp32-c3制作网络控制键盘/index.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2024-02-08-使用esp32-c3制作网络控制键盘/index.html">使用esp32-c...</a></div>
+        <div class="sibling-page-date">2024-02-08</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2023-08-17-utterances.html">评论系统迁移至ut...</a></div>
+        <div class="sibling-page-date">2023-08-17</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2023-08-17-utterances.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 从零手写了个PDF解析器</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="从零手写了个PDF解析器">
+        
+
+        
+        <meta name="keywords" content="dev,pdf">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>从零手写了个PDF解析器</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>从零手写了个PDF解析器</h1>
+    
+    <div class="date-bar">
+        <span class="date">2026-02-28</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#dev</span>
+    
+        <span class="tag">#pdf</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    这两个月花了点时间，写了一个pdf解析器和pdf目录（outline）的编辑器，算是部分解决了我编辑pdf目录的需求。关于两个库的编译和使用，可以参考各自的README和文档。</p>
+<blockquote>
+GitHub Repo：</p>
+<ul>
+<li><a href="https://github.com/fpg2012/pdf-outline">pdf-outline</a> 基于JSON的pdf目录编辑工具，依赖pindf、libicu</li>
+<li><a href="https://github.com/fpg2012/pindf">pindf</a> 底层pdf文档解析库（非常low-level），基本上只依赖zlib</li>
+</ul>
+</blockquote>
+以前我囤了很多扫描版pdf。这些pdf制作不是很精良，往往没有目录，很难检索。当时我没找到合适的开源软件来做这件事。几个月前重新看了一下pdf的spec，简单评估之后，我认为我可以一周把这个东西做出来（实际上前前后后做了两个月……）。</p>
+这里说一下啥是outline。outline有些地方直接叫做“书签”，有些地方叫“目录”，有些地方叫“概览”。总之就是打开pdf之后，显示在侧边栏里面的目录，点击里面的项可以跳转到对应的地方，就是下图框起来的区域：</p>
+![框起来的区域就是outline](截屏2026-02-28 15.45.27大.png)</p>
+<h2>底层解析库</h2>
+底层解析库我起名为libpindf。随便乱取的，就是在「pdf」中间插入一个「in」。</p>
+<h3>如何解析一个PDF？</h3>
+一个初次创建的PDF主要包括几个部分：</p>
+<ol>
+<li>版本号注释（文件的开头类似<code>%%PDF-1.5</code>的一行）</li>
+<li>PDF主要内容，主要是一大堆的indirect object</li>
+<li>xref表。一个速查表，可以根据object的标号，速查对应的indirect object在文件中的哪个位置。</li>
+<li>trailer。一个字典，指出Catalog对象的位置</li>
+<li>startxref。这一行后面给出了xref表在文件中的位置</li>
+<li>最后以<code>%%EOF</code>结束</li>
+</ol>
+PDF的主要内容由一大堆indirect object组成。所谓object，就是整数、浮点数、null、名字、字典、数组、字符串、流的统称。流比较特殊，主要用来放一些连续的二进制数据，由一个字典和一串原始二进制数据组成。</p>
+间接对象（indirect object）则是带编号的对象。根据编号，可以在字典、数组这种复合对象里面引用它们。trailer当中会引用Catalog对象这个对象。Catalog当中有页面树、目录树、名字树等等东西。PDF的所有内容都用这棵树组织起来。</p>
+是不是听起来很简单？我一开始也这么觉得，但是实际做起来发现，<strong>PDF标准充满各种历史包袱</strong>，相同的功能可能可以用不同的方式来实现。因此要支持大部分的PDF，还是需要花很多时间研读标准。</p>
+<blockquote>
+举个例子，我原本不打算实现流对象的解析，但后期的PDF标准为了进一步缩小体积，会把对象放到流的二进制数据里面，用特殊的格式压缩。这就迫使我不得不去解析各种流，硬控了我一周的时间。xref表也有流的版本。</p>
+</blockquote>
+<h3>如何修改PDF</h3>
+PDF支持追加式的修改。所谓追加，就是指可以在上述完整的文件结构后面，再接上一个完整的文件结构。新的xref表格会覆盖原始xref表的对应部分——这意味着我们可以添加新的indirect object，并且通过修改xref表，替换掉原先相同对象号的object。最后，需要在trailer当中加上<code>/Prev</code>这个属性，指出老的xref表的位置。</p>
+这种追加式修改可以叠加无数层，在流传的PDF当中非常普遍。但PDF的这种设计，导致解析器必须从文件末端开始解析，先找到startxref，然后解析trailer，然后解析xref表，一层一层地解析回去，直到找到最初的那个trailer和xref表，做起来还是挺麻烦的。这种结构也对浏览器不友好（比如传了完整文件才能开始阅读），所以PDF还支持对文档做“线性化”，线性化后的PDF只有一个xref和一个trailer，1号对象放在最前面，就是catalog对象，对浏览器比较友好。</p>
+<h3>为啥要自己造轮子？</h3>
+为了爽。</p>
+我原本想要直接用现成的库，比如mupdf之类的。但这些库的文档感觉不是特别完善，并且一般都是read-only或者create-only，于是就一直搁置。直到某一天，我弄丢了手机，断网了一晚上，无事可做，于是乎决定纯手工写个纯C的解析器。靠着manual和手边的几个离线文档手工起了项目，从此一发不可收拾。尤其是在AI时代，沉下心来纯手工做这个东西是真爽。</p>
+写lexer差不多只用了一天，parser一周做到了85%的完成度。然后因为纯C的种种麻烦之处，剩下的10%用了我两周的时间……目前我只敢说做到了（95%）的完成度。大部分pdf都是可以处理的，除非是加密的pdf/用了奇怪filter的pdf。</p>
+接下来就是编辑pdf。PDF支持追加式的编辑，所以理论上我只需要一个read-only搭配一个create-only的库，就能实现我原本想做的编辑操作。但我意识到这点的时候已经太晚，parser都已经快写完了。</p>
+<h3>复盘</h3>
+不应该用纯C来写，手工管理内存和所有权实在是太麻烦，如果改用rust，甚至哪怕是C++，应该真的一周就能搞定。</p>
+<h2>Outline编辑器</h2>
+在libpindf的基础上，编辑outline相对简单。只要找到目录树（outline树），然后把它替换掉，即可实现修改outline。</p>
+<h3>如何编辑？</h3>
+由于懒得写图形界面，我打算采用JSON作为一个中间格式。先把outline提取出来，翻译成json，人工编辑json之后，再翻译成一系列indirect object，替换到原先的outline树，就能实现编辑。</p>
+<h3>具体实现</h3>
+理论简单，但具体实践起来，又花了我好几天时间。</p>
+一个点是，PDF的目录有好几种实现方法。outline树中的节点需要有两个信息，</p>
+<ul>
+<li>标题，决定了怎么显示这个节点</p>
+</li>
+<li>跳转目的地：可以指向某个Destination对象，也可以指向某个Action对象。</p>
+</li>
+</ul>
+这两个要素各自有若干种写法，支持起来很烦人</p>
+<h4>标题的两种写法</h4>
+title有两种编码方式，默认使用所谓的“pdf encoding”，基本上就是诡异版的unicode，欧元符号之类的东西用特殊的编码，历史包袱很重。如果以某两个特殊字节开始，表示使用大端序的UTF-16。</p>
+用现在的眼光看来非常莫名其妙。个人不太喜欢大端序，写代码的时候总要专门去反转顺序……但偏偏PDF标准就是喜欢用大端序，在各种各样的地方都选择大端序。</p>
+<h4>目的地的n种写法</h4>
+Action对象有非常多种，除了跳转外，“打开网页”、“播放声音”甚至“播放视频”之类的都有……因此理论上点击pdf目录项还可以播视频……</p>
+跳转Action的内部会引用一个Destination，因此殊途同归。Destination会引用它要跳转的那个Page，或者是对应位置的name，还可以指定跳转到页面的那个位置（写坐标）……甚至能规定跳转之后采用哪种缩放方式。如果跳转目的地写name，还需要去name tree里面检索对应的真实page object是哪个，极度麻烦。</p>
+我目前不支持用Action。可以选择填Destination（需要按照pdf的语法自己写destination object），或者填页码。推荐填页码，心智负担最小。</p>
+<h4>示例JSON</h4>
+示例JSON如下（只写页码）：</p>
+<pre><code class="language-json"><span class="source json"><span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>chd<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure array json"><span class="punctuation section array begin json">[</span>
+        <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>前言<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>destination<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">5</span>
+            </span><span class="punctuation section dictionary end json">}</span></span>
+        </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+        <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>作者题词<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>destination<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">10</span>
+            </span><span class="punctuation section dictionary end json">}</span></span>
+        </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+        <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>目录<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>destination<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">11</span>
+            </span><span class="punctuation section dictionary end json">}</span></span>
+        </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+        <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>牡丹亭<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>destination<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">14</span>
+            </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>chd<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure array json"><span class="punctuation section array begin json">[</span>
+                <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>第一齣 標目<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">14</span>
+                </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+                <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>第二齣 言懷<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">17</span>
+                </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+                <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>第三齣 訓女<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">21</span>
+                </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+            <span class="punctuation section array end json">]</span></span>
+        </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+        <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>附录<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">323</span><span class="punctuation separator dictionary pair json">,</span></span>
+            <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>chd<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="meta structure array json"><span class="punctuation section array begin json">[</span>
+                <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>附录一 关于版本的说明<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">323</span>
+                </span><span class="punctuation section dictionary end json">}</span></span><span class="punctuation separator array json">,</span>
+                <span class="meta structure dictionary json"><span class="punctuation section dictionary begin json">{</span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>title<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>附录二 杜丽娘慕色还魂画本<span class="punctuation definition string end json">&quot;</span></span><span class="punctuation separator dictionary pair json">,</span></span>
+                    <span class="meta structure dictionary key json"><span class="string quoted double json"><span class="punctuation definition string begin json">&quot;</span>page<span class="punctuation definition string end json">&quot;</span></span></span><span class="meta structure dictionary value json"><span class="punctuation separator dictionary key-value json">:</span> <span class="constant numeric json">326</span>
+                </span><span class="punctuation section dictionary end json">}</span></span>
+            <span class="punctuation section array end json">]</span></span>
+        </span><span class="punctuation section dictionary end json">}</span></span>
+    <span class="punctuation section array end json">]</span></span>
+</span><span class="punctuation section dictionary end json">}</span></span>
+</span></code></pre>
+<h2>下一步？</h2>
+手工做目录还是太麻烦了，下一步看看能不能借助现在的VLM模型/OCR模型，半自动地把目录标出来。</p>
+上半年有时间的话做个工作流来试试看。大体的想法是，先找到书籍的目录，然后借助现有的目录，让VLM/OCR模型精读前几章，总结一下经验，然后跳读整本书。</p>
+<h2>Ref</h2>
+<ul>
+<li><a href="https://opensource.adobe.com/dc-acrobat-sdk-docs/pdfstandards/pdfreference1.7old.pdf">Adobe PDF 1.7 标准文档</a></li>
+<li><a href="https://github.com/fpg2012/pdf-outline">pdf-outline - GitHub</a></li>
+<li><a href="https://github.com/fpg2012/pindf">pindf - GitHub</a></li>
+</ul>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2026-04-31-risc-v裸机程序和中断处理/index.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2026-04-31-risc-v裸机程序和中断处理/index.html">risc-v裸机程...</a></div>
+        <div class="sibling-page-date">2026-04-31</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2026-01-08-MacOS上游玩windows游戏/index.html">MacOS上游玩W...</a></div>
+        <div class="sibling-page-date">2026-01-08</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2026-01-08-MacOS上游玩windows游戏/index.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

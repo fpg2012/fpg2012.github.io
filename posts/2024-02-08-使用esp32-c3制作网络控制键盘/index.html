@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 使用esp32-c3制作网络控制键盘</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="蓝牙键盘鼠标有很多优点，不需要线，也不需要占用一个USB接口，有些键盘还可以多模匹配，切换设备只需要按一个键。但有一个缺点是蓝牙键盘避不开的：必须在操作系统启动之后才能使用。这就带来一个棘手的问题：在GRUB以及BIOS中，没有办法使用蓝牙键盘鼠标。于是在我换蓝牙键盘之后，还是不得不常备一个有线键盘或者2.4GHz的无线键盘——直接把蓝牙键盘的种种好处都抵消掉了。如果手边恰好没有有线键盘/2.4GHz无线键盘，那我就无法在开机选操作系统。因此我做了这个东西进行补救：基于esp32-c3的网络控制键盘（下文直接称为esp32键盘）。">
+        
+
+        
+        <meta name="keywords" content="esp32,键盘,电子,arduino">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>使用esp32-c3制作网络控制键盘</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>使用esp32-c3制作网络控制键盘</h1>
+    
+    <div class="date-bar">
+        <span class="date">2024-02-08</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#esp32</span>
+    
+        <span class="tag">#键盘</span>
+    
+        <span class="tag">#电子</span>
+    
+        <span class="tag">#arduino</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    蓝牙键盘鼠标有很多优点，不需要线，也不需要占用一个USB接口，有些键盘还可以多模匹配，切换设备只需要按一个键。但有一个缺点是蓝牙键盘避不开的：必须在操作系统启动之后才能使用。</p>
+这就带来一个棘手的问题：在GRUB以及BIOS中，没有办法使用蓝牙键盘鼠标。于是在我换蓝牙键盘之后，还是不得不常备一个有线键盘或者2.4GHz的无线键盘——直接把蓝牙键盘的种种好处都抵消掉了。如果手边恰好没有有线键盘/2.4GHz无线键盘，那我就无法在开机选操作系统。</p>
+因此我做了这个东西进行补救：基于esp32-c3的网络控制键盘（下文直接称为esp32键盘）。</p>
+<h2>工作方式</h2>
+<figure><img src='./structure.png' alt='工作方式示意图' id='' title='' /><figcaption>工作方式示意图</figcaption></figure>大概就是esp32-c3经由ch9329串口转USB HID模块，连接到主机上，在主机看来，esp32-c3就是个USB键鼠。esp32-c3同时也连接到本地的WiFi，并且运行一个HTTP服务端。访问它会返回一个网页，网页中有若干按钮，按下网页上的按钮时会给esp32-c3发请求。esp32-c3解析请求后，通过ch9329模拟键盘按下那个键。</p>
+有了这个esp32键盘之后，我就可以通过手机模拟一个USB键盘的操作，从而在GRUB界面里面选操作系统，无需常备一块有线键盘。</p>
+<h2>材料</h2>
+<ol>
+<li>esp32-c3-devkitm-1（某宝随便买的）</li>
+<li>ch9329模块（某宝随便买的）</li>
+<li>ssd1306 128x64的显示屏（很久以前某宝买的）（可选）</li>
+<li>杜邦线若干</li>
+</ol>
+<h2>用到的库</h2>
+<ol>
+<li>参照乐鑫官网配好Arduino IDE（也就是安装esp32开发板）</li>
+<li>在Arduino IDE安装u8g2库，用来操作显示屏（可选）</li>
+<li>在Arduino IDE安装CH9219_Keyboard库</li>
+</ol>
+<h2>导线连接</h2>
+如图所示</p>
+<figure><img src='./connection.png' alt='导线连接' id='' title='' /><figcaption>导线连接</figcaption></figure>
+<h2>代码</h2>
+<pre><code class="language-c++"><span class="source c++"><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>WiFi.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>WiFiClient.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>WebServer.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>uri/UriBraces.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span>
+<span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>Arduino.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>U8g2lib.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span>
+<span class="meta preprocessor c++"><span class="keyword control import c++">#ifdef</span> U8X8_HAVE_HW_SPI
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>SPI.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor c++"><span class="keyword control import c++">#endif</span></span>
+<span class="meta preprocessor c++"><span class="keyword control import c++">#ifdef</span> U8X8_HAVE_HW_I2C
+</span><span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted other lt-gt include c++"><span class="punctuation definition string begin c++">&lt;</span>Wire.h<span class="punctuation definition string end c++">&gt;</span></span>
+</span><span class="meta preprocessor c++"><span class="keyword control import c++">#endif</span></span>
+
+<span class="meta preprocessor include c++"><span class="keyword control import include c++">#include</span> <span class="string quoted double include c++"><span class="punctuation definition string begin c++">&quot;</span>CH9329_Keyboard.h<span class="punctuation definition string end c++">&quot;</span></span>
+</span>
+<span class="meta preprocessor macro c++"><span class="keyword control import define c++">#define</span></span><span class="meta preprocessor macro c++"> <span class="entity name constant preprocessor c++">WIFI_SSID</span></span><span class="meta preprocessor macro c++"> <span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>你的WiFi名(SSID)<span class="punctuation definition string end c">&quot;</span></span></span>
+<span class="meta preprocessor macro c++"><span class="keyword control import define c++">#define</span></span><span class="meta preprocessor macro c++"> <span class="entity name constant preprocessor c++">WIFI_PASSWORD</span></span><span class="meta preprocessor macro c++"> <span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>你的WiFi密码<span class="punctuation definition string end c">&quot;</span></span></span>
+<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> Defining the WiFi channel speeds up the connection:
+</span><span class="meta preprocessor macro c++"><span class="keyword control import define c++">#define</span></span><span class="meta preprocessor macro c++"> <span class="entity name constant preprocessor c++">WIFI_CHANNEL</span></span><span class="meta preprocessor macro c++"> <span class="constant numeric c++">6</span></span>
+
+U8G2_SSD1306_128X64_NONAME_F_HW_I2C <span class="meta function c++"><span class="entity name function c++">u8g2</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="variable parameter c++">U8G2_R0</span><span class="punctuation separator c++">,</span> <span class="comment block c"><span class="punctuation definition comment c">/*</span> reset=<span class="punctuation definition comment c">*/</span></span> <span class="variable parameter c++">U8X8_PIN_NONE</span><span class="punctuation separator c++">,</span> <span class="comment block c"><span class="punctuation definition comment c">/*</span> clock=<span class="punctuation definition comment c">*/</span></span> <span class="constant numeric c++">6</span><span class="punctuation separator c++">,</span> <span class="comment block c"><span class="punctuation definition comment c">/*</span> data=<span class="punctuation definition comment c">*/</span></span> <span class="constant numeric c++">5</span><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+WebServer <span class="meta function c++"><span class="entity name function c++">server</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="constant numeric c++">80</span><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+<span class="storage modifier c++">const</span> <span class="storage type c">int</span> press_up <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">1</span><span class="punctuation separator c++">,</span> press_down <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">2</span><span class="punctuation separator c++">,</span> press_right <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">3</span><span class="punctuation separator c++">,</span> press_left <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">4</span><span class="punctuation separator c++">,</span> press_enter <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">5</span><span class="punctuation terminator c++">;</span>
+<span class="meta preprocessor macro c++"><span class="keyword control import define c++">#define</span></span><span class="meta preprocessor macro c++"> <span class="entity name constant preprocessor c++">QUEUE_SIZE</span></span><span class="meta preprocessor macro c++"> <span class="constant numeric c++">7</span></span>
+<span class="storage type c">int</span> press_history_queue<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>QUEUE_SIZE<span class="punctuation section brackets end c++">]</span></span> <span class="keyword operator assignment c">=</span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span><span class="keyword operator arithmetic c">-</span><span class="constant numeric c++">1</span><span class="punctuation separator c++">,</span> <span class="keyword operator arithmetic c">-</span><span class="constant numeric c++">1</span><span class="punctuation separator c++">,</span> <span class="keyword operator arithmetic c">-</span><span class="constant numeric c++">1</span><span class="punctuation separator c++">,</span> <span class="keyword operator arithmetic c">-</span><span class="constant numeric c++">1</span><span class="punctuation separator c++">,</span> <span class="keyword operator arithmetic c">-</span><span class="constant numeric c++">1</span><span class="punctuation section block end c++">}</span></span><span class="punctuation terminator c++">;</span>
+<span class="storage type c">int</span> p_front <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation separator c++">,</span> p_rear <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+<span class="storage type c">int</span> queue_len <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+<span class="storage type c">char</span> queue_str<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>QUEUE_SIZE <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">3</span><span class="punctuation section brackets end c++">]</span></span><span class="punctuation terminator c++">;</span>
+<span class="storage type c">char</span> queue_str_map<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span><span class="punctuation section brackets end c++">]</span></span> <span class="keyword operator assignment c">=</span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span><span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>0<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation separator c++">,</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>U<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation separator c++">,</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>D<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation separator c++">,</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>L<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation separator c++">,</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>R<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation separator c++">,</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span>E<span class="punctuation definition string end c">&#39;</span></span><span class="punctuation section block end c++">}</span></span><span class="punctuation terminator c++">;</span>
+
+<span class="storage type c">int</span> position_x <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation separator c++">,</span> position_y <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+
+<span class="support type stdint c">uint64_t</span> counter_default <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">4096</span><span class="punctuation terminator c++">;</span>
+<span class="support type stdint c">uint64_t</span> counter <span class="keyword operator assignment c">=</span> counter_default<span class="punctuation terminator c++">;</span>
+
+<span class="support type stdint c">uint64_t</span> counter_close_display_default <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">32768</span><span class="punctuation terminator c++">;</span>
+<span class="support type stdint c">uint64_t</span> counter_close_display <span class="keyword operator assignment c">=</span> counter_close_display_default<span class="punctuation terminator c++">;</span>
+
+<span class="support type stdint c">uint64_t</span> cycles <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+<span class="storage type c">int</span> real_cycles <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">pop_queue</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  <span class="keyword control c++">if</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>queue_len <span class="keyword operator comparison c">==</span> <span class="constant numeric c++">0</span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    <span class="keyword control c++">return</span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  p_front <span class="keyword operator assignment c">=</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>p_front <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">1</span><span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> QUEUE_SIZE<span class="punctuation terminator c++">;</span>
+  queue_len <span class="keyword operator arithmetic c">-</span><span class="keyword operator arithmetic c">-</span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">push_queue</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="storage type c">int</span> <span class="variable parameter c++">item</span><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  <span class="keyword control c++">if</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>queue_len <span class="keyword operator comparison c">==</span> QUEUE_SIZE<span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    <span class="meta function-call c++"><span class="variable function c++">pop_queue</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  press_history_queue<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>p_rear<span class="punctuation section brackets end c++">]</span></span> <span class="keyword operator assignment c">=</span> item<span class="punctuation terminator c++">;</span>
+  p_rear <span class="keyword operator assignment c">=</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>p_rear <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">1</span><span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> QUEUE_SIZE<span class="punctuation terminator c++">;</span>
+  queue_len <span class="keyword operator arithmetic c">+</span><span class="keyword operator arithmetic c">+</span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">update_queue_str</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  <span class="storage type c">int</span> i <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span>
+  <span class="keyword control c++">for</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>i <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">0</span><span class="punctuation terminator c++">;</span> i <span class="keyword operator comparison c">&lt;</span> queue_len<span class="punctuation terminator c++">;</span> <span class="keyword operator arithmetic c">+</span><span class="keyword operator arithmetic c">+</span>i<span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    queue_str<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>i<span class="punctuation section brackets end c++">]</span></span> <span class="keyword operator assignment c">=</span> queue_str_map<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>press_history_queue<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span>p_front <span class="keyword operator arithmetic c">+</span> i<span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> QUEUE_SIZE<span class="punctuation section brackets end c++">]</span></span><span class="punctuation section brackets end c++">]</span></span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  queue_str<span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span>i<span class="punctuation section brackets end c++">]</span></span> <span class="keyword operator assignment c">=</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span><span class="constant character escape c">\n</span><span class="punctuation definition string end c">&#39;</span></span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">update_position</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  position_x <span class="keyword operator assignment c">=</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>position_x <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">1</span><span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span><span class="constant numeric c++">20</span><span class="punctuation section group end c++">)</span></span><span class="punctuation terminator c++">;</span>
+  position_y <span class="keyword operator assignment c">=</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>position_y <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">1</span><span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span><span class="constant numeric c++">30</span><span class="punctuation section group end c++">)</span></span><span class="punctuation terminator c++">;</span>
+  <span class="meta function-call c++"><span class="variable function c++">updateDisplay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">updateDisplay</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">clearBuffer</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>					<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> clear the internal memory
+</span>  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">setFont</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">u8g2_font_t0_15b_tn</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>	<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> choose a suitable font
+</span>  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">drawStr</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">position_x<span class="punctuation separator c++">,</span>position_y<span class="keyword operator arithmetic c">+</span><span class="constant numeric c++">10</span><span class="punctuation separator c++">,</span> WiFi<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">localIP</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">toString</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">c_str</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>	<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> write something to the internal memory
+</span>  
+  String cycles_str <span class="keyword operator assignment c">=</span> <span class="meta function-call c++"><span class="variable function c++">String</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>LOOP/1024=<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span> <span class="keyword operator arithmetic c">+</span> <span class="meta function-call c++"><span class="variable function c++">String</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++">cycles</span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">setFont</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">u8g2_font_chikita_tr</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">drawStr</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">position_x<span class="punctuation separator c++">,</span> position_y<span class="keyword operator arithmetic c">+</span><span class="constant numeric c++">17</span><span class="punctuation separator c++">,</span> cycles_str<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">c_str</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">setFont</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">u8g2_font_tenstamps_mf</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>	<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> choose a suitable font
+</span>  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">drawStr</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">position_x<span class="punctuation separator c++">,</span>position_y<span class="keyword operator arithmetic c">+</span><span class="constant numeric c++">34</span><span class="punctuation separator c++">,</span> queue_str</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>	<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> write something to the internal memory
+</span>  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">sendBuffer</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>					<span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> transfer internal memory to the display
+</span></span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">closeDisplay</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">clearBuffer</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">sendBuffer</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">sendHtml</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  String response <span class="keyword operator assignment c">=</span> <span class="string quoted double c++"><span class="storage type string c++">R</span><span class="punctuation definition string begin c++">&quot;(</span>
+    &lt;!DOCTYPE html&gt;&lt;html&gt;
+      &lt;head&gt;
+        &lt;title&gt;ESP32 Web Server Demo&lt;/title&gt;
+        &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+        &lt;style&gt;
+          html { font-family: sans-serif; text-align: center; width: 100vw; }
+          body { display: inline-flex; flex-direction: column; }
+          h1 { margin-bottom: 1.2em; } 
+          h2 { margin: 0; }
+          div { display: flex; flex-wrap: wrap; }
+          .btn { background-color: #5B5; border: none; color: #fff; padding: 0.5em 1em;
+                 font-size: 2em; text-decoration: none; margin: 0.5em; }
+          .btn.OFF { background-color: #333; }
+          }
+        &lt;/style&gt;
+      &lt;/head&gt;
+            
+      &lt;body&gt;
+        &lt;h1&gt;ESP32 Web Server&lt;/h1&gt;
+
+        &lt;div class=&quot;button-area&quot;&gt;
+          &lt;span id=&quot;up&quot; class=&quot;btn&quot;&gt;up&lt;/span&gt;
+          &lt;span id=&quot;down&quot; class=&quot;btn&quot;&gt;down&lt;/span&gt;
+          &lt;span id=&quot;left&quot; class=&quot;btn&quot;&gt;left&lt;/span&gt;
+          &lt;span id=&quot;right&quot; class=&quot;btn&quot;&gt;right&lt;/span&gt;
+          &lt;span id=&quot;enter&quot; class=&quot;btn&quot;&gt;ENTER&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;script&gt;
+          var up = document.getElementById(&quot;up&quot;);
+          var down = document.getElementById(&quot;down&quot;);
+          var right = document.getElementById(&quot;right&quot;);
+          var left = document.getElementById(&quot;left&quot;);
+          var enter = document.getElementById(&quot;enter&quot;);
+
+          up.onclick = async function() {
+            await fetch(&quot;/press/1&quot;);
+          }
+          down.onclick = async function() {
+            await fetch(&quot;/press/2&quot;);
+          }
+          right.onclick = async function() {
+            await fetch(&quot;/press/3&quot;);
+          }
+          left.onclick = async function() {
+            await fetch(&quot;/press/4&quot;);
+          }
+          enter.onclick = async function() {
+            await fetch(&quot;/press/5&quot;);
+          }
+        &lt;/script&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+  <span class="punctuation definition string end c++">)&quot;</span></span><span class="punctuation terminator c++">;</span>
+  server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">send</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="constant numeric c++">200</span><span class="punctuation separator c++">,</span> <span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>text/html<span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c++">,</span> response</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">setup</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="storage type c++">void</span><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="constant numeric c++">115200</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  Serial1<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="constant numeric c++">9600</span><span class="punctuation separator c++">,</span> SERIAL_8N1<span class="punctuation separator c++">,</span> <span class="constant numeric c++">3</span><span class="punctuation separator c++">,</span> <span class="constant numeric c++">2</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">Serial1</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+  WiFi<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">WIFI_SSID<span class="punctuation separator c++">,</span> WIFI_PASSWORD<span class="punctuation separator c++">,</span> WIFI_CHANNEL</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">print</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>Connecting to WiFi <span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">print</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">WIFI_SSID</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> Wait for connection
+</span>  <span class="keyword control c++">while</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>WiFi<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">status</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span> <span class="keyword operator comparison c">!=</span> WL_CONNECTED<span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    <span class="meta function-call c++"><span class="variable function c++">delay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="constant numeric c++">100</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">print</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>.<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">println</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span> Connected!<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">print</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>IP address: <span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">println</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">WiFi<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">localIP</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+  server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">on</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>/<span class="punctuation definition string end c">&quot;</span></span><span class="punctuation separator c++">,</span> sendHtml</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+  server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">on</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="meta function-call c++"><span class="variable function c++">UriBraces</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>/press/{}<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation separator c++">,</span> <span class="meta brackets c++"><span class="punctuation section brackets begin c++">[</span><span class="punctuation section brackets end c++">]</span></span><span class="meta group c++"><span class="punctuation section group begin c++">(</span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    String press_button <span class="keyword operator assignment c">=</span> server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">pathArg</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="constant numeric c++">0</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">print</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>Press #<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">println</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">press_button</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+    <span class="keyword control c++">switch</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>press_button<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">toInt</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+      <span class="keyword control c++">case</span> <span class="constant numeric c++">1</span><span class="punctuation separator c++">:</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> up
+</span>        CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">press</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">KEY_UP_ARROW</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+        <span class="keyword control c++">break</span><span class="punctuation terminator c++">;</span>
+      <span class="keyword control c++">case</span> <span class="constant numeric c++">2</span><span class="punctuation separator c++">:</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> down
+</span>        CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">press</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">KEY_DOWN_ARROW</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+        <span class="keyword control c++">break</span><span class="punctuation terminator c++">;</span>
+      <span class="keyword control c++">case</span> <span class="constant numeric c++">3</span><span class="punctuation separator c++">:</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> right
+</span>        CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">press</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">KEY_RIGHT_ARROW</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+        <span class="keyword control c++">break</span><span class="punctuation terminator c++">;</span>
+      <span class="keyword control c++">case</span> <span class="constant numeric c++">4</span><span class="punctuation separator c++">:</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> left
+</span>        CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">press</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">KEY_LEFT_ARROW</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+        <span class="keyword control c++">break</span><span class="punctuation terminator c++">;</span>
+      <span class="keyword control c++">case</span> <span class="constant numeric c++">5</span><span class="punctuation separator c++">:</span>
+        <span class="comment line double-slash c"><span class="punctuation definition comment c">//</span> enter
+</span>        CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">press</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">KEY_RETURN</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+        <span class="keyword control c++">break</span><span class="punctuation terminator c++">;</span>
+    <span class="punctuation section block end c++">}</span></span>
+    <span class="meta function-call c++"><span class="variable function c++">push_queue</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++">press_button<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">toInt</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    <span class="meta function-call c++"><span class="variable function c++">update_queue_str</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    <span class="meta function-call c++"><span class="variable function c++">updateDisplay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+    Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">println</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++">queue_str</span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+    server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">send</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="constant numeric c++">200</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+    CH9329_Keyboard<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">releaseAll</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+    counter_close_display <span class="keyword operator assignment c">=</span> <span class="constant numeric c++">32768</span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+
+  server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  u8g2<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">begin</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  Serial<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">println</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="string quoted double c"><span class="punctuation definition string begin c">&quot;</span>HTTP server started<span class="punctuation definition string end c">&quot;</span></span></span></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="meta function-call c++"><span class="variable function c++">updateDisplay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c++"><span class="entity name function c++">loop</span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function parameters c++"><span class="meta group c++"><span class="storage type c++">void</span><span class="punctuation section group end c++">)</span></span></span><span class="meta function c++"> </span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block begin c++">{</span></span></span><span class="meta function c++"><span class="meta block c++">
+  server<span class="punctuation accessor dot c++">.</span><span class="meta method-call c++"><span class="variable function member c++">handleClient</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta method-call c++"></span><span class="meta method-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="meta function-call c++"><span class="variable function c++">delay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="constant numeric c++">2</span></span></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  real_cycles <span class="keyword operator assignment c">=</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>real_cycles <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c++">1</span><span class="punctuation section group end c++">)</span></span> <span class="keyword operator arithmetic c">%</span> <span class="constant numeric c++">1024</span><span class="punctuation terminator c++">;</span>
+  <span class="keyword control c++">if</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>real_cycles <span class="keyword operator comparison c">==</span> <span class="constant numeric c++">1023</span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    cycles<span class="keyword operator arithmetic c">+</span><span class="keyword operator arithmetic c">+</span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  <span class="keyword control c++">if</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>counter <span class="keyword operator comparison c">&gt;</span> <span class="constant numeric c++">0</span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    counter<span class="keyword operator arithmetic c">-</span><span class="keyword operator arithmetic c">-</span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span> <span class="keyword control c++">else</span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    counter <span class="keyword operator assignment c">=</span> counter_default<span class="punctuation terminator c++">;</span>
+    <span class="meta function-call c++"><span class="variable function c++">update_position</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+  <span class="keyword control c++">if</span> <span class="meta group c++"><span class="punctuation section group begin c++">(</span>counter_close_display <span class="keyword operator comparison c">&gt;</span> <span class="constant numeric c++">0</span><span class="punctuation section group end c++">)</span></span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    counter_close_display<span class="keyword operator arithmetic c">-</span><span class="keyword operator arithmetic c">-</span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span> <span class="keyword control c++">else</span> <span class="meta block c++"><span class="punctuation section block begin c++">{</span>
+    <span class="meta function-call c++"><span class="variable function c++">closeDisplay</span><span class="meta group c++"><span class="punctuation section group begin c++">(</span></span></span><span class="meta function-call c++"></span><span class="meta function-call c++"><span class="meta group c++"><span class="punctuation section group end c++">)</span></span></span><span class="punctuation terminator c++">;</span>
+  <span class="punctuation section block end c++">}</span></span>
+</span></span><span class="meta function c++"><span class="meta block c++"><span class="punctuation section block end c++">}</span></span></span>
+</span></code></pre>
+<blockquote>
+注：显示屏只是为了方便看IP地址。如果你不需要显示屏，就把u8g2相关的东西全部删掉</p>
+</blockquote>
+<blockquote>
+注2：记得把WiFi名（SSID）和密码换成自己的</p>
+</blockquote>
+<h2>结果</h2>
+<div style="display: grid; gap: 10px; grid-template-columns: 1.16fr 1fr; grid-template-rows: 1fr 1fr;"><img src="./pic1.jpg" style="grid-column: 1; grid-row: 1"><img src="./pic2.jpg" style="grid-column: 1; grid-row: 2"><img src="./pic3.jpg" style="grid-column: 2; grid-row: 1 / 3"></div>
+<h2>参考</h2>
+<ul>
+<li><a href="https://wokwi.com/projects/320964045035274834">wokwi上的esp32HTTP服务器示例</a></li>
+<li><a href="https://github.com/olikraus/u8g2/wiki">u8g2</a></li>
+<li><a href="https://github.com/shigobu/CH9329_Keyboard">CH9329_Keyboard (by shigobu)</a></li>
+<li><a href="https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32c3/hw-reference/esp32c3/user-guide-devkitm-1.html">esp32-c3-devkitm-1文档</a></li>
+</ul>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2024-03-14-OpenGL加载和绘制glTF模型/index.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2024-03-14-OpenGL加载和绘制glTF模型/index.html">OpenGL加载g...</a></div>
+        <div class="sibling-page-date">2024-03-14</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2023-09-03-intel-arc-a770-ai.html">使用Intel A...</a></div>
+        <div class="sibling-page-date">2023-09-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2023-09-03-intel-arc-a770-ai.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

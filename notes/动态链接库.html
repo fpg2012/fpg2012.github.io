@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - C/C++/Rust动态加载动态链接库</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="C使用`dlopen`系统调用，Rust用libloading这个板条箱">
+        
+
+        
+        <meta name="keywords" content="C,C++,Rust,lib">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>C/C++/Rust动态加载动态链接库</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>C/C++/Rust动态加载动态链接库</h1>
+    
+    <div class="date-bar">
+        <span class="date">2025-01-22</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔note〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#C</span>
+    
+        <span class="tag">#C++</span>
+    
+        <span class="tag">#Rust</span>
+    
+        <span class="tag">#lib</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <h2>TL;DR</h2>
+C使用<code>dlopen</code>系统调用，Rust用<a href="https://crates.io/libloading">libloading</a>这个板条箱。dlopen的用法可以看手册（<del>RTFM</del>)</p>
+<pre><code>man dlopen
+</code></pre>
+<h2>Example of Rust</h2>
+示例：</p>
+<pre><code class="language-rust"><span class="source rust"><span class="keyword other rust">use</span> <span class="meta path rust">std<span class="punctuation accessor rust">::</span></span>env<span class="punctuation terminator rust">;</span>
+<span class="keyword other rust">use</span> <span class="meta path rust">libloading<span class="punctuation accessor rust">::</span></span><span class="meta block rust"><span class="punctuation section block begin rust">{</span>Library<span class="punctuation separator rust">,</span> Symbol</span><span class="meta block rust"><span class="punctuation section block end rust">}</span></span><span class="punctuation terminator rust">;</span>
+<span class="keyword other rust">use</span> <span class="meta path rust">std<span class="punctuation accessor rust">::</span></span><span class="meta path rust">ffi<span class="punctuation accessor rust">::</span></span>CString<span class="punctuation terminator rust">;</span>
+<span class="keyword other rust">use</span> <span class="meta path rust">std<span class="punctuation accessor rust">::</span></span><span class="meta path rust">os<span class="punctuation accessor rust">::</span></span><span class="meta path rust">raw<span class="punctuation accessor rust">::</span></span><span class="storage type rust">c_char</span><span class="punctuation terminator rust">;</span>
+
+<span class="storage type type rust">type</span> <span class="entity name type rust">AddFunc</span> <span class="keyword operator rust">=</span> <span class="storage modifier rust">unsafe</span> <span class="storage type function rust">fn</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="storage type rust">i32</span><span class="punctuation separator rust">,</span> <span class="storage type rust">i32</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span> <span class="meta function return-type rust"><span class="punctuation separator rust">-&gt;</span> <span class="storage type rust">i32</span></span><span class="punctuation terminator rust">;</span>
+<span class="storage type type rust">type</span> <span class="entity name type rust">MsgFunc</span> <span class="keyword operator rust">=</span> <span class="storage modifier rust">unsafe</span> <span class="storage type function rust">fn</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="keyword operator rust">*</span><span class="storage type rust">const</span> <span class="storage type rust">c_char</span><span class="punctuation separator rust">,</span> <span class="keyword operator rust">*</span><span class="storage modifier rust">mut</span> <span class="keyword operator rust">*</span><span class="storage modifier rust">mut</span> <span class="storage type rust">c_char</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+
+<span class="meta function rust"><span class="meta function rust"><span class="storage type function rust">fn</span> </span><span class="entity name function rust">main</span></span><span class="meta function rust"><span class="meta function parameters rust"><span class="punctuation section parameters begin rust">(</span></span><span class="meta function rust"><span class="meta function parameters rust"><span class="punctuation section parameters end rust">)</span></span></span></span><span class="meta function rust"> </span><span class="meta function rust"><span class="meta block rust"><span class="punctuation section block begin rust">{</span>
+    <span class="storage type rust">let</span> library_path <span class="keyword operator rust">=</span> <span class="meta path rust">env<span class="punctuation accessor rust">::</span></span>args<span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">nth</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="constant numeric integer decimal rust">1</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">expect</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="string quoted double rust"><span class="punctuation definition string begin rust">&quot;</span>USAGE: loading &lt;LIB&gt;<span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+    <span class="storage modifier rust">unsafe</span> <span class="meta block rust"><span class="punctuation section block begin rust">{</span>
+        <span class="storage type rust">let</span> lib <span class="keyword operator rust">=</span> <span class="meta path rust">Library<span class="punctuation accessor rust">::</span></span>new<span class="meta group rust"><span class="punctuation section group begin rust">(</span>library_path</span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="storage type rust">let</span> func<span class="punctuation separator rust">:</span> <span class="meta generic rust">Symbol<span class="punctuation definition generic begin rust">&lt;</span>AddFunc<span class="punctuation definition generic end rust">&gt;</span></span> <span class="keyword operator rust">=</span> lib.<span class="support function rust">get</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="string quoted double rust"><span class="storage type string rust">b</span><span class="punctuation definition string begin rust">&quot;</span>add<span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="storage type rust">let</span> answer <span class="keyword operator rust">=</span> <span class="support function rust">func</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="constant numeric integer decimal rust">1</span><span class="punctuation separator rust">,</span> <span class="constant numeric integer decimal rust">2</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="support macro rust">println!</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="string quoted double rust"><span class="punctuation definition string begin rust">&quot;</span>1 + 2 = <span class="constant other placeholder rust">{}</span><span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation separator rust">,</span> answer<span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+
+        <span class="storage type rust">let</span> func2<span class="punctuation separator rust">:</span> <span class="meta generic rust">Symbol<span class="punctuation definition generic begin rust">&lt;</span>MsgFunc<span class="punctuation definition generic end rust">&gt;</span></span> <span class="keyword operator rust">=</span> lib.<span class="support function rust">get</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="string quoted double rust"><span class="storage type string rust">b</span><span class="punctuation definition string begin rust">&quot;</span>echo2<span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="storage type rust">let</span> message <span class="keyword operator rust">=</span> <span class="meta path rust">CString<span class="punctuation accessor rust">::</span></span>new<span class="meta group rust"><span class="punctuation section group begin rust">(</span><span class="string quoted double rust"><span class="punctuation definition string begin rust">&quot;</span>helloworld<span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="storage type rust">let</span> <span class="storage modifier rust">mut</span> message2<span class="punctuation separator rust">:</span> <span class="keyword operator rust">*</span><span class="storage modifier rust">mut</span> <span class="storage type rust">c_char</span> <span class="keyword operator rust">=</span> <span class="constant numeric integer hexadecimal rust">0x0</span> <span class="keyword operator rust">as</span> <span class="keyword operator rust">*</span><span class="storage modifier rust">mut</span> <span class="storage type rust">c_char</span><span class="punctuation terminator rust">;</span>
+        <span class="support function rust">func2</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span>message.<span class="support function rust">as_ptr</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation separator rust">,</span> <span class="keyword operator rust">&amp;</span><span class="storage modifier rust">mut</span> message2</span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+        <span class="support macro rust">print!</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="string quoted double rust"><span class="punctuation definition string begin rust">&quot;</span><span class="constant other placeholder rust">{}</span> =&gt; <span class="constant other placeholder rust">{}</span><span class="punctuation definition string end rust">&quot;</span></span></span><span class="meta group rust"><span class="punctuation separator rust">,</span> message.<span class="support function rust">to_str</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation separator rust">,</span> <span class="meta path rust">CString<span class="punctuation accessor rust">::</span></span>from_raw<span class="meta group rust"><span class="punctuation section group begin rust">(</span>message2</span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">to_str</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span>.<span class="support function rust">unwrap</span><span class="meta group rust"><span class="punctuation section group begin rust">(</span></span><span class="meta group rust"><span class="punctuation section group end rust">)</span></span><span class="punctuation section group end rust">)</span></span><span class="punctuation terminator rust">;</span>
+    </span><span class="meta block rust"><span class="punctuation section block end rust">}</span></span>
+</span><span class="meta block rust"><span class="punctuation section block end rust">}</span></span></span>
+</span></code></pre>
+C代码</p>
+<pre><code class="language-c"><span class="source c"><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>stdlib.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>string.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="meta preprocessor include c"><span class="keyword control import include c">#include</span> <span class="string quoted other lt-gt include c"><span class="punctuation definition string begin c">&lt;</span>ctype.h<span class="punctuation definition string end c">&gt;</span></span>
+</span><span class="storage type c">int</span> <span class="meta function c"><span class="entity name function c">add</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="storage type c">int</span> <span class="variable parameter c">a</span><span class="punctuation separator c">,</span> <span class="storage type c">int</span> <span class="variable parameter c">b</span><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+    <span class="keyword control c">return</span> a <span class="keyword operator arithmetic c">+</span> b<span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c"><span class="entity name function c">echo</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="storage modifier c">const</span> <span class="storage type c">char</span><span class="keyword operator c">*</span> <span class="variable parameter c">input</span><span class="punctuation separator c">,</span> <span class="storage type c">char</span><span class="keyword operator c">*</span><span class="keyword operator c">*</span> <span class="variable parameter c">output</span><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+    <span class="storage type c">int</span> len <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="support function C99 c">strlen</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">input</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="keyword operator c">*</span>output <span class="keyword operator assignment c">=</span> <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="storage type c">char</span><span class="keyword operator c">*</span><span class="punctuation section group end c">)</span></span><span class="meta function-call c"><span class="support function C99 c">malloc</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">len <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c">1</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="keyword control c">for</span> <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="storage type c">int</span> i <span class="keyword operator assignment c">=</span> <span class="constant numeric c">0</span><span class="punctuation terminator c">;</span> i <span class="keyword operator comparison c">&lt;</span> len<span class="punctuation terminator c">;</span> i<span class="keyword operator arithmetic c">+</span><span class="keyword operator arithmetic c">+</span><span class="punctuation section group end c">)</span></span> <span class="meta block c"><span class="punctuation section block begin c">{</span>
+        <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="keyword operator c">*</span>output<span class="punctuation section group end c">)</span></span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>i<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> input<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>i<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c">1</span><span class="punctuation terminator c">;</span>
+    <span class="punctuation section block end c">}</span></span>
+    <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="keyword operator c">*</span>output<span class="punctuation section group end c">)</span></span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>len<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span><span class="constant character escape c">\0</span><span class="punctuation definition string end c">&#39;</span></span><span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+
+<span class="storage type c">void</span> <span class="meta function c"><span class="entity name function c">echo2</span></span><span class="meta function parameters c"><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function parameters c"><span class="meta group c"><span class="storage modifier c">const</span> <span class="storage type c">char</span><span class="keyword operator c">*</span> <span class="variable parameter c">input</span><span class="punctuation separator c">,</span> <span class="storage type c">char</span><span class="keyword operator c">*</span><span class="keyword operator c">*</span> <span class="variable parameter c">output</span><span class="punctuation section group end c">)</span></span></span><span class="meta function c"> </span><span class="meta function c"><span class="meta block c"><span class="punctuation section block begin c">{</span></span></span><span class="meta function c"><span class="meta block c">
+    <span class="storage type c">int</span> len <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="support function C99 c">strlen</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">input</span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="keyword operator c">*</span>output <span class="keyword operator assignment c">=</span> <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="storage type c">char</span><span class="keyword operator c">*</span><span class="punctuation section group end c">)</span></span><span class="meta function-call c"><span class="support function C99 c">malloc</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">len <span class="keyword operator arithmetic c">+</span> <span class="constant numeric c">1</span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="keyword control c">for</span> <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="storage type c">int</span> i <span class="keyword operator assignment c">=</span> <span class="constant numeric c">0</span><span class="punctuation terminator c">;</span> i <span class="keyword operator comparison c">&lt;</span> len<span class="punctuation terminator c">;</span> i<span class="keyword operator arithmetic c">+</span><span class="keyword operator arithmetic c">+</span><span class="punctuation section group end c">)</span></span> <span class="meta block c"><span class="punctuation section block begin c">{</span>
+        <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="keyword operator c">*</span>output<span class="punctuation section group end c">)</span></span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>i<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> <span class="meta function-call c"><span class="support function C99 c">toupper</span><span class="meta group c"><span class="punctuation section group begin c">(</span></span></span><span class="meta function-call c"><span class="meta group c">input<span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>i<span class="punctuation section brackets end c">]</span></span></span></span><span class="meta function-call c"><span class="meta group c"><span class="punctuation section group end c">)</span></span></span><span class="punctuation terminator c">;</span>
+    <span class="punctuation section block end c">}</span></span>
+    <span class="meta group c"><span class="punctuation section group begin c">(</span><span class="keyword operator c">*</span>output<span class="punctuation section group end c">)</span></span><span class="meta brackets c"><span class="punctuation section brackets begin c">[</span>len<span class="punctuation section brackets end c">]</span></span> <span class="keyword operator assignment c">=</span> <span class="string quoted single c"><span class="punctuation definition string begin c">&#39;</span><span class="constant character escape c">\0</span><span class="punctuation definition string end c">&#39;</span></span><span class="punctuation terminator c">;</span>
+</span></span><span class="meta function c"><span class="meta block c"><span class="punctuation section block end c">}</span></span></span>
+</span></code></pre>
+把C代码编译成动态链接库，其中<code>-fPIC</code>表示位置无关，<code>-shared</code>表示动态链接库</p>
+<pre><code>gcc -c -fPIC adder.c -o libadder.o
+gcc -shared libadder.o -o libadder2.so
+</code></pre>
+最后运行程序，得到结果如下</p>
+<pre><code>1 + 2 = 3
+helloworld =&gt; HELLOWORLD
+</code></pre>
+<hr />
+实际上rust代码之间也可以这样动态互调</p>
+<pre><code>#[no_mangle]
+pub extern "C" fn add(a: isize, b: isize) -&gt; isize {
+    a + b
+}
+</code></pre>
+编译，<code>cdynlib</code>表示使用C ABI的动态链接库</p>
+<pre><code>rustc --crate-type cdylib adder.rs
+</code></pre>
+<h2>Ref</h2>
+<ul>
+<li>https://www.michaelfbryan.com/rust-ffi-guide/dynamic_loading.html</li>
+<li>https://github.com/nagisa/rust_libloading</li>
+<li>https://man7.org/linux/man-pages/man3/dlopen.3.html</li>
+<li>https://eli.thegreenplace.net/2012/08/24/plugins-in-c</li>
+</ul>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/notes/2025-03阅读笔记.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/notes/2025-03阅读笔记.html">2025-03读书...</a></div>
+        <div class="sibling-page-date">2025-03-16</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/notes/ubuntu.html">在现有的btrfs...</a></div>
+        <div class="sibling-page-date">2025-01-16</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/notes/ubuntu.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

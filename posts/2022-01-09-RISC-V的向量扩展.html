@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - SIMD与RISC-V的向量扩展</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="体系结构">
+        
+
+        
+        <meta name="keywords" content="体系结构,归纳整理,ISA,SIMD">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>SIMD与RISC-V的向量扩展</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>SIMD与RISC-V的向量扩展</h1>
+    
+    <div class="date-bar">
+        <span class="date">2022-01-09</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#体系结构</span>
+    
+        <span class="tag">#归纳整理</span>
+    
+        <span class="tag">#ISA</span>
+    
+        <span class="tag">#SIMD</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    <blockquote>
+原是体系结构的“课程研究报告”。不过既然已经花了那么多时间搜集资料，写出来的东西只当成作业上交未免有点浪费。</p>
+</blockquote>
+虽然RISC-V的向量扩展（V-extension）目前还在草案阶段，但是已经基本成型了。出于对RISC-V的兴趣，我决定以其向量扩展为研究学习主题。</p>
+我原先以为RISC-V向量扩展的的设计会类似Intel的SSE、AVX指令集，但是查找资料的结果告诉我并非如此。与SIMD指令的路子不同，RISC-V选择了向量处理，类似上课讲过CRAY向量机的处理方式。RISC-V文档中，压缩整型扩展（P扩展）被砍掉了，另外提出了向量扩展（V扩展）。关于这点，Patterson（RISC-V的发起人之一，《计算机体系结构：量化方法》的作者之一，图灵奖得主）甚至还专门写了一篇很有意思的文章，批评SIMD指令并不是一个好设计。</p>
+SIMD是Flynn分类法中”单指令多数据“的简写，为何这一数据级并行的基本思路会受到Patterson的批判？下面我简要概括一下Patterson等人的理由。</p>
+<h2>SIMD指令为什么「被认为是有害的」？</h2>
+在发表于SIGARCH上的《<strong>SIMD Instructions</strong> Considered Harmful》一文中，Patterson和Waterman提出了以下理由，说明为什么SIMD指令的出发点看似仅仅是划分寄存器，允许同时对不同部分进行运算，但是却”好心办了坏事“，带来不少害处。</p>
+<ol>
+<li>对于元素宽度不同的划分方式，SIMD指令集需要提供不同的指令，硬件也有些复杂</p>
+</li>
+<li>当SIMD寄存器改进得更宽（宽一倍），为了兼容性，指令数量也几乎需要翻倍</p>
+</li>
+<li>SIMD指令带来的复杂程度，与带来的性能提升或许并不匹配</p>
+</li>
+</ol>
+SIMD指令本质上缺乏灵活性，因此随着指令架构的演进不可避免地变得非常庞大、复杂。比如，Intel的IA-32从1978年至今从80条指令演化到了1400条指令，这么大数量的增加很大程度上是为了SIMD指令。对比Intel的指令集文档和RISC-V的文档页数，前者不仅分成好几卷，一卷基本上就有几千页，后者总共核心内容只有几十页，总共加在一起应该也没有500页。SIMD指令很大程度上使得指令级非常复杂，并且复杂程度很可能随着架构演进，还要继续增加。</p>
+关于第三点，两位作者对一个平凡而简单的程序进行了分析，统计指令的数量，假设n=1000</p>
+<pre><code>    void daxpy(size_t n, double a, const double x[], double y[])
+    {
+     for (size_t i = 0; i &lt; n; i++) {
+       y[i] = a*x[i] + y[i];
+     }
+    }
+</code></pre>
+<figure><img src='https://www.sigarch.org/wp-content/uploads/2017/09/SIMDHarmfulTable2.jpg' alt='' id='' title='' /><figcaption></figcaption></figure>使用CRAY式向量流水线的RV32V在n=1000时几乎是完胜使用SIMD的前两者。据此测试结果，两位作者不得不对SIMD指令这种方式带来的提升提出质疑，并认为SIMD指令不是一个好思路。</p>
+当然对SIMD指令的批判并不意味着SIMD一无是处，在图像处理中，彩色像素几乎总是包含三个值（RGB），经常需要对这三个值做相同的操作，这种情况下SIMD就是非常好的方案。按照我个人的理解，两位作者意指传统的SIMD<strong>指令</strong>带来的代价太大，而不是SIMD这一<strong>思路</strong>本身无用。</p>
+RISC-V的向量扩展和粗暴地添加指令和硬件不同。Eirk Engheim的文章对这种动机进行了进一步说明：“用向量架构，可以更优雅地实现数据级并行。”</p>
+<h2>RISC-V的向量指令扩展</h2>
+我尝试阅读了RISC-V向量指令扩展的细则（spec），虽说不能完全掌握其使用，但是对其灵活性有更直接的感受。</p>
+<h3>基本概念</h3>
+向量扩展指令集添加了若干个CSR（控制状态寄存器），定义了一些基本的控制状态，比如向量开始位置、向量数据类型、向量长度等等。其中我觉得最重要的是<code>vtype</code>寄存器，灵活性就体现于此，后面具体说明。</p>
+还有32个向量寄存器<code>v0-v31</code>，每个寄存器都有VLEN个位。</p>
+<h3>向量指令扩展如何处理向量</h3>
+<figure><img src='https://miro.medium.com/proxy/1*n2UKrFFCFVAfuqiealwtQA.png' alt='Processing elements two vectors with just one ALU. Normally there will be more ALUs to process multiple elements in parallel.' id='' title='' /><figcaption>Processing elements two vectors with just one ALU. Normally there will be more ALUs to process multiple elements in parallel.</figcaption></figure>如图（图来自Erik Engheim的文章），不同于SIMD，一次只使用一个ALU，只对一对元素进行操作，但是向量寄存器可以很长。</p>
+具体实现中在<code>vtype</code>寄存器中的<code>[5:3]</code>位表示<code>vsew[2:0]</code>，<code>[2:0]</code>位表示<code>vlmul[2:0]</code>。前者设置SEW（选中元素宽度），后者设置LMUL（分组因子）。</p>
+SEW表示了一个向量寄存器中有多少个元素，如果SEW是16，那么向量的每个元素就有16个位，向量包含的元素个数就是VLEN/16。</p>
+LMUL表示分组方案，上面提到向量寄存器可以很长，但是实际上「很多向量」和「很长的向量」不能同时取得，分组就是一种折衷方案（compromise），当LMUL是1的时候，不分组；当LMUL是2的时候，两个向量一组，比如，v0和v1被接在一起了，v2和v3接在一起，向量长度相比不分组就长了一倍。LMUL取4、8以此类推。LMUL还可以取分数，缩短向量长度。具体的分组方法和接法在spec中有图表说明。</p>
+我觉得SEW和LMUL的设置就是RISC-V向量扩展灵活性的核心。通过在CSR<code>vtype</code>中设置这两个参数，就能调整机器看待向量的方式，<strong>可长可短，可宽可窄，按需设置</strong>。另外CSR必须用专门的指令进行修改，spec中说明这可以简化CSR的管理。</p>
+<h3>具体的向量指令</h3>
+使用<code>vsetvl</code>系列指令设置<code>vtype</code>寄存器。spec中建议汇编器使用一些预先定义的名字来表示LMUL。比如</p>
+<pre><code>vsetvli t0, a0, e8, m2  # SEW= 8, LMUL=2
+</code></pre>
+从内存中加载向量使用<code>vl</code>系列指令，写回内存中使用<code>vs</code>系列指令。加载和写回都有三种寻址方式，如同课上说过的，unit-stride（单位步长）、stride（常数步长）、indexed（索引）。第一种指定位置开始，一次取一个元素。第二种从指定位置开始，先取一个元素，然后走一个给定的步长后再取下一个元素（适合行主序存储时取列），索引则需要提供另一个向量提供各个元素的偏移量（适合稀疏的数据）。</p>
+spec举例如下。<code>vd</code>代表目标向量寄存器。<code>(rs1)</code>代表主存中的地址，用一个通用寄存器给出，<code>vm</code>是掩码，此处不讨论。</p>
+<pre><code>vle8.v vd, (rs1), vm    # 8-bit unit-stride load
+vlse8.v vd, (rs1), vm    # 8-bit strided load
+vle32.v vd, (rs1), vm    # 32-bit unit-stride load
+vlse32.v vd, (rs1), vm    # 32-bit strided load
+vluxei8.v vd, (rs1), vs2, vm  # unorderd 8-bit indexed load of SEW data
+vluxei32.v vd, (rs1), vs2, vm # unorderd 32-bit indexed load of SEW data
+</code></pre>
+写回内存只需将指令换成对应的<code>vs</code>系列指令。</p>
+向量运算部分，十分简单，不过浮点指令和整型指令是分开的，另外还有一族加宽度的指令，即结果的SEW是操作数SEW的两倍。</p>
+以整型加法为例，不仅有向量加向量，还有向量加标量，向量加立即数。减法、乘法、移位都类似。甚至还有取最值（最大值、最小值）的指令。</p>
+<pre><code>vadd.vv vd, vs2, vs1, vm # vector add vector
+vadd.vx vd, vs2, rs1, vm # vector add scalar
+vadd.vi vd, vs2, imm, vm # vector add immediate
+</code></pre>
+上面提到的掩码可以用于合并向量。掩码实际上也存储在一个向量寄存器中，掩码向量之间可以做逻辑运算。被“掩”住的元素不会发生异常。</p>
+<h3>简单程序</h3>
+上面<code>daxpy</code>函数，Patterson的文章给出了RISC-V指令集和IA-32 AVX的汇编代码</p>
+<pre><code># a0 is n, a1 is pointer to x[0], a2 is pointer to y[0], fa0 is a
+  0:  li t0, 2&lt;&lt;25
+  4:  vsetdcfg t0             # enable 2 64b Fl.Pt. registers
+loop:
+  8:  setvl  t0, a0           # vl = t0 = min(mvl, n)
+  c:  vld    v0, a1           # load vector x
+  10:  slli   t1, t0, 3        # t1 = vl * 8 (in bytes)
+  14:  vld    v1, a2           # load vector y
+  18:  add    a1, a1, t1       # increment pointer to x by vl*8
+  1c:  vfmadd v1, v0, fa0, v1  # v1 += v0 * fa0 (y = a * x + y)
+  20:  sub    a0, a0, t0       # n -= vl (t0)
+  24:  vst    v1, a2           # store Y
+  28:  add    a2, a2, t1       # increment pointer to y by vl*8
+  2c:  bnez   a0, loop         # repeat if n != 0
+  30:  ret                     # return
+</code></pre>
+<pre><code># eax is i, n is esi, a is xmm1,
+# pointer to x[0] is ebx, pointer to y[0] is ecx
+ 0: push   esi
+ 1: push   ebx
+ 2: mov    esi,[esp+0xc]   # esi = n
+ 6: mov    ebx,[esp+0x18]  # ebx = x
+ a: vmovsd xmm1,[esp+0x10] # xmm1 = a
+ 10: mov    ecx,[esp+0x1c]  # ecx = y
+ 14: vmovddup xmm2,xmm1     # xmm2 = {a,a}
+ 18: mov    eax,esi
+ 1a: and    eax,0xfffffffc  # eax = floor(n/4)*4
+ 1d: vinsertf128 ymm2,ymm2,xmm2,0x1 # ymm2 = {a,a,a,a}
+ 23: je     3e              # if n &lt; 4 goto Fringe
+ 25: xor    edx,edx         # edx = 0
+Main Loop:
+ 27: vmovapd ymm0,[ebx+edx*8] # load 4 elements of x
+ 2c: vfmadd213pd ymm0,ymm2,[ecx+edx*8] # 4 mul adds
+ 32: vmovapd [ecx+edx*8],ymm0 # store into 4 elements of y
+ 37: add    edx,0x4
+ 3a: cmp    edx,eax          # compare to n
+ 3c: jb     27               # repeat loop if &lt; n
+Fringe:
+ 3e: cmp    esi,eax          # any fringe elements?
+ 40: jbe    59               # if (n mod 4) == 0 go to Done
+Fringe Loop:
+ 42: vmovsd xmm0,[ebx+eax*8] # load element of x
+ 47: vfmadd213sd xmm0,xmm1,[ecx+eax*8] # 1 mul add
+ 4d: vmovsd [ecx+eax*8],xmm0 # store into element of y
+ 52: add    eax,0x1          # increment Fringe count
+ 55: cmp    esi,eax          # compare Loop and Fringe counts
+ 57: jne    42 &lt;daxpy+0x42&gt;  # repeat FringeLoop if != 0
+Done:
+ 59: pop    ebx              # function epilogue
+ 5a: pop    esi
+ 5b: ret
+</code></pre>
+后者在真正开始计算前需要做很多准备工作，但是循环体中的指令少；前者整体更简洁，但是循环体中的指令多。但是依靠向量指令和流水线，后者可以规避这一点。看完程序之后我不得不同意RISC-V确实更加优雅。</p>
+<h2>总结</h2>
+我没有预料到对RISC-V指令的学习会引出这么多有趣的内容，看似人畜无害的SIMD居然会引发这么多争论。</p>
+看完资料后我在想，是否真的是向量指令<strong>永远</strong>优于SIMD指令？我觉得如果向量长度很短，向量处理指令未必能够更快，SIMD指令也许更好。因此，对SIMD指令和向量指令的优劣对比都是综合比较的结果，并不是一方全方面完胜另一方。至于谁的trade-off更优，也许只有实际应用才能告诉我们答案。</p>
+<h2>参考文献</h2>
+<ul>
+<li>Patterson和Waterman的文章 https://www.sigarch.org/simd-instructions-considered-harmful/https://www.sigarch.org/simd-instructions-considered-harmful/</p>
+</li>
+<li>Eirk Engheim的文章 https://medium.com/swlh/risc-v-vector-instructions-vs-arm-and-x86-simd-8c9b17963a31</p>
+</li>
+<li>RISC-V V-extension SPEC https://github.com/riscv/riscv-v-spec</p>
+</li>
+</ul>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2022-02-27-使用ffmpeg录制TTY命令行.html">没有图形界面也要录...</a></div>
+        <div class="sibling-page-date">2022-02-27</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2021-12-03-Material Design笔记.html">Material ...</a></div>
+        <div class="sibling-page-date">2021-12-03</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2021-12-03-Material Design笔记.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>

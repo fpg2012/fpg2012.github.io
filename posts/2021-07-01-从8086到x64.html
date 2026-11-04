@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        
+        <title>Empty Space - 从8086到x64</title>
+        
+        <meta charset="UTF-8">
+        <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport">
+
+        
+        <meta name="description" content="相信所有学习过「计算机组成原理与汇编语言」课程的人都受过8086的折磨：少得可怜的寄存器、远古开发环境、远古命令行调试器`debug`、复古的DOS操作系统，还有一点……**实机不能运行**。如果说前面几点还勉强可以忍受，那么最后一点实在是忍无可忍。8086已经是古玩了，Intel和微软的向前兼容也有限度，这导致了现在流行的64位操作系统上根本无法直接运行为8086编写的代码。于是为了继续教8086，现在国内大量学校使用某部分功能收费的IDE进行教学，写出来的东西也只能在Dosbox里面打转。但是，脱离实机的运行环境，学得再多也难对实践有太多助益。">
+        
+
+        
+        <meta name="keywords" content="折腾记录,汇编,x64">
+        
+
+        <link rel="stylesheet" href="//soulsand.top/assets/style/main.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/tango.css">
+        <link rel="stylesheet" href="//soulsand.top/assets/style/katex.min.css" integrity="sha384-MlJdn/WNKDGXveldHDdyRP1R4CTHr3FeuDNfhsLPYrq2t0UBkUdK2jyTnXPEK1NQ" crossorigin="anonymous">
+
+<link rel="stylesheet" href="//soulsand.top/assets/style/syntect.css">
+
+
+        
+        
+        <link rel="apple-touch-icon" sizes="180x180" href="//soulsand.top/assets/favicon/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="//soulsand.top/assets/favicon/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="//soulsand.top/assets/favicon/favicon-16x16.png">
+        <link rel="manifest" href="//soulsand.top/assets/favicon/site.webmanifest">
+        
+    </head>
+    <body>
+        <header>
+
+<div class="header-logo">
+    <img class="nth233logo" src="//soulsand.top/assets/img/404.png"></img>
+    <a href="//soulsand.top/">Empty Space</a>
+</div>
+
+<div class="header-menu">
+    <div id="search-button" class="search-control search-button">
+        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6 .1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"/></svg>
+    </div>
+    <a href="//soulsand.top/notes/">Notes</a>
+    <a href="//soulsand.top/about/">About</a>
+    <a href="//soulsand.top/feed.xml">RSS</a>
+    <!--<a href="//soulsand.top/friends.html">Friends</a>-->
+    <div id="theme-switch" class="header-button" title="夜幕降临">🌒</div>
+</div>
+</header>
+<div id="search-area" class="search-area hide">
+    <input id="search-box" class="search-box" type="text">
+    <div id="search-result-area">
+    
+    </div>
+</div>
+        <script src="//soulsand.top/assets/js/switch-theme.js"></script>
+        <main>
+            
+<div class='left-side-bar'>
+    <div class="author-info">
+        <img src="/assets/img/404.png">
+        <div>我是<a href="//soulsand.top/about.html">nth233</a> <br/> 喜欢本文就点个♥吧</div>
+    </div>
+    <hr/>
+    
+    <div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+    
+</div>
+
+<div class='right-side-bar post-menu'>
+    <div class='menu-title'>从8086到x64</div>
+    <hr>
+</div> 
+<div class="post-area">
+<div class="post-front-matter">
+    
+    <h1>从8086到x64</h1>
+    
+    <div class="date-bar">
+        <span class="date">2021-07-01</span>
+    </div>
+    <div class="category-bar">
+    
+        <span class="category">〔dev〕</span>
+    
+    </div>
+    <div class="tag-bar">
+    
+        <span class="tag">#折腾记录</span>
+    
+        <span class="tag">#汇编</span>
+    
+        <span class="tag">#x64</span>
+    
+    </div>
+</div>
+
+
+
+<div class="post-top-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+<hr class="hr-wavy frontmatter-hr">
+
+<details class="post-menu-float">
+    <summary>目录</summary>
+    <div class="post-menu"></div>
+</details>
+<div class="post-content">
+    相信所有学习过「计算机组成原理与汇编语言」课程的人都受过8086的折磨：少得可怜的寄存器、远古开发环境、远古命令行调试器<code>debug</code>、复古的DOS操作系统，还有一点……<strong>实机不能运行</strong>。如果说前面几点还勉强可以忍受，那么最后一点实在是忍无可忍。8086已经是古玩了，Intel和微软的向前兼容也有限度，这导致了现在流行的64位操作系统上根本无法直接运行为8086编写的代码。于是为了继续教8086，现在国内大量学校使用某部分功能收费的IDE进行教学，写出来的东西也只能在Dosbox里面打转。但是，脱离实机的运行环境，学得再多也难对实践有太多助益。</p>
+好在从8086转到x64不困难。基础的指令基本相同，寄存器的名字也一脉相承，而且还干掉了分段和8086奇葩的20根地址线，使得编写程序更简单了（相当于以前的<code>flat</code>格式。而且转到x64还能带来生态上的改进：更先进易用的操作系统和更与时俱进的调试器，效率得以大幅提升。</p>
+<blockquote>
+之所以给新手教8086的指令集，一般都说是因为「8086简单」。然而和它的兄弟8088相比，8086还复杂了一些，和RISC架构的几个指令集相比，8086更是一点也不简单，甚至和x64相比，8086也只是显得简陋，基础的指令集并不显得更“简单”。并且在当下，8086已经严重过时，使得学习难度变得更高。</p>
+过去给新手教8086，或许只是因为这个架构具有里程碑意义，而且在容易找到可以运行的实机（得益于Intel和微软的垄断地位）。现在给新手教8086，也许只是因为懒于改革而已。实际上应该新手适合学x64（有实机）或者RISC-V（简单）。</p>
+</blockquote>
+<h2>第一步：寄存器和指令</h2>
+<h3>寄存器</h3>
+在基础的指令集上，实际上没有什么改变的；寄存器也只是改了个名、加了些新的。首先，在<code>ax</code>、<code>bx</code>、<code>cx</code>、<code>dx</code>、<code>si</code>、<code>di</code>这几个8086的通用寄存器前面加上<code>r</code>，就得到相应的64位寄存器，比如<code>rax</code>、<code>rdi</code>。原先的名字依然可以使用，不过得到的是这几个通用寄存器的低16位。把<code>r</code>换成<code>e</code>，就得到64位寄存器的低32位，比如<code>eax</code>，这是i386的遗产。<code>ah</code>、<code>al</code>这几个8位寄存器仍然可以使用，含义和以前相同。<code>flags</code>现在叫做<code>rflags</code>，它也是64位宽，不过高32位尚未使用，低32位和32位的<code>eflags</code>相同，低16位和之前的<code>flags</code>相同。</p>
+另外，x64引入了<code>r8</code>到<code>r15</code>8个新通用寄存器，都是64位宽。后面加上<code>d</code>表示取其低32位，加上<code>w</code>代表取其低16位，加上<code>b</code>代表取其低8位（在intel格式中用<code>l</code>）。注意，不存在<code>r8h</code>这个寄存器，传统的高8位寄存器<code>ah</code>、<code>bh</code>、<code>ch</code>、<code>dh</code>不能和<code>r8b</code>这些寄存器同时出现在一条指令里。</p>
+<blockquote>
+<p><code>d</code>代表双字（doubleword，32位），<code>w</code>代表字（word，16位），<code>b</code>代表字节（byte）。后面还会提到<code>q</code>，代表肆字（quadword，64位）。「肆字」这个叫法是我自己编的，译法参照化学中的「碳碳叁键」。</p>
+</blockquote>
+<p><code>ip</code>现在叫做<code>rip</code>。</p>
+你会发现我没有提到<code>ds</code>、<code>cs</code>等段寄存器，没错，他们被干掉了。长模式下段寄存器无用。</p>
+此外还有80位宽的浮点数寄存器<code>fpr0</code>到<code>fpr7</code>，他们的低64位用于MMX寄存器，更具体的内容这里不赘述，因为编写简单的程序似乎不怎么会用到，具体可以查看Intel或AMD的文档。</p>
+<h3>指令</h3>
+指令实际上没有什么不同。原先的指令被全数保留，即使有细微的差别，通过查文档也可以解决。</p>
+所有的指令后面加上<code>q</code>、<code>d</code>、<code>w</code>、<code>b</code>可以指明后面操作数的宽度。不过一般不需要手动加，汇编器会自动做。比如下面两条指令其实没有什么差别。</p>
+<pre><code>addq rax, 100
+add rax, 100
+</code></pre>
+乘法指令和除法指令也和以前几乎一样。</p>
+<pre><code>mul bx
+mul rbx
+</code></pre>
+第一条指令会把<code>ax</code>乘<code>bx</code>结果的高位存在<code>dx</code>中，低位存在<code>ax</code>中；类似地，第二条指令会把<code>rax</code>乘<code>rbx</code>的结果存在<code>rdx</code>:<code>rax</code>中。</p>
+另外还有一点值得注意，寻址的时候应该使用64位寄存器。比如</p>
+<pre><code>mov ax, word ptr [rsp + 8]
+</code></pre>
+把<code>rsp</code>换成<code>sp</code>则是不对的。</p>
+<h2>第二步：操作系统和汇编器</h2>
+由于笔者使用Linux，因此下面的内容只针对Linux操作系统。实际上Windows下也只是换汤不换药，改成Windows的系统调用即可。</p>
+汇编器我选择了GAS（GNU Assembler），很多发行装好就自带binutils了，其中就包括了GAS。使用命令<code>as</code>就可以调用GAS。链接器自然也使用binutils的<code>ld</code>。GAS默认使用AT&amp;T的汇编格式，立即数前加<code>$</code>，寄存器名字前加<code>%</code>，源操作数在前，目标操作数在后。不过我实在难以习惯，还是使用intel的格式。</p>
+<h3>调用约定</h3>
+Linux继承了System V的调用约定（calling conventions），<code>rdi</code>存放第一个参数，<code>rsi</code>存放第二个参数，<code>rdx</code>存放第三个参数，<code>r10</code>存放第四个参数，<code>r8</code>存放第五个参数，<code>r9</code>存放第六参数。第一个返回值存在<code>rax</code>中，第二个返回值存在<code>rdx</code>中。按照约定，被调用者保证调用后<code>rbx</code>、<code>r12</code>到<code>r15</code>、<code>rbp</code>和<code>rsp</code> 内容不变。</p>
+详见下图</p>
+<figure><img src='/assets/img/post/calling.png' alt='System V Calling Convention' id='' title='' /><figcaption>System V Calling Convention</figcaption></figure>
+<h3>系统调用</h3>
+系统调用除了要按照上面的调用约定进行调用外，还需要往<code>rax</code>中放入系统调用号。下面的最常用的两个系统调用：</p>
+<table><thead><tr><th><code>rax</code></th><th>System Call</th><th><code>rdi</code></th><th><code>rsi</code></th><th><code>rdx</code></th></tr></thead><tbody>
+<tr><td>0</td><td>sys_read</td><td>unsigned int fd</td><td>char *buf</td><td>size_t count</td></tr>
+<tr><td>1</td><td>sys_write</td><td>unsigned int fd</td><td>const char *buf</td><td>size_t count</td></tr>
+<tr><td>60</td><td>sys_exit</td><td>int error_code</td><td></td><td></td></tr>
+</tbody></table>
+<p><code>read</code>和<code>write</code>返回值都是实际读/写的字节数。<code>exit</code>结束程序，可以设定程序退出后返回的错误码，<code>0</code>表示正常。</p>
+准备好相关参数，就可以使用<code>syscall</code>指令直接进行系统调用。比如下面的代码，把<code>rsi</code>指向的内容输出到标准输出中。（UNIX中一切皆文件，<code>stdin</code>的文件描述符为0，<code>stdout</code>为1，<code>stderr</code>为2）</p>
+<pre><code>lea rsi, msg # msg为要输出的字符串的标号
+mov rdi, 1
+mov rax, 1
+mov rdx, 5 # 输出五个字符
+syscall # 系统调用
+</code></pre>
+如果<code>msg</code>的位置指向字符串<code>helloworld\0</code>，那么调用后将输出<code>hello</code>。</p>
+类似地，下面的代码用于终止程序</p>
+<pre><code>mov rax, 60
+mov rdi, 0
+syscall
+</code></pre>
+相当于DOS下8086的</p>
+<pre><code>mov ax, 4c00h
+int 21h
+</code></pre>
+<h3>GAS代码格式</h3>
+MASM中里面需要用<code>xxx segment</code>和<code>xxx ends</code>来定义各种段，GAS中不需要。</p>
+<p><code>.data</code>后面的内容就是数据段的内容，<code>.text</code>后的内容就是代码段的内容。程序的入口为<code>_start</code>，为了让汇编器找到<code>_start</code>，需要将其设为外部文件可见的，使用<code>.global _start</code>即可。<code>#</code>之后的内容为单行注释。</p>
+于是一个典型的程序框架如下：</p>
+<pre><code>.intel_syntax noprefix # 启用intel格式
+.data
+# 数据段中的一些定义
+
+.text
+.global _start
+
+_start:
+    # 一些代码
+    
+    # 终止程序
+    mov rax, 60
+    mov rdi, 0
+    syscall
+end
+# end 之后的东西会被汇编器忽略
+</code></pre>
+GAS中有一些常用的宏。</p>
+<table><thead><tr><th></th><th>作用</th></tr></thead><tbody>
+<tr><td><code>.ascii</code></td><td>后跟字符串</td></tr>
+<tr><td><code>.asciz</code></td><td>后跟字符串，自动以0结尾</td></tr>
+<tr><td><code>.byte</code></td><td>后跟一个字节</td></tr>
+<tr><td><code>.rept x</code>和<code>.endr</code></td><td>把<code>.rept</code>和<code>.endr</code>之间的内容重复<code>x</code>遍</td></tr>
+</tbody></table>
+本文只是概述，更多内容可以参考GAS的文档。</p>
+至此，我们可以开始写第一个程序了。</p>
+<h2>第三步：Hello World!</h2>
+这里直接给出程序。</p>
+<pre><code>.intel_syntax noprefix
+.data
+msg: .ascii "Hello World!\n"
+.equ msg_len, .-msg
+
+.text
+.global _start
+_start:
+    lea rsi, msg
+    mov rdi, 1
+    mov rax, 1
+    mov rdx, msg_len
+    syscall
+
+    mov rax, 60
+    mov rdi, 0
+    syscall
+.end
+
+</code></pre>
+第四行的<code>.equ msglen, .-msg</code>定义了一个新符号<code>msglen</code>，<code>.-msg</code>代表当前地址减去<code>msg</code>的偏移量，即为字符串的长度。</p>
+编写完成后命名为<code>helloworld.s</code>，然后调用下面的命令进行汇编。<code>-g</code>是为了便生成调试信息，可以去掉。</p>
+<pre><code>as -g helloworld.s -o helloworld.o
+</code></pre>
+然后链接。</p>
+<pre><code>ld helloworld.o -o helloworld
+</code></pre>
+此时应该会得到一个可执行文件<code>helloworld</code>，执行之，即可获得预期的结果：终端输出了<code>Hello World!</code>。</p>
+只写个Helloworld略有一点乏味，下面的程序读取用户输入的数字，转成二进制输出，把<code>0</code>输出为绿色。其中使用了颜色代码<code>\033[0;32m</code>（绿色）和<code>\033[0m</code>（默认颜色）。绿色代码后的字符全部显示为绿色，默认颜色同理。</p>
+<pre><code>.intel_syntax noprefix
+.data
+input_buffer:
+.rept 40 
+	.byte 0 
+.endr
+output_buffer:
+.rept 100
+	.byte 0
+.endr
+msg1: .asciz "input a num (hex): "
+msg2: .asciz "binary: "
+color_start: .asciz "\033[0;32m"
+color_reset: .asciz "\033[0m"
+lf: .ascii "\n"
+
+
+.text
+.global _start
+
+# output LF
+_newline:
+	mov rax, 1
+	mov rdi, 2
+	lea rsi, lf
+	mov rdx, 1
+	syscall
+	ret
+	
+# rdi - string to insert
+# rsi - buffer begin
+# rdx - pos
+_insert_into_buffer:
+	xor rax, rax
+insert_into_buffer_loop:
+	mov al, byte ptr [rdi]
+	inc rdi
+	cmp al, 0
+	jz insert_into_buffer_loop_end
+	mov byte ptr [rsi+rdx], al
+	inc rdx
+	jmp insert_into_buffer_loop
+insert_into_buffer_loop_end:
+	ret
+	
+# output rbx in binary
+_output_bin:
+	push r12
+    xor rcx, rcx
+output_bin_loop:
+
+	inc rcx
+	mov r10, rbx
+	and r10, 1
+	add r10B, '0'
+	push r10
+	sar rbx, 1
+	cmp rbx, 0
+	jnz output_bin_loop
+
+	xor rdx, rdx
+output_bin_loop2:
+	pop rax
+	mov byte ptr [rdx+output_buffer], al
+	cmp al, '1'
+	jz output_bin_loop2_even
+	mov r12b, byte ptr [rdx+output_buffer]
+	lea rdi, color_start
+	lea rsi, output_buffer
+	call _insert_into_buffer
+
+	mov byte ptr [rdx+output_buffer], r12b
+	inc rdx
+
+	lea rdi, color_reset
+	lea rsi, output_buffer
+	call _insert_into_buffer
+	jmp output_bin_loop2_odd
+output_bin_loop2_even:
+	inc rdx
+output_bin_loop2_odd:
+	loop output_bin_loop2
+	
+	lea rsi, output_buffer
+	mov rax, 1
+	mov rdi, 1
+	syscall
+
+	pop r12
+	ret
+
+# read line into input buffer
+_read_into_buffer:
+	push r12
+	lea rsi, input_buffer
+read_into_buffer_loop:
+	mov rax, 0
+	mov rdx, 1
+	syscall
+	mov r12b, byte ptr [rsi]
+	inc rsi
+	cmp r12b, '\n'
+	jnz read_into_buffer_loop
+	
+	mov byte ptr [rsi], 0
+	mov rax, rsi
+	sub rax, offset input_buffer
+	dec rax
+	pop r12
+	ret
+
+# parse input buffer, write result into rax
+# rdi - start of string
+# rdx - length
+_parse_input:
+	mov rcx, rdx
+	xor rbx, rbx
+	xor rax, rax
+parse_input_loop:
+	mov bl, byte ptr [rdi]
+	cmp bl, 'A'
+	jge parse_input_le
+	# less then 10
+	sub bl, '0'
+	jmp parse_input_le_end
+parse_input_le:
+	sub bl, 'A'
+	add bl, 10
+parse_input_le_end:
+	shl rax, 4
+	add rax, rbx
+	inc rdi
+	loop parse_input_loop
+	ret
+
+# calc length, and print the string in rsi
+_myputs:
+	mov r10, rsi
+	xor rdx, rdx
+myputs_loop:
+	mov bl, byte ptr [rsi]
+	cmp bl, 0
+	jz myputs_loop_end
+	inc rdx
+	inc rsi
+	jmp myputs_loop
+myputs_loop_end:
+	mov rax, 1
+	mov rdi, 1
+	mov rsi, r10
+	syscall
+	ret
+	
+_start:
+read_input:
+	lea rsi, msg1
+	call _myputs
+	call _read_into_buffer
+	mov rdx, rax
+	lea rdi, input_buffer
+	call _parse_input
+	push rax
+	
+output_in_bin:
+	lea rsi, msg2
+	call _myputs
+	pop rbx
+	call _output_bin
+	call _newline
+
+	# exit
+	mov rax, 60
+	mov rdi, 0
+	syscall
+.end
+
+</code></pre>
+应有以下运行结果</p>
+<figure><img src='/assets/img/post/x64result.png' alt='x64result' id='' title='' /><figcaption>x64result</figcaption></figure>
+<h2>第四步：用<code>gdb</code>调试</h2>
+GDB（GNU Debugger）对应MASM的debug，由于提供了TUI界面，要比DOS下的debug好用不知道多少倍。</p>
+<pre><code>gdb -tui xxx
+</code></pre>
+如是即可使用gdb的TUI界面。具体用法已经超出了本文的范畴，网上资料也不少，暂时先不填坑。这里就放一张图。</p>
+<figure><img src='/assets/img/post/gdbtui.png' alt='gdb' id='' title='' /><figcaption>gdb</figcaption></figure>
+<h2>参考</h2>
+<ol>
+<li><a href="https://software.intel.com/content/www/us/en/develop/articles/introduction-to-x64-assembly.html">x64介绍</a></li>
+<li><a href="https://gitlab.com/x86-psABIs/x86-64-ABI">System V ABI</a></li>
+<li><a href="https://docs.microsoft.com/en-us/cpp/build/x64-calling-convention?view=msvc-160">微软的调用约定</a></li>
+<li><a href="http://web.mit.edu/gnu/doc/html/as_7.html">GAS的文档</a></li>
+<li><a href="https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl">Linux系统调用号表</a></li>
+<li><a href="http://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/">一份整理好的Linux系统调用表</a></li>
+<li><a href="www.intel.com/content/www/us/en/processors/architectures-software-developer-manuals.html">Intel的文档</a></li>
+<li><a href="https://en.wikibooks.org/wiki/X86_Assembly">关于x86汇编的Wikibook</a>，建议阅读</li>
+</ol>
+
+</div>
+
+
+<div class="post-bottom-like-bar">
+<div class="social-media-info">
+    
+    <div class="social-media-item"><a href="//space.bilibili.com/11616223"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M488.6 104.1C505.3 122.2 513 143.8 511.9 169.8V372.2C511.5 398.6 502.7 420.3 485.4 437.3C468.2 454.3 446.3 463.2 419.9 464H92C65.6 463.2 43.8 454.2 26.7 436.8C9.7 419.4 .8 396.5 0 368.2V169.8C.8 143.8 9.7 122.2 26.7 104.1C43.8 87.8 65.6 78.8 92 78H121.4L96.1 52.2C90.3 46.5 87.4 39.2 87.4 30.4C87.4 21.6 90.3 14.3 96.1 8.6C101.8 2.9 109.1 0 117.9 0C126.7 0 134 2.9 139.8 8.6L213.1 78H301.1L375.6 8.6C381.7 2.9 389.2 0 398 0C406.8 0 414.1 2.9 419.9 8.6C425.6 14.3 428.5 21.6 428.5 30.4C428.5 39.2 425.6 46.5 419.9 52.2L394.6 78L423.9 78C450.3 78.8 471.9 87.8 488.6 104.1H488.6zM449.8 173.8C449.4 164.2 446.1 156.4 439.1 150.3C433.9 144.2 425.1 140.9 416.4 140.5H96.1C86.5 140.9 78.6 144.2 72.5 150.3C66.3 156.4 63.1 164.2 62.7 173.8V368.2C62.7 377.4 66 385.2 72.5 391.7C79 398.2 86.9 401.5 96.1 401.5H416.4C425.6 401.5 433.4 398.2 439.7 391.7C446 385.2 449.4 377.4 449.8 368.2L449.8 173.8zM185.5 216.5C191.8 222.8 195.2 230.6 195.6 239.7V273C195.2 282.2 191.9 289.9 185.8 296.2C179.6 302.5 171.8 305.7 162.2 305.7C152.6 305.7 144.7 302.5 138.6 296.2C132.5 289.9 129.2 282.2 128.8 273V239.7C129.2 230.6 132.6 222.8 138.9 216.5C145.2 210.2 152.1 206.9 162.2 206.5C171.4 206.9 179.2 210.2 185.5 216.5H185.5zM377 216.5C383.3 222.8 386.7 230.6 387.1 239.7V273C386.7 282.2 383.4 289.9 377.3 296.2C371.2 302.5 363.3 305.7 353.7 305.7C344.1 305.7 336.3 302.5 330.1 296.2C323.1 289.9 320.7 282.2 320.4 273V239.7C320.7 230.6 324.1 222.8 330.4 216.5C336.7 210.2 344.5 206.9 353.7 206.5C362.9 206.9 370.7 210.2 377 216.5H377z"/></svg></a></div>
+    <div class="social-media-item"><a href="//github.com/fpg2012"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg></a></div>    
+    
+    
+    <div class='counting-stars-area'>
+    <span class="counting-stars-btn">♥</span>
+    <span class="counting-stars-indicator"></span>
+</div>
+    
+</div>
+</div>
+
+
+
+<div class="sibling-pages">
+    
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2021-10-01-抄几首戴望舒的诗.html">〈</a></div>
+    <div class="sibling-page sibling-page-next">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2021-10-01-抄几首戴望舒的诗.html">抄几首戴望舒的诗...</a></div>
+        <div class="sibling-page-date">2021-10-20</div>
+    </div>
+    
+    
+    <div class="sibling-page sibling-page-last">
+        <div class="sibling-page-title"><a href="//soulsand.top/posts/2021-04-29-《后来的事》.html">《后来的事》...</a></div>
+        <div class="sibling-page-date">2021-04-29</div>
+    </div>
+    <div class="sibling-page-arrow"><a href="//soulsand.top/posts/2021-04-29-《后来的事》.html">〉</a></div>
+    
+</div>
+
+
+
+
+    <div class="comment-area">
+<div id="comment-loading" style="display: flex; justify-content: center; padding: 2ex 1em 2ex 1em; color: var(--menu-link-color);">... 评论加载中 ...</div>
+<script src="https://utteranc.es/client.js"
+        repo="fpg2012/fpg2012.github.io"
+        issue-term="pathname"
+        label="Comment"
+        theme="preferred-color-scheme"
+        crossorigin="anonymous"
+        async
+        onload="removeCommentLoading()">
+</script>
+<script>
+function removeCommentLoading() {
+  var r = document.querySelector(".utterances-frame");
+  
+  r.addEventListener('load', function () {
+    var p = document.getElementById('comment-loading');
+    p.parentNode.removeChild(p);
+  });
+}
+</script>
+</div>
+
+
+</div>
+<script src=//soulsand.top/assets/js/generate-toc.js></script>
+
+<script>var counting_stars_url = '//like.soulsand.top'</script>
+<script src=//soulsand.top/assets/js/counting_stars.js></script>
+
+
+        </main>
+        <script src="//soulsand.top/assets/js/search.js"></script>
+        <footer>
+<span>© nth233 2026 | <span class="theme-about">Powered by <a href="https://github.com/fpg2012/sushi">sushi</a> |  Theme <a href="https://github.com/fpg2012/sushi-theme-empty">empty</a> by <a href="https://github.com/fpg2012">nth233</a></span>
+</footer>
+        <div id="fullscreen-img-container" class="hidden">
+        </div>
+        <div id="top-button" onclick="window.scrollTo(0,0)">△</div>
+	<script src="//soulsand.top/assets/js/fullscreen-img.js"></script>
+    
+    </body>
+</html>
